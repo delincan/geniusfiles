@@ -178,18 +178,40 @@ function rateLimited(request: Request): boolean {
   return hits.length > RATE_MAX;
 }
 
+/* Origines de l'application native (WebView Capacitor Android / iOS).
+   Le site web appelle l'API depuis sa propre origine et n'a pas besoin de CORS. */
+const NATIVE_ORIGINS = new Set([
+  "https://localhost",
+  "http://localhost",
+  "capacitor://localhost",
+  "https://127.0.0.1",
+]);
+
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "https://localhost",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Expose-Headers": "x-vercel-ai-ui-message-stream",
   "Access-Control-Max-Age": "86400",
-  Vary: "Origin",
+  Vary: "Origin, Access-Control-Request-Headers",
 };
+
+function preflightHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get("Origin");
+  const headers = { ...CORS_HEADERS };
+  if (origin && NATIVE_ORIGINS.has(origin)) headers["Access-Control-Allow-Origin"] = origin;
+  const requested = request.headers.get("Access-Control-Request-Headers");
+  if (requested && /^[\w\-, ]{1,500}$/.test(requested)) {
+    headers["Access-Control-Allow-Headers"] = requested;
+  }
+  return headers;
+}
 
 export const Route = createFileRoute("/api/public/chat")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: CORS_HEADERS }),
+      OPTIONS: async ({ request }) =>
+        new Response(null, { status: 204, headers: preflightHeaders(request) }),
       POST: async ({ request }) => {
         try {
           if (rateLimited(request)) {
