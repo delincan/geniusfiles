@@ -213,11 +213,12 @@ export const Route = createFileRoute("/api/public/chat")({
       OPTIONS: async ({ request }) =>
         new Response(null, { status: 204, headers: preflightHeaders(request) }),
       POST: async ({ request }) => {
+        const CORS = preflightHeaders(request);
         try {
           if (rateLimited(request)) {
             return new Response("Trop de requêtes. Réessayez dans un instant.", {
               status: 429,
-              headers: { ...CORS_HEADERS, "Retry-After": "60" },
+              headers: { ...CORS, "Retry-After": "60" },
             });
           }
 
@@ -225,23 +226,23 @@ export const Route = createFileRoute("/api/public/chat")({
           if (raw.length > MAX_BODY_BYTES) {
             return new Response("Requête trop volumineuse.", {
               status: 413,
-              headers: CORS_HEADERS,
+              headers: CORS,
             });
           }
           let body: ChatRequestBody;
           try {
             body = JSON.parse(raw) as ChatRequestBody;
           } catch {
-            return new Response("Requête invalide.", { status: 400, headers: CORS_HEADERS });
+            return new Response("Requête invalide.", { status: 400, headers: CORS });
           }
           const { messages, storages } = body;
           if (!Array.isArray(messages) || messages.length === 0) {
-            return new Response("Messages are required", { status: 400, headers: CORS_HEADERS });
+            return new Response("Messages are required", { status: 400, headers: CORS });
           }
           if (messages.length > MAX_MESSAGES || raw.length > MAX_TOTAL_CHARS) {
             return new Response("Conversation trop longue.", {
               status: 413,
-              headers: CORS_HEADERS,
+              headers: CORS,
             });
           }
 
@@ -249,7 +250,7 @@ export const Route = createFileRoute("/api/public/chat")({
           if (!key) {
             return new Response("LOVABLE_API_KEY is not configured", {
               status: 500,
-              headers: CORS_HEADERS,
+              headers: CORS,
             });
           }
 
@@ -269,7 +270,7 @@ export const Route = createFileRoute("/api/public/chat")({
 
           return result.toUIMessageStreamResponse({
             originalMessages: messages as UIMessage[],
-            headers: CORS_HEADERS,
+            headers: CORS,
           });
         } catch (error) {
           // Le détail technique reste dans les journaux serveur : la réponse
@@ -277,7 +278,7 @@ export const Route = createFileRoute("/api/public/chat")({
           console.error("[assistant] handler error", error);
           return new Response("Assistant indisponible pour le moment.", {
             status: 500,
-            headers: CORS_HEADERS,
+            headers: CORS,
           });
         }
       },
