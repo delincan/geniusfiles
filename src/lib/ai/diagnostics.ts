@@ -238,7 +238,6 @@ export async function chatFetch(
     throw failure;
   }
 
-
   if (!response.ok) {
     clearTimeout(timer);
     const detail = await response.text().catch(() => "");
