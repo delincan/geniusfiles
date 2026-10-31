@@ -1,0 +1,19 @@
+{
+  "source": "code-archive (geniusfiles-main.zip, Lovable TanStack Start + Capacitor Android app)",
+  "capabilities": [
+    {"capability": "code", "source": "src/, public/, resources/, scripts/, configs", "outcome": "migrate", "status": "in_progress", "next_action": "Copy source into project, keep target platform files newer"},
+    {"capability": "routes", "source": "16 page routes + /api/public/chat + /api/public/time", "outcome": "migrate", "status": "in_progress", "next_action": "Verify each route renders"},
+    {"capability": "schema", "source": "none (local device storage only)", "outcome": "not_applicable", "status": "verified", "next_action": "none"},
+    {"capability": "records", "source": "none (Capacitor Preferences / Filesystem / browser storage)", "outcome": "not_applicable", "status": "verified", "next_action": "none"},
+    {"capability": "auth_identities", "source": "none", "outcome": "not_applicable", "status": "verified", "next_action": "none"},
+    {"capability": "authorization", "source": "none (vault is local biometric/PIN)", "outcome": "not_applicable", "status": "verified", "next_action": "none"},
+    {"capability": "uploaded_file_bytes", "source": "none server-side", "outcome": "not_applicable", "status": "verified", "next_action": "none"},
+    {"capability": "ai_assistant", "source": "Lovable AI Gateway via LOVABLE_API_KEY in /api/public/chat", "outcome": "preserve", "status": "in_progress", "next_action": "Verify chat endpoint streams a reply"},
+    {"capability": "public_endpoints", "source": "/api/public/chat, /api/public/time (called by Android APK via VITE_API_BASE_URL)", "outcome": "preserve", "status": "in_progress", "next_action": "Verify both respond"},
+    {"capability": "android_native", "source": "android/, android-overrides/, capacitor.config.ts, Kotlin plugins, CI workflow", "outcome": "preserve", "status": "in_progress", "next_action": "Copied as-is; APK build only possible locally or via GitHub Actions"},
+    {"capability": "ads_firebase", "source": "AdMob, Firebase/Crashlytics (native only, google-services.json)", "outcome": "preserve", "status": "pending", "next_action": "Native-only; verify in APK build"},
+    {"capability": "secrets", "source": "LOVABLE_API_KEY (present, managed); Android signing secrets live in GitHub Actions", "outcome": "preserve", "status": "verified", "next_action": "none"},
+    {"capability": "cutover", "source": "APK default VITE_API_BASE_URL=https://geniusfiles.lovable.app", "outcome": "pending_user_decision", "status": "pending", "next_action": "After publishing this project, point VITE_API_BASE_URL to the new URL if the old project is retired"},
+    {"capability": "verification", "source": "", "outcome": "verify", "status": "in_progress", "next_action": "Build, tests, browser check"}
+  ]
+}
