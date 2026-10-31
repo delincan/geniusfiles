@@ -1,3 +1,9 @@
+# Search refresh loop and assistant
+
+- [ ] Stop the search screen's background refresh loop and verify it settles.
+- [ ] Fix formatting so `bun run verify` passes.
+- [ ] Fix Genius AI "Impossible de joindre" error.
+
 # Touch interaction
 
 # Refresh, search and selection corrections
