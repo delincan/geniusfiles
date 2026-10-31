@@ -112,7 +112,19 @@ export async function chatFetch(input: RequestInfo | URL, init?: RequestInit): P
 
   let response: Response;
   try {
-    response = await fetch(input, { ...init, signal: controller.signal });
+    try {
+      response = await fetch(input, { ...init, signal: controller.signal });
+    } catch (first) {
+      // Réseau mobile instable (changement Wi-Fi/4G, réveil de l'appareil) :
+      // une seconde tentative rapide évite un faux « impossible de joindre ».
+      if (controller.signal.aborted) throw first;
+      aiLog("nouvelle tentative après échec réseau", {
+        detail: first instanceof Error ? first.message : String(first),
+      });
+      await new Promise((r) => setTimeout(r, 800));
+      if (controller.signal.aborted) throw first;
+      response = await fetch(input, { ...init, signal: controller.signal });
+    }
   } catch (err) {
     clearTimeout(timer);
     const aborted = controller.signal.aborted && !external?.aborted;

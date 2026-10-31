@@ -16,12 +16,7 @@ export function sameRoots(a: readonly StorageRoot[], b: readonly StorageRoot[]):
   for (let i = 0; i < a.length; i++) {
     const x = a[i];
     const y = b[i];
-    if (
-      x.id !== y.id ||
-      x.label !== y.label ||
-      x.hint !== y.hint ||
-      x.available !== y.available
-    ) {
+    if (x.id !== y.id || x.label !== y.label || x.hint !== y.hint || x.available !== y.available) {
       return false;
     }
   }
