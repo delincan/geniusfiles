@@ -54,3 +54,4 @@ le job `validate` échoue et bloque la génération de l'APK/AAB si `verify` éc
 ## Test config
 
 - `vitest.config.ts` must define `__APP_VERSION__` like `vite.config.ts`; route modules read it at import time and the routing test imports every route.
+- Shared hooks that return arrays or callbacks (e.g. `useRoots`) keep the same identity while content is unchanged; callers list them in effect dependencies, and a fresh array each render restarts those effects in a loop.

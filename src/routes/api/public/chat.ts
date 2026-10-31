@@ -178,24 +178,47 @@ function rateLimited(request: Request): boolean {
   return hits.length > RATE_MAX;
 }
 
+/* Origines de l'application native (WebView Capacitor Android / iOS).
+   Le site web appelle l'API depuis sa propre origine et n'a pas besoin de CORS. */
+const NATIVE_ORIGINS = new Set([
+  "https://localhost",
+  "http://localhost",
+  "capacitor://localhost",
+  "https://127.0.0.1",
+]);
+
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "https://localhost",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Expose-Headers": "x-vercel-ai-ui-message-stream",
   "Access-Control-Max-Age": "86400",
-  Vary: "Origin",
+  Vary: "Origin, Access-Control-Request-Headers",
 };
+
+function preflightHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get("Origin");
+  const headers = { ...CORS_HEADERS };
+  if (origin && NATIVE_ORIGINS.has(origin)) headers["Access-Control-Allow-Origin"] = origin;
+  const requested = request.headers.get("Access-Control-Request-Headers");
+  if (requested && /^[\w\-, ]{1,500}$/.test(requested)) {
+    headers["Access-Control-Allow-Headers"] = requested;
+  }
+  return headers;
+}
 
 export const Route = createFileRoute("/api/public/chat")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: CORS_HEADERS }),
+      OPTIONS: async ({ request }) =>
+        new Response(null, { status: 204, headers: preflightHeaders(request) }),
       POST: async ({ request }) => {
+        const CORS = preflightHeaders(request);
         try {
           if (rateLimited(request)) {
             return new Response("Trop de requêtes. Réessayez dans un instant.", {
               status: 429,
-              headers: { ...CORS_HEADERS, "Retry-After": "60" },
+              headers: { ...CORS, "Retry-After": "60" },
             });
           }
 
@@ -203,23 +226,23 @@ export const Route = createFileRoute("/api/public/chat")({
           if (raw.length > MAX_BODY_BYTES) {
             return new Response("Requête trop volumineuse.", {
               status: 413,
-              headers: CORS_HEADERS,
+              headers: CORS,
             });
           }
           let body: ChatRequestBody;
           try {
             body = JSON.parse(raw) as ChatRequestBody;
           } catch {
-            return new Response("Requête invalide.", { status: 400, headers: CORS_HEADERS });
+            return new Response("Requête invalide.", { status: 400, headers: CORS });
           }
           const { messages, storages } = body;
           if (!Array.isArray(messages) || messages.length === 0) {
-            return new Response("Messages are required", { status: 400, headers: CORS_HEADERS });
+            return new Response("Messages are required", { status: 400, headers: CORS });
           }
           if (messages.length > MAX_MESSAGES || raw.length > MAX_TOTAL_CHARS) {
             return new Response("Conversation trop longue.", {
               status: 413,
-              headers: CORS_HEADERS,
+              headers: CORS,
             });
           }
 
@@ -227,7 +250,7 @@ export const Route = createFileRoute("/api/public/chat")({
           if (!key) {
             return new Response("LOVABLE_API_KEY is not configured", {
               status: 500,
-              headers: CORS_HEADERS,
+              headers: CORS,
             });
           }
 
@@ -247,7 +270,7 @@ export const Route = createFileRoute("/api/public/chat")({
 
           return result.toUIMessageStreamResponse({
             originalMessages: messages as UIMessage[],
-            headers: CORS_HEADERS,
+            headers: CORS,
           });
         } catch (error) {
           // Le détail technique reste dans les journaux serveur : la réponse
@@ -255,7 +278,7 @@ export const Route = createFileRoute("/api/public/chat")({
           console.error("[assistant] handler error", error);
           return new Response("Assistant indisponible pour le moment.", {
             status: 500,
-            headers: CORS_HEADERS,
+            headers: CORS,
           });
         }
       },

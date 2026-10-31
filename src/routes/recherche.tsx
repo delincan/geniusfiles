@@ -822,91 +822,91 @@ export function SearchPage() {
   return (
     <AppShell ownsHeaderInset>
       <header className="sticky top-0 z-30 -mx-4 border-b border-border/60 bg-background/95 pt-safe backdrop-blur">
-      {selectionMode ? (
-        <SelectionActionRow
-          count={selectedFiles.length}
-          sizeLabel={selectionSizeLabel}
-          onClear={clearSelection}
-          onSelectAll={selectAll}
-          onSelectRange={selectedFiles.length >= 1 ? selectRange : undefined}
-        />
-      ) : (
-        <div className="px-4 pb-3 pl-safe pr-safe">
-          <div className="mt-2">
-            <label className="relative block">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                inputMode="search"
-                enterKeyHint="search"
-                autoCorrect="on"
-                autoCapitalize="sentences"
-                spellCheck
-                autoFocus={query.length === 0}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={
-                  scope
-                    ? t("search.input.placeholderScoped", { scope: scope.label })
-                    : t("search.input.placeholderGlobal")
-                }
-                aria-label={t("search.input.aria")}
-                className="h-13 w-full rounded-3xl border border-border bg-surface-elevated pl-11 pr-20 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/30 focus-visible:shadow-none"
-              />
-              <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
-                {query ? (
+        {selectionMode ? (
+          <SelectionActionRow
+            count={selectedFiles.length}
+            sizeLabel={selectionSizeLabel}
+            onClear={clearSelection}
+            onSelectAll={selectAll}
+            onSelectRange={selectedFiles.length >= 1 ? selectRange : undefined}
+          />
+        ) : (
+          <div className="px-4 pb-3 pl-safe pr-safe">
+            <div className="mt-2">
+              <label className="relative block">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  inputMode="search"
+                  enterKeyHint="search"
+                  autoCorrect="on"
+                  autoCapitalize="sentences"
+                  spellCheck
+                  autoFocus={query.length === 0}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={
+                    scope
+                      ? t("search.input.placeholderScoped", { scope: scope.label })
+                      : t("search.input.placeholderGlobal")
+                  }
+                  aria-label={t("search.input.aria")}
+                  className="h-13 w-full rounded-3xl border border-border bg-surface-elevated pl-11 pr-20 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/30 focus-visible:shadow-none"
+                />
+                <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
+                  {query ? (
+                    <button
+                      type="button"
+                      onClick={() => setQuery("")}
+                      aria-label={t("cleaner.trash.clearSearch.aria")}
+                      className="rounded-lg p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    >
+                      <X className="h-[18px] w-[18px]" />
+                    </button>
+                  ) : null}
                   <button
                     type="button"
-                    onClick={() => setQuery("")}
-                    aria-label={t("cleaner.trash.clearSearch.aria")}
-                    className="rounded-lg p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    onClick={() => setShowFilters(true)}
+                    aria-label={t("search.filters.aria")}
+                    className={`relative rounded-lg p-1.5 transition-colors ${
+                      activeFilterCount > 0
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    }`}
                   >
-                    <X className="h-[18px] w-[18px]" />
+                    <SlidersHorizontal className="h-[18px] w-[18px]" />
+                    {activeFilterCount > 0 ? (
+                      <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
+                        {activeFilterCount}
+                      </span>
+                    ) : null}
                   </button>
-                ) : null}
-                <button
-                  type="button"
-                  onClick={() => setShowFilters(true)}
-                  aria-label={t("search.filters.aria")}
-                  className={`relative rounded-lg p-1.5 transition-colors ${
-                    activeFilterCount > 0
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                  }`}
-                >
-                  <SlidersHorizontal className="h-[18px] w-[18px]" />
-                  {activeFilterCount > 0 ? (
-                    <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
-                      {activeFilterCount}
-                    </span>
-                  ) : null}
-                </button>
-              </div>
-            </label>
-          </div>
+                </div>
+              </label>
+            </div>
 
-          {/* Quick kind chips — always visible for one-tap filtering. */}
-          <div className="mt-3 flex flex-wrap gap-2">
-            {kindChips(t).map((c) => {
-              const active = filters.kind === c.id;
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => setFilters({ ...filters, kind: c.id })}
-                  className={`gf-press rounded-full border px-3.5 py-2 text-[12.5px] font-medium transition-colors ${
-                    active
-                      ? "border-primary/40 bg-primary/10 text-primary"
-                      : "border-border bg-surface text-foreground hover:border-primary/40 hover:bg-accent"
-                  }`}
-                >
-                  {c.label}
-                </button>
-              );
-            })}
+            {/* Quick kind chips — always visible for one-tap filtering. */}
+            <div className="mt-3 flex flex-wrap gap-2">
+              {kindChips(t).map((c) => {
+                const active = filters.kind === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setFilters({ ...filters, kind: c.id })}
+                    className={`gf-press rounded-full border px-3.5 py-2 text-[12.5px] font-medium transition-colors ${
+                      active
+                        ? "border-primary/40 bg-primary/10 text-primary"
+                        : "border-border bg-surface text-foreground hover:border-primary/40 hover:bg-accent"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        )}
       </header>
 
       {showRecents ? (
