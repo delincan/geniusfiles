@@ -71,7 +71,78 @@ export function describeChatError(err: unknown): string {
   return messageFor("internal");
 }
 
+/**
+ * Détail technique court (cause réelle + adresse contactée), affiché sous le
+ * message pour qu'un échec puisse être diagnostiqué depuis le téléphone.
+ * Ne contient jamais de clé ni de contenu de conversation.
+ */
+export function describeChatErrorDetail(err: unknown): string | null {
+  let text = "";
+  if (err instanceof ChatRequestError) {
+    text = [err.kind, err.status ? `HTTP ${err.status}` : "", err.detail ?? ""]
+      .filter(Boolean)
+      .join(" · ");
+  } else if (err instanceof Error) {
+    text = err.message;
+  } else if (typeof err === "string") {
+    text = err;
+  }
+  text = text.replace(/\s+/g, " ").trim();
+  if (!text) return null;
+  return text.length > 160 ? `${text.slice(0, 157)}…` : text;
+}
+
 const TIMEOUT_MS = 120_000;
+/** Délai maximal pour obtenir la réponse initiale d'une adresse avant de passer à la suivante. */
+const CONNECT_TIMEOUT_MS = 30_000;
+
+function hostOf(url: string): string {
+  try {
+    return new URL(url, "http://local").host || url;
+  } catch {
+    return url;
+  }
+}
+
+/** Adresse principale puis secours ; sans secours, l'adresse principale est retentée une fois. */
+export function buildAttemptList(primary: string, fallbacks: readonly string[]): string[] {
+  const list = [primary, ...fallbacks.filter((u) => u && u !== primary)];
+  return list.length > 1 ? list : [primary, primary];
+}
+
+type AttemptResult =
+  | { ok: true; response: Response }
+  | { ok: false; error: unknown; connectTimeout: boolean };
+
+/**
+ * Une tentative avec son propre délai de connexion. Le signal global reste
+ * relié à la tentative réussie : « Arrêter » et le délai total coupent aussi
+ * le flux de réponse.
+ */
+async function attemptFetch(
+  url: string,
+  init: RequestInit | undefined,
+  global: AbortSignal,
+): Promise<AttemptResult> {
+  const local = new AbortController();
+  const relay = () => local.abort();
+  if (global.aborted) local.abort();
+  else global.addEventListener("abort", relay, { once: true });
+  let connectTimeout = false;
+  const timer = setTimeout(() => {
+    connectTimeout = true;
+    local.abort();
+  }, CONNECT_TIMEOUT_MS);
+  try {
+    const response = await fetch(url, { ...init, signal: local.signal });
+    clearTimeout(timer);
+    return { ok: true, response };
+  } catch (error) {
+    clearTimeout(timer);
+    global.removeEventListener("abort", relay);
+    return { ok: false, error, connectTimeout: connectTimeout && !global.aborted };
+  }
+}
 
 /**
  * `fetch` instrumenté utilisé par le transport de chat :
