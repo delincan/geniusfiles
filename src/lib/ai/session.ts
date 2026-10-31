@@ -16,7 +16,7 @@ import {
   lastAssistantMessageIsCompleteWithToolCalls,
   type UIMessage,
 } from "ai";
-import { chatApiUrl } from "./api-url";
+import { chatApiFallbackUrls, chatApiUrl } from "./api-url";
 import { aiLog, chatFetch } from "./diagnostics";
 import { runEngineTool } from "./tools/execute";
 import { getEngineStage } from "./tools/stage";
@@ -271,7 +271,7 @@ function createChat(id: string, messages: UIMessage[]): Chat<UIMessage> {
     messages,
     transport: new DefaultChatTransport({
       api: chatApiUrl(),
-      fetch: (_input, init) => chatFetch(chatApiUrl(), init),
+      fetch: (_input, init) => chatFetch(chatApiUrl(), init, chatApiFallbackUrls()),
       body: () => ({ storages: rootsProvider() }),
     }),
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
