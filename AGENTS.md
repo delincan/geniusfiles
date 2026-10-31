@@ -50,3 +50,7 @@ Conditions non négociables :
 
 La CI Android (`.github/workflows/android-build.yml`) applique la même barrière :
 le job `validate` échoue et bloque la génération de l'APK/AAB si `verify` échoue.
+
+## Test config
+
+- `vitest.config.ts` must define `__APP_VERSION__` like `vite.config.ts`; route modules read it at import time and the routing test imports every route.
