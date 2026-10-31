@@ -28,7 +28,7 @@ import { AssistantMarkdown } from "@/components/assistant/AssistantMarkdown";
 import { AssistantDrawer } from "@/components/assistant/AssistantDrawer";
 import { PipelineTrace } from "@/components/assistant/PipelineTrace";
 import { TemplateMarquee } from "@/components/assistant/TemplateMarquee";
-import { describeChatError } from "@/lib/ai/diagnostics";
+import { describeChatError, describeChatErrorDetail } from "@/lib/ai/diagnostics";
 import {
   getChat,
   getConversationId,
@@ -354,7 +354,14 @@ function AssistantPage() {
 
           {error ? (
             <div className="gf-chat-safe rounded-2xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-[13px] text-destructive">
-              <p className="mb-2">{describeChatError(error)}</p>
+              <p className="mb-1">{describeChatError(error)}</p>
+              {describeChatErrorDetail(error) ? (
+                <p className="mb-2 break-words text-[11px] opacity-70">
+                  {describeChatErrorDetail(error)}
+                </p>
+              ) : (
+                <div className="mb-1" />
+              )}
               <button
                 type="button"
                 onClick={() => retryTask()}

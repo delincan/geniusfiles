@@ -16,6 +16,10 @@ import { isNativeRuntime } from "@/lib/native/platform";
 // remplace la valeur ci-dessous, ou définis VITE_API_BASE_URL dans `.env`
 // avant `bun run build:mobile` (l'override est prioritaire).
 const PUBLISHED_URL = "https://geniusfiles.lovable.app";
+// Adresse de secours stable du même site publié (identifiant du projet,
+// indépendante du nom de domaine) : utilisée si l'adresse principale est
+// injoignable depuis le téléphone.
+const STABLE_PUBLISHED_URL = "https://project--ffac2671-2751-43d1-a0e9-790eb605587b.lovable.app";
 
 /**
  * Détecte une origine « application native » même si le pont Capacitor
@@ -43,4 +47,13 @@ export function apiBaseUrl(): string {
 export function chatApiUrl(): string {
   const base = apiBaseUrl();
   return `${base}/api/public/chat`;
+}
+
+/** Adresses de secours (application native uniquement), dans l'ordre d'essai. */
+export function chatApiFallbackUrls(): string[] {
+  if (!(isNativeRuntime() || isNativeOrigin())) return [];
+  const primary = chatApiUrl();
+  return [PUBLISHED_URL, STABLE_PUBLISHED_URL]
+    .map((b) => `${b.replace(/\/+$/, "")}/api/public/chat`)
+    .filter((u, i, all) => u !== primary && all.indexOf(u) === i);
 }

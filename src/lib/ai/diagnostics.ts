@@ -71,14 +71,90 @@ export function describeChatError(err: unknown): string {
   return messageFor("internal");
 }
 
+/**
+ * Détail technique court (cause réelle + adresse contactée), affiché sous le
+ * message pour qu'un échec puisse être diagnostiqué depuis le téléphone.
+ * Ne contient jamais de clé ni de contenu de conversation.
+ */
+export function describeChatErrorDetail(err: unknown): string | null {
+  let text = "";
+  if (err instanceof ChatRequestError) {
+    text = [err.kind, err.status ? `HTTP ${err.status}` : "", err.detail ?? ""]
+      .filter(Boolean)
+      .join(" · ");
+  } else if (err instanceof Error) {
+    text = err.message;
+  } else if (typeof err === "string") {
+    text = err;
+  }
+  text = text.replace(/\s+/g, " ").trim();
+  if (!text) return null;
+  return text.length > 160 ? `${text.slice(0, 157)}…` : text;
+}
+
 const TIMEOUT_MS = 120_000;
+/** Délai maximal pour obtenir la réponse initiale d'une adresse avant de passer à la suivante. */
+const CONNECT_TIMEOUT_MS = 30_000;
+
+function hostOf(url: string): string {
+  try {
+    return new URL(url, "http://local").host || url;
+  } catch {
+    return url;
+  }
+}
+
+/** Adresse principale puis secours ; sans secours, l'adresse principale est retentée une fois. */
+export function buildAttemptList(primary: string, fallbacks: readonly string[]): string[] {
+  const list = [primary, ...fallbacks.filter((u) => u && u !== primary)];
+  return list.length > 1 ? list : [primary, primary];
+}
+
+type AttemptResult =
+  | { ok: true; response: Response }
+  | { ok: false; error: unknown; connectTimeout: boolean };
+
+/**
+ * Une tentative avec son propre délai de connexion. Le signal global reste
+ * relié à la tentative réussie : « Arrêter » et le délai total coupent aussi
+ * le flux de réponse.
+ */
+async function attemptFetch(
+  url: string,
+  init: RequestInit | undefined,
+  global: AbortSignal,
+): Promise<AttemptResult> {
+  const local = new AbortController();
+  const relay = () => local.abort();
+  if (global.aborted) local.abort();
+  else global.addEventListener("abort", relay, { once: true });
+  let connectTimeout = false;
+  const timer = setTimeout(() => {
+    connectTimeout = true;
+    local.abort();
+  }, CONNECT_TIMEOUT_MS);
+  try {
+    const response = await fetch(url, { ...init, signal: local.signal });
+    clearTimeout(timer);
+    return { ok: true, response };
+  } catch (error) {
+    clearTimeout(timer);
+    global.removeEventListener("abort", relay);
+    return { ok: false, error, connectTimeout: connectTimeout && !global.aborted };
+  }
+}
 
 /**
  * `fetch` instrumenté utilisé par le transport de chat :
  * délai maximal, journalisation dev, et erreurs typées.
  */
-export async function chatFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-  const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+export async function chatFetch(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+  fallbacks: readonly string[] = [],
+): Promise<Response> {
+  const primary = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+  let url = primary;
   const started = Date.now();
 
   if (typeof navigator !== "undefined" && navigator.onLine === false) {
@@ -110,34 +186,49 @@ export async function chatFetch(input: RequestInfo | URL, init?: RequestInit): P
     aiLog("requête démarrée", { url, ...(preview as object) });
   }
 
-  let response: Response;
-  try {
-    try {
-      response = await fetch(input, { ...init, signal: controller.signal });
-    } catch (first) {
-      // Réseau mobile instable (changement Wi-Fi/4G, réveil de l'appareil) :
-      // une seconde tentative rapide évite un faux « impossible de joindre ».
-      if (controller.signal.aborted) throw first;
+  const candidates = buildAttemptList(primary, fallbacks);
+  let response: Response | null = null;
+  let lastError: unknown = null;
+  let lastWasConnectTimeout = false;
+
+  for (let i = 0; i < candidates.length && !response; i += 1) {
+    if (controller.signal.aborted) break;
+    if (i > 0) {
+      // Réseau mobile instable (changement Wi-Fi/4G, réveil de l'appareil,
+      // adresse momentanément injoignable) : courte pause puis nouvelle
+      // tentative, sur l'adresse de secours si elle existe.
       aiLog("nouvelle tentative après échec réseau", {
-        detail: first instanceof Error ? first.message : String(first),
+        next: candidates[i],
+        detail: lastError instanceof Error ? lastError.message : String(lastError),
       });
       await new Promise((r) => setTimeout(r, 800));
-      if (controller.signal.aborted) throw first;
-      response = await fetch(input, { ...init, signal: controller.signal });
+      if (controller.signal.aborted) break;
     }
-  } catch (err) {
+    url = candidates[i];
+    const attempt = await attemptFetch(url, init, controller.signal);
+    if (attempt.ok) response = attempt.response;
+    else {
+      lastError = attempt.error;
+      lastWasConnectTimeout = attempt.connectTimeout;
+    }
+  }
+
+  if (!response) {
     clearTimeout(timer);
     const aborted = controller.signal.aborted && !external?.aborted;
-    const failure = aborted
-      ? new ChatRequestError("timeout", messageFor("timeout"))
-      : typeof navigator !== "undefined" && navigator.onLine === false
-        ? new ChatRequestError("offline", messageFor("offline"))
-        : new ChatRequestError(
-            "network",
-            messageFor("network"),
+    const host = hostOf(url);
+    const raw = lastError instanceof Error ? lastError.message : String(lastError ?? "");
+    const failure =
+      aborted || lastWasConnectTimeout
+        ? new ChatRequestError(
+            "timeout",
+            messageFor("timeout"),
             undefined,
-            err instanceof Error ? err.message : String(err),
-          );
+            `${lastWasConnectTimeout ? "connect timeout" : "timeout"} · ${host}`,
+          )
+        : typeof navigator !== "undefined" && navigator.onLine === false
+          ? new ChatRequestError("offline", messageFor("offline"))
+          : new ChatRequestError("network", messageFor("network"), undefined, `${raw} · ${host}`);
     aiLog("échec réseau", {
       url,
       ms: Date.now() - started,
