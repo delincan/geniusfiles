@@ -133,6 +133,18 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-4007496300800778~9248149643" />
 
+        <!-- Google Analytics for Firebase : suivi AUTOMATIQUE des écrans
+             désactivé. Toute l'interface vit dans une seule activité
+             (MainActivity, la WebView) : le suivi automatique ne remontait
+             que « MainActivity » et « AdActivity » (publicité) au lieu des
+             vrais écrans, et doublait les screen_view. Les écrans sont
+             envoyés manuellement par la WebView (src/lib/native/analytics.ts)
+             avec leur nom lisible. Sessions, engagement, versions, appareils
+             et pays restent collectés automatiquement. -->
+        <meta-data
+            android:name="google_analytics_automatic_screen_reporting_enabled"
+            android:value="false" />
+
         <activity
             android:name="app.geniusfiles.mobile.MainActivity"
             android:exported="true"
