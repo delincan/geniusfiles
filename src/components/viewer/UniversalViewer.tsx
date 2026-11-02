@@ -54,7 +54,8 @@ import { viewerKindOf, type ViewerKind } from "@/lib/viewer/kinds";
 import { entryKey, sourceUrlOf } from "@/lib/viewer/source";
 import { getResume, setResume } from "@/lib/viewer/resume";
 import { touchRecentEntry } from "@/lib/recents/store";
-import { trackEvent } from "@/lib/native/analytics";
+import { fileTypeOf, trackEvent, type ScreenId } from "@/lib/native/analytics";
+import { useAnalyticsScreen } from "@/lib/native/useAnalyticsScreen";
 import { loadTextFile, TEXT_SOFT_LIMIT, type TextLoadResult } from "@/lib/viewer/text";
 import { BottomSheet } from "@/components/files/BottomSheet";
 import { audioStore } from "@/lib/player/audio-store";
@@ -85,6 +86,18 @@ export type ViewerAction =
   | "openWith";
 
 const AUTO_HIDE_MS = 3000;
+
+
+/** Lecteur (et écran) utilisé pour chaque type de visionneuse. */
+const READER_SCREEN: Partial<Record<ViewerKind, ScreenId>> = {
+  image: "image_viewer",
+  video: "video_player",
+  audio: "audio_player",
+  pdf: "pdf_reader",
+  text: "document_reader",
+  office: "document_reader",
+  ebook: "document_reader",
+};
 
 export function UniversalViewer({
   open,
@@ -189,12 +202,31 @@ export function UniversalViewer({
     touchRecentEntry(parent, entry, "open");
   }, [open, parent, entry]);
 
-  /* Mesure d'usage : quel type de lecteur est utilisé (image, vidéo,
-     audio, document…). Aucun nom, chemin ni contenu n'est transmis. */
+  /* Mesure d'usage : UNE ouverture par cycle d'ouverture du lecteur, avec
+     le type de fichier et le lecteur utilisé. Feuilleter les fichiers
+     voisins, le rechargement des miniatures ou le rafraîchissement de la
+     liste (nouvelle identité de `entry`) ne recomptent rien. Aucun nom,
+     chemin ni contenu n'est transmis. */
+  const openCountedRef = useRef(false);
   useEffect(() => {
-    if (!open || !entry || entry.isDirectory || kind === "none") return;
-    trackEvent("file_open", { action: "open", kind });
+    if (!open) {
+      openCountedRef.current = false;
+      return;
+    }
+    if (openCountedRef.current || !entry || entry.isDirectory || kind === "none") return;
+    openCountedRef.current = true;
+    trackEvent("file_opened", {
+      file_type: fileTypeOf([entry]),
+      tool_type: READER_SCREEN[kind] ?? "other",
+    });
   }, [open, entry, kind]);
+
+  /* Écran consulté : le lecteur correspondant au type affiché. L'audio est
+     confié au lecteur audio global, qui déclare lui-même son écran. */
+  useAnalyticsScreen(
+    open && entry && kind !== "audio" ? (READER_SCREEN[kind] ?? null) : null,
+    "viewer",
+  );
 
   // ---- Keyboard shortcuts ----
   useEffect(() => {
