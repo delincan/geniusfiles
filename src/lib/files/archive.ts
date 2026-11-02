@@ -1,4 +1,3 @@
-import { trackEvent } from "@/lib/native/analytics";
 /**
  * Archive module — creation, listing and extraction.
  *
@@ -650,25 +649,13 @@ function dispatchStorageChanged() {
 // Re-export for the UI which builds trees from mock listings too.
 export { mockResolve };
 
-/* Mesure d'usage : compression / extraction, format et issue seulement. */
+/* Mesure d'usage : faite par l'écran appelant (ces fonctions servent aussi
+   à Genius AI, aux automatisations et à la reprise de tâches). */
 
 export async function createArchive(opts: CreateOptions): Promise<CreateResult> {
-  const res = await createArchiveImpl(opts);
-  trackEvent("file_action", {
-    action: "compress",
-    tool: opts.format,
-    result: res.cancelled ? "cancelled" : res.ok ? "success" : "failure",
-    count: opts.entries.length,
-  });
-  return res;
+  return createArchiveImpl(opts);
 }
 
 export async function extractArchive(opts: ExtractOptions): Promise<ExtractResult> {
-  const res = await extractArchiveImpl(opts);
-  trackEvent("file_action", {
-    action: "extract",
-    result: res.cancelled ? "cancelled" : res.ok ? "success" : "failure",
-    count: res.completed ?? 0,
-  });
-  return res;
+  return extractArchiveImpl(opts);
 }

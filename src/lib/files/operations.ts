@@ -26,7 +26,6 @@ import { chunks, runQueued, tick } from "./op-queue";
 import { namesStillPresent, nameExists } from "./verify";
 import { checkEntryName, checkOperationPath, checkOperationTarget } from "@/lib/security/paths";
 import { t } from "@/lib/i18n";
-import { trackEvent, trackFileAction } from "@/lib/native/analytics";
 
 function dispatchStorageChanged() {
   if (typeof window === "undefined") return;
@@ -1431,20 +1430,21 @@ export async function readDetails(parent: PathRef, entry: FileEntry): Promise<De
 export { kindOf };
 
 /* ────────────────────────────────────────────────────────────────
-   Mesure d'usage (Analytics)
+   Points d'entrée publics des opérations.
 
-   Chaque opération majeure remonte uniquement : le type d'action, son
-   issue (succès / échec / partiel / annulé) et un nombre d'éléments
-   arrondi en paliers. Jamais de nom, de chemin ni de contenu.
+   La mesure d'usage n'est PAS faite ici : ces fonctions sont aussi
+   appelées par Genius AI, les automatisations, le rangement, le
+   nettoyeur et la reprise de tâches, et une sélection répartie dans
+   plusieurs dossiers les appelle une fois par dossier. Les écrans
+   enregistrent donc eux-mêmes UN événement par action de l'utilisateur
+   (voir src/lib/native/analytics.ts).
    ──────────────────────────────────────────────────────────────── */
 
 export async function createDirectory(
   parent: PathRef,
   name: string,
 ): Promise<{ ok: boolean; error?: string }> {
-  const res = await createDirectoryImpl(parent, name);
-  trackEvent("file_action", { action: "create_folder", result: res.ok ? "success" : "failure" });
-  return res;
+  return createDirectoryImpl(parent, name);
 }
 
 export async function renameEntry(
@@ -1452,13 +1452,7 @@ export async function renameEntry(
   entry: FileEntry,
   newName: string,
 ): Promise<{ ok: boolean; error?: string }> {
-  const res = await renameEntryImpl(parent, entry, newName);
-  trackEvent("file_action", {
-    action: "rename",
-    kind: kindOf(entry.name, entry.isDirectory),
-    result: res.ok ? "success" : "failure",
-  });
-  return res;
+  return renameEntryImpl(parent, entry, newName);
 }
 
 export async function deleteEntries(
@@ -1466,9 +1460,7 @@ export async function deleteEntries(
   entries: FileEntry[],
   opts: DeleteOptions = {},
 ): Promise<OperationResult> {
-  const res = await deleteEntriesImpl(parent, entries, opts);
-  trackFileAction("delete", res);
-  return res;
+  return deleteEntriesImpl(parent, entries, opts);
 }
 
 export async function transferEntries(
@@ -1477,20 +1469,12 @@ export async function transferEntries(
   destination: PathRef,
   opts: TransferOptions,
 ): Promise<OperationResult> {
-  const res = await transferEntriesImpl(source, entries, destination, opts);
-  trackFileAction(opts.mode === "move" ? "move" : "copy", res);
-  return res;
+  return transferEntriesImpl(source, entries, destination, opts);
 }
 
 export async function shareEntries(
   parent: PathRef,
   entries: FileEntry[],
 ): Promise<{ ok: boolean; error?: string }> {
-  const res = await shareEntriesImpl(parent, entries);
-  trackEvent("file_action", {
-    action: "share",
-    result: res.ok ? "success" : "failure",
-    count: entries.length,
-  });
-  return res;
+  return shareEntriesImpl(parent, entries);
 }

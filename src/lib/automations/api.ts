@@ -1,4 +1,3 @@
-import { trackEvent } from "@/lib/native/analytics";
 /**
  * High-level programmatic API for automations — the surface the AI
  * assistant talks to.
@@ -347,7 +346,6 @@ export type SavePayload = NonNullable<PreviewResult["ready"]>;
 
 /** Persist a previously-previewed draft. Never called before user confirmation. */
 export function saveDraft(payload: SavePayload, opts?: { id?: string }): Automation {
-  trackEvent("automation", { action: opts?.id ? "update" : "create" });
   return saveAutomation({
     id: opts?.id,
     name: payload.name,
@@ -400,14 +398,12 @@ export function listAll(filter?: "enabled" | "disabled" | "all") {
 }
 
 export function toggle(id: string, enabled: boolean): boolean {
-  trackEvent("automation", { action: enabled ? "enable" : "disable" });
   if (!getAutomation(id)) return false;
   toggleAutomation(id, enabled);
   return true;
 }
 
 export function remove(id: string): boolean {
-  trackEvent("automation", { action: "delete" });
   if (!getAutomation(id)) return false;
   deleteAutomation(id);
   return true;

@@ -465,6 +465,13 @@ async function executeAction(action: Action, simulate: boolean): Promise<Executi
  *
  * Une simulation (aperçu) ne consomme jamais d'utilisation.
  */
+/** Catégorie générale des actions d'une règle : la seule, ou `mixed`. */
+function actionCategoryOf(kinds: readonly string[]): string {
+  const unique = new Set(kinds);
+  if (unique.size === 0) return "none";
+  return unique.size === 1 ? [...unique][0] : "mixed";
+}
+
 export async function runAutomation(
   automation: Automation,
   opts: RunOptions,
@@ -474,10 +481,6 @@ export async function runAutomation(
      refusée faute de quota ne consomme rien. */
   const hold = opts.simulate ? null : reserveQuota("automations");
   if (!opts.simulate && !hold) throw new QuotaExceededError("automations");
-  // Mesure d'usage : exécution d'automatisation — ni nom, ni chemin.
-  if (!opts.simulate) {
-    trackEvent("automation", { action: "run", count: automation.actions.length });
-  }
   const results: ExecutionActionResult[] = [];
   const errors: string[] = [];
   if (!opts.simulate) {
@@ -517,6 +520,15 @@ export async function runAutomation(
 
   recordExecution(record);
   if (!opts.simulate) {
+    // Mesure d'usage : APRÈS l'exécution réelle, avec son issue (une
+    // exécution partielle est un échec). Ni nom, ni dossier, ni fichier.
+    trackEvent("automation_executed", {
+      result: failed === 0 ? "success" : "failure",
+      operation: status,
+      tool_type: automation.trigger.kind,
+      action_category: actionCategoryOf(automation.actions.map((a) => a.kind)),
+      item_count: record.filesProcessed,
+    });
     recordRun(automation.id);
     markStopped(automation.id);
     const when = new Intl.DateTimeFormat(localeTag(), {

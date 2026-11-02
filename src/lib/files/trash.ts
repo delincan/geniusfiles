@@ -30,7 +30,7 @@ import type { PathRef } from "./types";
 import { toAbsolutePath, mockResolve, type MockNode } from "./fs";
 import { recordOperation } from "./history";
 import { t } from "@/lib/i18n";
-import { trackEvent } from "@/lib/native/analytics";
+import { resultOf, trackEvent } from "@/lib/native/analytics";
 import { loadTrashRetention, markTrashPurged, loadTrashLastPurgeAt } from "./preferences";
 
 export type TrashItem = {
@@ -474,7 +474,9 @@ export async function autoPurgeTrash(force = false): Promise<{ deleted: number }
   const cutoff = now - retention * 86_400_000;
   const expired = items.filter((it) => it.deletedAt < cutoff);
   if (expired.length === 0) return { deleted: 0 };
-  const res = await permanentDelete(expired);
+  // Purge automatique (en arrière-plan) : ce n'est pas une action de
+  // l'utilisateur, elle n'est donc pas comptée dans la mesure d'usage.
+  const res = await permanentDeleteImpl(expired);
   return { deleted: res.deleted };
 }
 
@@ -497,18 +499,19 @@ export function trashAbsPath(): string {
   return `${toAbsolutePath({ rootId: "internal", segments: [] })}/.GeniusFilesTrash`;
 }
 
-/* Mesure d'usage : type d'action sur la corbeille, issue et volume
-   arrondi. Aucun nom, chemin ni contenu n'est transmis. */
+/* Mesure d'usage (appelées uniquement depuis l'écran Corbeille) : une
+   action = un événement, avec son issue et le nombre d'éléments. Aucun nom,
+   chemin ni contenu n'est transmis. */
 
 export async function restoreItems(
   items: TrashItem[],
   opts: RestoreOptions = {},
 ): Promise<RestoreOutcome> {
   const res = await restoreItemsImpl(items, opts);
-  trackEvent("trash_action", {
-    action: "restore",
-    result: res.failed.length === 0 ? "success" : res.restored > 0 ? "partial" : "failure",
-    count: res.restored,
+  trackEvent("file_restored", {
+    operation: "from_trash",
+    result: resultOf(res.failed.length === 0),
+    item_count: res.restored,
   });
   return res;
 }
@@ -518,20 +521,20 @@ export async function permanentDelete(items: TrashItem[]): Promise<{
   failed: string[];
 }> {
   const res = await permanentDeleteImpl(items);
-  trackEvent("trash_action", {
-    action: "delete_permanent",
-    result: res.failed.length === 0 ? "success" : res.deleted > 0 ? "partial" : "failure",
-    count: res.deleted,
+  trackEvent("file_deleted", {
+    operation: "permanent_from_trash",
+    result: resultOf(res.failed.length === 0),
+    item_count: res.deleted,
   });
   return res;
 }
 
 export async function emptyTrash(): Promise<{ deleted: number; failed: number }> {
   const res = await emptyTrashImpl();
-  trackEvent("trash_action", {
-    action: "empty",
-    result: res.failed === 0 ? "success" : res.deleted > 0 ? "partial" : "failure",
-    count: res.deleted,
+  trackEvent("file_deleted", {
+    operation: "empty_trash",
+    result: resultOf(res.failed === 0),
+    item_count: res.deleted,
   });
   return res;
 }

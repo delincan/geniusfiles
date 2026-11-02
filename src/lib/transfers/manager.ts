@@ -22,6 +22,7 @@ import { t } from "@/lib/i18n";
 import type { FileEntry, PathRef } from "@/lib/files/types";
 import { requestFileJump } from "@/lib/files/deeplink";
 import { showNotification } from "@/lib/native/notifications";
+import { currentScreen, fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
 import { formatSize } from "@/lib/files/format";
 import { toAbsolutePath } from "@/lib/files/fs";
 import { dispatchFsPatch } from "@/lib/index/patches";
@@ -490,6 +491,9 @@ async function run(
   // de dossier) : la même question, le même « appliquer à tous », pour
   // cette opération uniquement.
   let lateBlanket: ConflictChoice | null = null;
+  // Écran d'origine figé au lancement : l'utilisateur peut naviguer
+  // pendant la copie, l'événement reste rattaché à l'écran de départ.
+  const sourceScreen = currentScreen();
   const onConflict = async (item: { name: string; isDirectory: boolean }) => {
     if (lateBlanket) return lateBlanket;
     const answer = await requestConflictDecision({
@@ -557,6 +561,15 @@ async function run(
   task.speedBps = 0;
   task.message = summaryMessage(task);
   publish();
+
+  // Mesure d'usage : UN événement pour l'opération globale (quel que soit
+  // le nombre de dossiers d'origine), après son exécution réelle.
+  trackEvent(task.mode === "copy" ? "file_copied" : "file_moved", {
+    result: resultOf(task.failures.length === 0, cancelled),
+    file_type: fileTypeOf(groups.flatMap((g) => g.entries)),
+    item_count: task.succeeded,
+    source_screen: sourceScreen,
+  });
 
   notifyEnd(task);
   onDone?.(getTask(task.id) ?? task);

@@ -13,6 +13,7 @@
  * public listing, so nothing extra is needed to make protected files
  * disappear from Fichiers, Galerie, Recherche or Nettoyeur.
  */
+import { trackEvent } from "@/lib/native/analytics";
 import { useListScrollMemory } from "@/lib/files/use-list-scroll";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -188,6 +189,7 @@ function VaultRoute() {
         onDone={() => {
           setConfigured(true);
           markUnlocked();
+          trackEvent("vault_opened", { operation: "setup" });
         }}
       />
     );
@@ -198,6 +200,9 @@ function VaultRoute() {
       <LockScreen
         onUnlocked={() => {
           markUnlocked();
+          // Ni la méthode utilisée, ni le code, ni la biométrie : seulement
+          // le fait que le coffre a été ouvert.
+          trackEvent("vault_opened", { operation: "unlock" });
         }}
         onReset={() => {
           setConfigured(false);

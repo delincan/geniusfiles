@@ -27,7 +27,7 @@ import { OnboardingOverlay } from "../components/onboarding/OnboardingOverlay";
 import { markStartupSignal, onStartupReady } from "../lib/startup/boot";
 import { installNativeBehaviors } from "../lib/native/web-behaviors";
 import { installCrashReporting } from "../lib/native/crashlytics";
-import { installAnalytics, trackScreen } from "../lib/native/analytics";
+import { installAnalytics, trackRoute } from "../lib/native/analytics";
 import { prefetchRoots } from "../lib/files/fs";
 // Bootstrap personnalisation (thème / densité / animations / barres système).
 import "../lib/personalization/applier";
@@ -281,14 +281,15 @@ function RootComponent() {
   // uniquement, entièrement assainies. No-op hors runtime natif.
   useEffect(() => installCrashReporting(), []);
 
-  // Mesure d'usage global (Google Analytics for Firebase) : vues d'écran
-  // logiques uniquement, jamais de chemin ni de nom de fichier. Le SDK
-  // fournit seul sessions, versions, appareils, langues et pays.
+  // Mesure d'usage (Google Analytics for Firebase) : l'écran de base est
+  // déduit de la route ; lecteurs, éditeurs et sections internes ajoutent
+  // leur propre couche (useAnalyticsScreen). Jamais de chemin ni de nom de
+  // fichier. Le SDK fournit seul sessions, versions, appareils et pays.
   useEffect(() => {
+    trackRoute(router.state.location.pathname);
     installAnalytics();
-    trackScreen(router.state.location.pathname);
     return router.subscribe("onResolved", (event) => {
-      trackScreen(event.toLocation.pathname);
+      trackRoute(event.toLocation.pathname);
     });
   }, [router]);
 

@@ -1,3 +1,5 @@
+import { fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
+import { useAnalyticsScreen } from "@/lib/native/useAnalyticsScreen";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppNavigate } from "@/lib/navigation/pick-nav";
 import {
@@ -253,6 +255,10 @@ export function FilesPage() {
      et l'ouverture d'un fichier changent de rôle. */
   const pick = usePickRequest();
   const [path, setPath] = useState<PathRef | null>(null);
+  /* Écran consulté : l'accueil (tableau de bord) ou le gestionnaire de
+     fichiers dès qu'un dossier est ouvert. Naviguer entre dossiers ne
+     crée pas de nouvelle vue d'écran. */
+  useAnalyticsScreen(path ? "file_manager" : "home", "section");
   const [historyLen, setHistoryLen] = useState(0);
 
   const [view, setView] = useState<ViewMode>("list");
@@ -948,6 +954,12 @@ export function FilesPage() {
           signalRef.current = null;
         }
       }
+      trackEvent("file_deleted", {
+        operation: opts?.permanent ? "permanent" : "trash",
+        result: resultOf(failed.length === 0, cancelled),
+        file_type: fileTypeOf(entries),
+        item_count: succeeded,
+      });
       // Seuls les éléments réellement supprimés quittent la sélection ;
       // les échecs y restent pour permettre une nouvelle tentative.
       if (failed.length === 0) clearSelection();
@@ -986,10 +998,20 @@ export function FilesPage() {
       for (const group of groups) {
         const res = await shareEntries(group.parent, group.entries);
         if (!res.ok) {
+          trackEvent("file_shared", {
+            result: "failure",
+            file_type: fileTypeOf(entries),
+            item_count: entries.length,
+          });
           toast.error(res.error ?? t("home.share.failed"));
           return;
         }
       }
+      trackEvent("file_shared", {
+        result: "success",
+        file_type: fileTypeOf(entries),
+        item_count: entries.length,
+      });
     },
     [groupsFor, t],
   );
@@ -1000,6 +1022,7 @@ export function FilesPage() {
       const parent = groupsFor([entry])[0]?.parent ?? path;
       if (!parent) return false;
       const res = await renameEntry(parent, entry, newName);
+      trackEvent("file_renamed", { result: resultOf(res.ok), file_type: fileTypeOf([entry]) });
       if (res.ok) {
         toast.success(t("home.rename.done"));
         // Le visionneur suit le fichier renommé au lieu de retomber sur le
@@ -1021,6 +1044,7 @@ export function FilesPage() {
     async (name: string) => {
       if (!path) return false;
       const res = await createDirectory(path, name);
+      trackEvent("folder_created", { result: resultOf(res.ok) });
       if (res.ok) {
         toast.success(t("home.folder.created"));
         return true;
@@ -1089,6 +1113,13 @@ export function FilesPage() {
       });
       setProgressOpen(false);
       signalRef.current = null;
+      trackEvent("file_compressed", {
+        result: resultOf(res.ok, res.cancelled),
+        tool_type: opts.format,
+        operation: opts.password ? "encrypted" : "standard",
+        file_type: fileTypeOf(entries),
+        item_count: entries.length,
+      });
       clearSelection();
       onRefresh();
       if (res.cancelled) toast.warning(t("home.archive.cancelled"));
@@ -1128,6 +1159,12 @@ export function FilesPage() {
       });
       setProgressOpen(false);
       signalRef.current = null;
+      trackEvent("file_extracted", {
+        result: resultOf(res.ok, res.cancelled),
+        tool_type: (entry.ext ?? "archive").toLowerCase(),
+        operation: selection.length > 0 ? "partial_selection" : "all",
+        item_count: res.completed ?? 0,
+      });
       onRefresh();
       if (res.cancelled) toast.warning(t("home.extract.cancelled"));
       else if (res.ok) toast.success(t("home.extract.done", { count: res.completed ?? 0 }));

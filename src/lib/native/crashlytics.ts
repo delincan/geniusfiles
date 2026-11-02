@@ -22,25 +22,18 @@ type CrashlyticsBridge = {
   isAvailable(): Promise<{ available: boolean }>;
 };
 
-let bridge: CrashlyticsBridge | null | undefined;
+let bridge: CrashlyticsBridge | null = null;
 
+/* Le pont n'est mis en cache que s'il est trouvé : au tout premier rendu,
+   `window.Capacitor.Plugins` peut ne pas encore être peuplé, et mémoriser
+   `null` coupait définitivement les rapports non fatals de la WebView. */
 function plugin(): CrashlyticsBridge | null {
-  if (bridge !== undefined) return bridge;
-  if (!isNativeRuntime() || nativePlatform() !== "android") {
-    bridge = null;
-    return null;
-  }
+  if (bridge) return bridge;
+  if (!isNativeRuntime() || nativePlatform() !== "android") return null;
   const plugins = (window as unknown as { Capacitor?: { Plugins?: Record<string, unknown> } })
     .Capacitor?.Plugins;
-  const found = plugins?.["GeniusFilesCrashlytics"] as CrashlyticsBridge | undefined;
-  bridge = found ?? null;
+  bridge = (plugins?.["GeniusFilesCrashlytics"] as CrashlyticsBridge | undefined) ?? null;
   return bridge;
-}
-
-/** Routes applicatives connues : seules celles-ci sont publiées comme clé. */
-function safeRoute(pathname: string): string {
-  const first = pathname.split("/").filter(Boolean)[0] ?? "accueil";
-  return /^[a-z0-9-]{1,32}$/.test(first) ? first : "autre";
 }
 
 /**
@@ -121,7 +114,6 @@ export function installCrashReporting(): () => void {
     .setKeys({
       keys: {
         app_version: __APP_VERSION__,
-        webview_route: safeRoute(window.location.pathname),
         language: (navigator.language || "unknown").slice(0, 12),
       },
     })
@@ -143,9 +135,14 @@ export function installCrashReporting(): () => void {
   };
 }
 
-/** Met à jour la clé de route (appelée aux changements d'écran). */
-export function setCrashRoute(pathname: string): void {
+/**
+ * Met à jour la clé « écran courant » (appelée par la mesure d'audience à
+ * chaque vue d'écran comptée) : un crash est ainsi rattaché à l'écran où
+ * il s'est produit. Identifiant logique uniquement (ex. `pdf_tools`).
+ */
+export function setCrashRoute(screenId: string): void {
   const p = plugin();
   if (!p) return;
-  void p.setKeys({ keys: { webview_route: safeRoute(pathname) } }).catch(() => {});
+  const screen = /^[a-z0-9_-]{1,40}$/.test(screenId) ? screenId : "other";
+  void p.setKeys({ keys: { webview_screen: screen } }).catch(() => {});
 }

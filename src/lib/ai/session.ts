@@ -144,8 +144,21 @@ function startTask() {
   startPolling();
 }
 
+/** Origine de la tâche en cours et annulation volontaire (mesure d'usage). */
+let taskOrigin: "message" | "retry" = "message";
+let taskCancelled = false;
+
 function endTask(withFailure = false) {
   if (phase === "idle") return;
+  // Une demande = un événement, à son issue réelle (réponse reçue, erreur
+  // réseau ou serveur, ou arrêt par l'utilisateur). Aucun texte transmis.
+  if (phase === "running") {
+    trackEvent("ai_request_completed", {
+      operation: taskOrigin,
+      result: taskCancelled ? "cancelled" : withFailure ? "failure" : "success",
+    });
+  }
+  taskCancelled = false;
   failed = withFailure;
   if (!withFailure) currentId = "respond";
   phase = "closing";
@@ -351,10 +364,11 @@ function getConversationIdFromStorage(): string | null {
 export function sendUserMessage(text: string): boolean {
   const hold = reserveQuota("assistant");
   if (!hold) return false;
-  // Mesure d'usage : seul le fait d'utiliser Genius AI est enregistré.
-  // Le texte du message n'est jamais transmis à Analytics.
-  trackEvent("ai_usage", { action: "message" });
   const c = getChat();
+  // Mesure d'usage : seul le fait d'utiliser Genius AI est enregistré.
+  // Le texte de la demande n'est jamais transmis à Analytics.
+  if (c.messages.length === 0) trackEvent("ai_conversation_started");
+  taskOrigin = "message";
   startTask();
   try {
     void c.sendMessage({ text }).finally(persist);
@@ -372,11 +386,13 @@ export function sendUserMessage(text: string): boolean {
 
 export function stopTask() {
   void chat?.stop();
+  taskCancelled = true;
   endTask(false);
 }
 
 export function retryTask() {
   const c = getChat();
+  taskOrigin = "retry";
   startTask();
   void c.regenerate();
 }

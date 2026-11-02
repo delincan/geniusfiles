@@ -1,4 +1,4 @@
-import { trackEvent } from "@/lib/native/analytics";
+import { resultOf, trackEvent } from "@/lib/native/analytics";
 /**
  * Coffre-fort — high-level API used by the UI.
  *
@@ -696,10 +696,9 @@ export async function addFromPublic(
   opts: AddOptions,
 ): Promise<VaultAddResult> {
   const res = await addFromPublicImpl(sources, opts);
-  trackEvent("vault_action", {
-    action: "add",
-    result: res.failed.length === 0 ? "success" : res.added > 0 ? "partial" : "failure",
-    count: res.added,
+  trackEvent("vault_file_added", {
+    result: resultOf(res.failed.length === 0),
+    item_count: res.added,
   });
   return res;
 }
@@ -709,20 +708,18 @@ export async function restoreItems(
   opts: RestoreOptions = {},
 ): Promise<VaultRestoreResult> {
   const res = await restoreItemsImpl(items, opts);
-  trackEvent("vault_action", {
-    action: "restore",
-    result: res.failed.length === 0 ? "success" : "partial",
-    count: items.length - res.failed.length,
+  trackEvent("vault_file_restored", {
+    result: resultOf(res.failed.length === 0),
+    item_count: items.length - res.failed.length,
   });
   return res;
 }
 
 export async function permanentDelete(items: VaultItem[]): Promise<VaultDeleteResult> {
   const res = await permanentDeleteImpl(items);
-  trackEvent("vault_action", {
-    action: "delete_permanent",
-    result: res.failed.length === 0 ? "success" : "partial",
-    count: items.length - res.failed.length,
+  trackEvent("vault_file_deleted", {
+    result: resultOf(res.failed.length === 0),
+    item_count: items.length - res.failed.length,
   });
   return res;
 }

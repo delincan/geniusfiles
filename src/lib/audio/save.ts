@@ -1,4 +1,3 @@
-import { trackEvent } from "@/lib/native/analytics";
 /**
  * Export de l'audio édité vers le stockage.
  *
@@ -102,17 +101,5 @@ export async function saveEditedAudio(options: {
   mono?: boolean;
   onProgress?: (ratio: number) => void;
 }): Promise<{ path: string; size: number; name: string }> {
-  try {
-    const res = await saveEditedAudioImpl(options);
-    trackEvent("media_edit", {
-      tool: "audio_editor",
-      action: "save",
-      kind: options.format ?? "wav",
-      result: "success",
-    });
-    return res;
-  } catch (err) {
-    trackEvent("media_edit", { tool: "audio_editor", action: "save", result: "failure" });
-    throw err;
-  }
+  return saveEditedAudioImpl(options);
 }

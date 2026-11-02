@@ -11,6 +11,7 @@
  * de défilement) est conservé : ouvrir un fichier puis revenir ne
  * réinitialise jamais la recherche.
  */
+import { fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
 import { useListScrollMemory } from "@/lib/files/use-list-scroll";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppNavigate } from "@/lib/navigation/pick-nav";
@@ -98,6 +99,11 @@ import { useT, t as translate } from "@/lib/i18n";
 import type { TransValues } from "@/lib/i18n";
 
 type TFn = (key: string, values?: TransValues) => string;
+
+/** Dernière recherche comptée (survit au démontage de l'écran). */
+let lastCountedSearch: string | null = null;
+/** Délai de stabilité d'une requête avant d'être comptée. */
+const SEARCH_COUNT_SETTLE_MS = 1500;
 
 export const Route = createFileRoute("/recherche")({
   head: () => ({
@@ -423,8 +429,23 @@ export function SearchPage() {
       setHistory(pushSearchHistory(trimmed));
     }, 900);
 
+    // Mesure d'usage : la recherche est instantanée (un scan par frappe) ;
+    // seule une requête restée stable est comptée, une seule fois. Un
+    // rafraîchissement, un retour sur l'écran ou une mise à jour de la
+    // liste ne recomptent rien. Le terme recherché n'est jamais transmis.
+    const countTimer = window.setTimeout(() => {
+      if (cacheKey === lastCountedSearch) return;
+      lastCountedSearch = cacheKey;
+      trackEvent("search_performed", {
+        operation: scope ? "folder" : filters.rootId === "all" ? "all_storage" : "one_storage",
+        item_count: latestResults.length,
+        result: "success",
+      });
+    }, SEARCH_COUNT_SETTLE_MS);
+
     return () => {
       active = false;
+      window.clearTimeout(countTimer);
       window.clearTimeout(timer);
       runRef.current?.abort();
     };
@@ -606,10 +627,19 @@ export function SearchPage() {
 
   const doShare = useCallback(
     async (items: SearchResult[]) => {
+      let shared = true;
       for (const g of groupByParent(items)) {
         const r = await shareEntries(g.parent, g.entries);
-        if (!r.ok) toast.error(errorMessage(r.error, t("files.recent.sharePartial")));
+        if (!r.ok) {
+          shared = false;
+          toast.error(errorMessage(r.error, t("files.recent.sharePartial")));
+        }
       }
+      trackEvent("file_shared", {
+        result: resultOf(shared),
+        file_type: fileTypeOf(items),
+        item_count: items.length,
+      });
     },
     [t],
   );
@@ -624,6 +654,12 @@ export function SearchPage() {
         ok += r.succeeded;
         failed += r.failed.length;
       }
+      trackEvent("file_deleted", {
+        operation: permanent ? "permanent" : "trash",
+        result: resultOf(failed === 0),
+        file_type: fileTypeOf(items),
+        item_count: ok,
+      });
       clearSelection();
       setResults((prev) => prev.filter((r) => !removed.has(resultId(r))));
       refreshAfterMutation();
@@ -694,6 +730,7 @@ export function SearchPage() {
   const doRename = useCallback(
     async (entry: SearchResult, newName: string) => {
       const r = await renameEntry(parentOf(entry), entry, newName);
+      trackEvent("file_renamed", { result: resultOf(r.ok), file_type: fileTypeOf([entry]) });
       if (r.ok) {
         toast.success(t("home.rename.done"));
         clearSelection();

@@ -55,3 +55,9 @@ le job `validate` échoue et bloque la génération de l'APK/AAB si `verify` éc
 
 - `vitest.config.ts` must define `__APP_VERSION__` like `vite.config.ts`; route modules read it at import time and the routing test imports every route.
 - Shared hooks that return arrays or callbacks (e.g. `useRoots`) keep the same identity while content is unchanged; callers list them in effect dependencies, and a fresh array each render restarts those effects in a loop.
+
+## Analytics (Firebase)
+
+- Screen views come only from `src/lib/native/analytics.ts` (route + `useAnalyticsScreen` layers); Firebase automatic screen reporting stays disabled in the manifest, otherwise reports show MainActivity/AdActivity and duplicate `screen_view`.
+- User-facing screens/routes record one event per user action after it completes; shared lib operations (file ops, archive, search engine) stay untracked because AI, automations and multi-folder selections reuse them.
+- Event names, param keys and screen names are whitelisted in both `analytics.ts` and `GeniusFilesAnalyticsPlugin.kt`; `analytics.test.ts` enforces they match.
