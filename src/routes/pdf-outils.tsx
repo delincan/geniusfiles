@@ -3631,7 +3631,9 @@ function ExtractTextSheet({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     if (!source) return;
     const ctrl = job.start();
-    extractPdfText(source, { signal: ctrl.signal, onProgress: (p) => job.update(p) })
+    trackPdf("extract-text", () =>
+      extractPdfText(source, { signal: ctrl.signal, onProgress: (p) => job.update(p) }),
+    )
       .then((r) => setText(r.text))
       .catch((e) => toast.error(errorMessage(e, t("pdf.impossibleDExtraireLeTexte"))))
       .finally(() => job.stop());
