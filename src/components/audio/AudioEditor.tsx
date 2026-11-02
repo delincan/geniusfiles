@@ -7,6 +7,7 @@
  * `@/lib/audio/render`). Undo/Redo déplacent simplement un curseur dans
  * cette pile — aucune copie complète du signal n'est conservée.
  */
+import { trackEditorSave, useEditorUsage } from "@/lib/native/useAnalyticsScreen";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
@@ -207,6 +208,7 @@ export function AudioEditor({
   onExit: () => void;
 }) {
   const t = useT();
+  useEditorUsage("audio_editor");
   const [source, setSource] = useState<AudioClip | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const cacheRef = useRef<RenderCache | null>(null);
@@ -834,8 +836,10 @@ export function AudioEditor({
         mode: "new",
         name: `${base}-partie2.wav`,
       });
+      trackEditorSave("audio_editor", "save_split", true);
       toast.success(t("media.editor.toast.twoFilesCreated", { a: a.name, b: b.name }));
     } catch (e) {
+      trackEditorSave("audio_editor", "save_split", false);
       toast.error(e instanceof AudioEditorError ? e.message : t("media.error.exportFailed"));
     } finally {
       setWorking(null);
@@ -1271,11 +1275,13 @@ export function AudioEditor({
         mono: exportMono,
         onProgress: (r) => setExportProgress(r),
       });
+      trackEditorSave("audio_editor", mode === "replace" ? "save_replace" : "save_new", true);
       setSavedCursor(cursor);
       setSaveOpen(false);
       setReplaceOpen(false);
       toast.success(t("media.editor.toast.saved", { name: res.name, size: formatSize(res.size) }));
     } catch (e) {
+      trackEditorSave("audio_editor", mode === "replace" ? "save_replace" : "save_new", false);
       toast.error(e instanceof AudioEditorError ? e.message : t("media.error.exportFailed"));
     } finally {
       setWorking(null);

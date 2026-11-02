@@ -1,4 +1,4 @@
-import { trackEvent } from "@/lib/native/analytics";
+import { trackEditorSave } from "@/lib/native/useAnalyticsScreen";
 /**
  * Saving edited photos back to the device.
  *
@@ -98,15 +98,10 @@ export async function saveEditedImage(options: {
 }): Promise<{ path: string; size: number; name: string }> {
   try {
     const res = await saveEditedImageImpl(options);
-    trackEvent("media_edit", {
-      tool: "photo_editor",
-      action: "save",
-      kind: options.format,
-      result: "success",
-    });
+    trackEditorSave("photo_editor", options.mode === "replace" ? "save_replace" : "save_new", true);
     return res;
   } catch (err) {
-    trackEvent("media_edit", { tool: "photo_editor", action: "save", result: "failure" });
+    trackEditorSave("photo_editor", options.mode === "replace" ? "save_replace" : "save_new", false);
     throw err;
   }
 }

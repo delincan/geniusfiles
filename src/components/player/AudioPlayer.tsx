@@ -1,3 +1,4 @@
+import { useAnalyticsScreen } from "@/lib/native/useAnalyticsScreen";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "@tanstack/react-router";
@@ -42,6 +43,7 @@ import { useT } from "@/lib/i18n";
  */
 export function AudioPlayer({ onClose }: { onClose: () => void }) {
   const overlayZ = useOverlayZClass();
+  useAnalyticsScreen("audio_player", "viewer");
   const t = useT();
   const navigate = useNavigate();
   const state = useAudioState();
