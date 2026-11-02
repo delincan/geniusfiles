@@ -49,7 +49,7 @@ import {
   type StoredSignature,
 } from "@/lib/pdf/signatures";
 import { toast } from "sonner";
-import { trackEvent } from "@/lib/native/analytics";
+import { trackPdf, trackPdfToolOpened } from "@/lib/pdf/analytics";
 import { AppShell } from "@/components/AppShell";
 import { InlineAdBanner } from "@/components/ads/InlineAdBanner";
 import { resumeAds, suspendAds } from "@/lib/ads/policy";
@@ -350,7 +350,7 @@ function PdfToolsPage() {
   /* Mesure d'usage : quel outil PDF est ouvert (identifiant d'outil
      uniquement, jamais de fichier ni de contenu). */
   const openTool = useCallback((id: ToolId) => {
-    trackEvent("pdf_tool", { action: "open", tool: id });
+    trackPdfToolOpened(id);
     setTool(id);
   }, []);
 
@@ -624,7 +624,7 @@ function ImagesToPdfSheet({ onClose }: { onClose: () => void }) {
         (destination
           ? `${toAbsolutePath({ rootId: destination.rootId as never, segments: destination.segments })}/${name || "document.pdf"}`
           : resolveTempPath(name || "document.pdf"));
-      const res = await imagesToPdf(
+      const res = await trackPdf("images-to-pdf", () => imagesToPdf(
         images.map((i) => i.src),
         tmpDest,
         { pageSize, orientation, compression },
@@ -632,7 +632,7 @@ function ImagesToPdfSheet({ onClose }: { onClose: () => void }) {
           signal: ctrl.signal,
           onProgress: (p) => job.update(p),
         },
-      );
+      ));
       recordPdfOp({
         kind: "images-to-pdf",
         summary: t("pdf.summary.imagesToPdf", { count: images.length }),
@@ -962,12 +962,12 @@ function ScanSheet({ onClose }: { onClose: () => void }) {
       name.endsWith(".pdf") ? name : `${name}.pdf`
     }`;
     try {
-      const res = await imagesToPdf(
+      const res = await trackPdf("scan", () => imagesToPdf(
         pages.map((p) => ({ kind: "blob" as const, blob: p.blob, name: p.name })),
         abs,
         { pageSize, orientation, compression: "medium" },
         { signal: ctrl.signal, onProgress: (p) => job.update(p) },
-      );
+      ));
       recordPdfOp({
         kind: "scan",
         summary: t("pdf.scan.opSummary", { count: pages.length }),
@@ -1195,14 +1195,14 @@ function MergeSheet({ onClose }: { onClose: () => void }) {
       name.endsWith(".pdf") ? name : `${name}.pdf`
     }`;
     try {
-      const res = await mergePdfs(
+      const res = await trackPdf("merge", () => mergePdfs(
         sources.map((s) => s.path),
         abs,
         {
           signal: ctrl.signal,
           onProgress: (p) => job.update(p),
         },
-      );
+      ));
       recordPdfOp({
         kind: "merge",
         summary: t("pdf.merge.opSummary", { count: sources.length }),
@@ -1536,13 +1536,13 @@ function SinglePdfSheet({ mode, onClose }: { mode: SingleMode; onClose: () => vo
             description: t("pdf.formatPlagesExemple"),
           });
         await runToDest(d, "", async (_dest, ctrl) => {
-          const res = await splitPdf(
+          const res = await trackPdf("split", () => splitPdf(
             source,
             ranges,
             toAbsolutePath({ rootId: d.rootId as never, segments: d.segments }),
             (source.split("/").pop() ?? "document").replace(/\.pdf$/i, ""),
             { signal: ctrl.signal, onProgress: (p) => job.update(p) },
-          );
+          ));
           recordPdfOp({
             kind: "split",
             summary: t("pdf.split.opSummary", { count: res.files.length }),
@@ -1565,10 +1565,10 @@ function SinglePdfSheet({ mode, onClose }: { mode: SingleMode; onClose: () => vo
             description: t("pdf.choisissezAuMoinsUnePageA"),
           });
         await runToDest(d, "_extrait", async (dest, ctrl) => {
-          const res = await extractPages(source, list, dest, {
+          const res = await trackPdf("extract", () => extractPages(source, list, dest, {
             signal: ctrl.signal,
             onProgress: (p) => job.update(p),
-          });
+          }));
           recordPdfOp({
             kind: "extract",
             summary: t("pdf.summary.pagesExtracted", { count: list.length }),
@@ -1596,10 +1596,10 @@ function SinglePdfSheet({ mode, onClose }: { mode: SingleMode; onClose: () => vo
           confirm.ask(confirmCopy.deletePages(list.length), () => resolve()),
         );
         await runToDest(d, "_nettoye", async (dest, ctrl) => {
-          const res = await deletePages(source, list, dest, {
+          const res = await trackPdf("delete-pages", () => deletePages(source, list, dest, {
             signal: ctrl.signal,
             onProgress: (p) => job.update(p),
-          });
+          }));
           recordPdfOp({
             kind: "delete-pages",
             summary: t("pdf.summary.pagesDeleted", { count: list.length }),
@@ -1615,10 +1615,10 @@ function SinglePdfSheet({ mode, onClose }: { mode: SingleMode; onClose: () => vo
       }
       case "reorder": {
         await runToDest(d, "_reorganise", async (dest, ctrl) => {
-          const res = await reorderPages(source, order, dest, {
+          const res = await trackPdf("reorder", () => reorderPages(source, order, dest, {
             signal: ctrl.signal,
             onProgress: (p) => job.update(p),
-          });
+          }));
           recordPdfOp({
             kind: "reorder",
             summary: t("pdf.summary.pagesReordered"),
@@ -1638,10 +1638,10 @@ function SinglePdfSheet({ mode, onClose }: { mode: SingleMode; onClose: () => vo
             description: t("pdf.indiquezUneRotationPourAuMoins"),
           });
         await runToDest(d, "_pivote", async (dest, ctrl) => {
-          const res = await rotatePages(source, rotations, dest, {
+          const res = await trackPdf("rotate", () => rotatePages(source, rotations, dest, {
             signal: ctrl.signal,
             onProgress: (p) => job.update(p),
-          });
+          }));
           recordPdfOp({
             kind: "rotate",
             summary: t("pdf.summary.pagesRotated", { count: Object.keys(rotations).length }),
@@ -1657,10 +1657,10 @@ function SinglePdfSheet({ mode, onClose }: { mode: SingleMode; onClose: () => vo
       }
       case "compress": {
         await runToDest(d, "_compresse", async (dest, ctrl) => {
-          const res = await compressPdf(source, dest, compression, {
+          const res = await trackPdf("compress", () => compressPdf(source, dest, compression, {
             signal: ctrl.signal,
             onProgress: (p) => job.update(p),
-          });
+          }));
           const pct = Math.round(res.ratio * 100);
           recordPdfOp({
             kind: "compress",
@@ -1682,7 +1682,7 @@ function SinglePdfSheet({ mode, onClose }: { mode: SingleMode; onClose: () => vo
         const base = (source.split("/").pop() ?? "document.pdf").replace(/\.pdf$/i, "");
         const abs = `${toAbsolutePath({ rootId: d.rootId as never, segments: d.segments })}/${base}_copie.pdf`;
         try {
-          const res = await duplicatePdf(source, abs);
+          const res = await trackPdf("duplicate", () => duplicatePdf(source, abs));
           recordPdfOp({
             kind: "duplicate",
             summary: t("pdf.copie"),
@@ -2329,7 +2329,7 @@ function WatermarkSheet({ onClose }: { onClose: () => void }) {
           mime: imageFile.type === "image/png" ? "image/png" : "image/jpeg",
         };
       }
-      const res = await watermarkPdf(
+      const res = await trackPdf("watermark", () => watermarkPdf(
         source,
         abs,
         {
@@ -2346,7 +2346,7 @@ function WatermarkSheet({ onClose }: { onClose: () => void }) {
           imageWidth: imageWidth / 100,
         },
         { signal: ctrl.signal, onProgress: (p) => job.update(p) },
-      );
+      ));
       recordPdfOp({
         kind: "watermark" as never,
         summary: `Filigrane sur ${res.pageCount} page(s)`,
@@ -2839,7 +2839,7 @@ function AddTextSheet({ onClose }: { onClose: () => void }) {
                 maxWidth: t.wFrac,
               };
             });
-          return addTextToPdf(source, abs, overlays, { signal: ctrl.signal });
+          return trackPdf("add-text", () => addTextToPdf(source, abs, overlays, { signal: ctrl.signal }));
         }}
       />
       <FileSourcePicker
@@ -3024,7 +3024,7 @@ function AddImageSheet({ mode, onClose }: { mode: "image" | "signature"; onClose
               opacity: im.opacity,
               rotate: im.rotate,
             }));
-          return addImageToPdf(source, abs, overlays, { signal: ctrl.signal });
+          return trackPdf(mode === "signature" ? "signature" : "add-image", () => addImageToPdf(source, abs, overlays, { signal: ctrl.signal }));
         }}
       />
 
@@ -3255,7 +3255,7 @@ function FillFormSheet({ onClose }: { onClose: () => void }) {
     const base = (source.split("/").pop() ?? "document.pdf").replace(/\.pdf$/i, "");
     const abs = `${toAbsolutePath({ rootId: d.rootId as never, segments: d.segments })}/${base}_rempli.pdf`;
     try {
-      const res = await fillPdfForm(source, abs, values, { flatten, signal: ctrl.signal });
+      const res = await trackPdf("fill-form", () => fillPdfForm(source, abs, values, { flatten, signal: ctrl.signal }));
       recordPdfOp({
         kind: "rename" as never,
         summary: t("pdf.formulaireRempli"),
@@ -3323,7 +3323,7 @@ function FillFormSheet({ onClose }: { onClose: () => void }) {
                   maxWidth: t.wFrac,
                 };
               });
-            return addTextToPdf(source, abs, overlays, { signal: ctrl.signal });
+            return trackPdf("fill-form", () => addTextToPdf(source, abs, overlays, { signal: ctrl.signal }));
           }}
         />
         <FileSourcePicker
@@ -3508,12 +3508,12 @@ function PdfToImagesSheet({ onClose }: { onClose: () => void }) {
     const dir = toAbsolutePath({ rootId: d.rootId as never, segments: d.segments });
     try {
       const pages = pagesText.trim() ? parseList(pagesText, info.pageCount) : undefined;
-      const res = await pdfToImages(
+      const res = await trackPdf("pdf-to-images", () => pdfToImages(
         source,
         dir,
         { format, scale: Math.max(1, Math.min(4, Number(scale) || 2)), pages },
         { signal: ctrl.signal, onProgress: (p) => job.update(p) },
-      );
+      ));
       recordPdfOp({
         kind: "extract" as never,
         summary: t("pdf.summary.imagesExported", { count: res.files.length }),
@@ -3886,12 +3886,12 @@ function TextToPdfSheet({ onClose }: { onClose: () => void }) {
     const finalName = name.endsWith(".pdf") ? name : `${name}.pdf`;
     const abs = `${toAbsolutePath({ rootId: d.rootId as never, segments: d.segments })}/${finalName}`;
     try {
-      const res = await textToPdf(
+      const res = await trackPdf("text-to-pdf", () => textToPdf(
         text,
         abs,
         { pageSize, orientation },
         { signal: ctrl.signal, onProgress: (p) => job.update(p) },
-      );
+      ));
       recordPdfOp({
         kind: "images-to-pdf" as never,
         summary: t("pdf.texteVersPdf"),
@@ -4013,12 +4013,12 @@ function FilesToPdfSheet({ onClose }: { onClose: () => void }) {
     const ctrl = job.start();
     const dir = toAbsolutePath({ rootId: d.rootId as never, segments: d.segments });
     try {
-      const res = await filesToPdf(sources, dir, {
+      const res = await trackPdf("files-to-pdf", () => filesToPdf(sources, dir, {
         merge,
         baseName,
         signal: ctrl.signal,
         onProgress: (p) => job.update(p),
-      });
+      }));
       const ok = res.results.filter((r) => r.output && !r.error).length;
       const failed = res.results.filter((r) => r.error);
       recordPdfOp({
