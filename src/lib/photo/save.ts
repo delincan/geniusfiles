@@ -101,7 +101,11 @@ export async function saveEditedImage(options: {
     trackEditorSave("photo_editor", options.mode === "replace" ? "save_replace" : "save_new", true);
     return res;
   } catch (err) {
-    trackEditorSave("photo_editor", options.mode === "replace" ? "save_replace" : "save_new", false);
+    trackEditorSave(
+      "photo_editor",
+      options.mode === "replace" ? "save_replace" : "save_new",
+      false,
+    );
     throw err;
   }
 }

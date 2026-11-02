@@ -194,7 +194,11 @@ export function WordEditor({
           await writeBytes(target, bytes, { overwrite: false, autoRename: true });
           setMessage(t("viewer.word.copySaved"));
         }
-        trackEditorSave("document_editor", mode === "overwrite" ? "save_replace" : "save_new", true);
+        trackEditorSave(
+          "document_editor",
+          mode === "overwrite" ? "save_replace" : "save_new",
+          true,
+        );
         setBaseline(text);
         setRestored(false);
         try {
@@ -204,7 +208,11 @@ export function WordEditor({
         }
         window.setTimeout(() => setMessage(null), 1800);
       } catch (e) {
-        trackEditorSave("document_editor", mode === "overwrite" ? "save_replace" : "save_new", false);
+        trackEditorSave(
+          "document_editor",
+          mode === "overwrite" ? "save_replace" : "save_new",
+          false,
+        );
         setMessage((e as Error)?.message ?? t("viewer.word.saveFailed"));
       } finally {
         setSaving(false);

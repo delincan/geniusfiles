@@ -87,7 +87,6 @@ export type ViewerAction =
 
 const AUTO_HIDE_MS = 3000;
 
-
 /** Lecteur (et écran) utilisé pour chaque type de visionneuse. */
 const READER_SCREEN: Partial<Record<ViewerKind, ScreenId>> = {
   image: "image_viewer",

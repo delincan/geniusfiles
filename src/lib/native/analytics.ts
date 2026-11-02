@@ -438,7 +438,11 @@ export function installAnalytics(): void {
 
 function safeLocale(): string {
   try {
-    return getLocale().slice(0, 12).replace(/[^\w-]/g, "") || "unknown";
+    return (
+      getLocale()
+        .slice(0, 12)
+        .replace(/[^\w-]/g, "") || "unknown"
+    );
   } catch {
     return "unknown";
   }
