@@ -36,12 +36,6 @@ function plugin(): CrashlyticsBridge | null {
   return bridge;
 }
 
-/** Routes applicatives connues : seules celles-ci sont publiées comme clé. */
-function safeRoute(pathname: string): string {
-  const first = pathname.split("/").filter(Boolean)[0] ?? "accueil";
-  return /^[a-z0-9-]{1,32}$/.test(first) ? first : "autre";
-}
-
 /**
  * Retire tout ce qui pourrait identifier un utilisateur ou ses documents.
  * Conserve les identifiants techniques (noms de classes, fonctions, codes).
@@ -120,7 +114,6 @@ export function installCrashReporting(): () => void {
     .setKeys({
       keys: {
         app_version: __APP_VERSION__,
-        webview_route: safeRoute(window.location.pathname),
         language: (navigator.language || "unknown").slice(0, 12),
       },
     })
