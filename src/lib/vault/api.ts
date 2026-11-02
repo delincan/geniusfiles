@@ -697,7 +697,6 @@ export async function addFromPublic(
 ): Promise<VaultAddResult> {
   const res = await addFromPublicImpl(sources, opts);
   trackEvent("vault_file_added", {
-    operation: opts.mode,
     result: resultOf(res.failed.length === 0),
     item_count: res.added,
   });
