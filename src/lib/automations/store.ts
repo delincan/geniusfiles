@@ -6,6 +6,7 @@
  * stable `id`, carry a `syncKey`, and every mutation stamps
  * `updatedAt`.
  */
+import { trackEvent } from "@/lib/native/analytics";
 import type { Automation } from "./types";
 
 const KEY = "gf.automations.rules";
@@ -81,6 +82,13 @@ export function saveAutomation(
     syncKey: input.syncKey,
   };
   safeSet([created, ...all]);
+  // Mesure d'usage : création réelle d'une règle (manuelle ou par Genius
+  // AI). Jamais le nom, la description ni les dossiers ciblés.
+  trackEvent("automation_created", {
+    operation: created.source,
+    tool_type: created.trigger.kind,
+    item_count: created.actions.length,
+  });
   return created;
 }
 
@@ -92,8 +100,15 @@ export function toggleAutomation(id: string, enabled: boolean) {
   const all = safeGet();
   const idx = all.findIndex((a) => a.id === id);
   if (idx < 0) return;
+  const changed = all[idx].enabled !== enabled;
   all[idx] = { ...all[idx], enabled, updatedAt: Date.now() };
   safeSet(all);
+  // Compté uniquement quand l'état change réellement.
+  if (changed) {
+    trackEvent(enabled ? "automation_enabled" : "automation_disabled", {
+      tool_type: all[idx].trigger.kind,
+    });
+  }
 }
 
 export function duplicateAutomation(id: string): Automation | undefined {
