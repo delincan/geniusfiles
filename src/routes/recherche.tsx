@@ -100,6 +100,11 @@ import type { TransValues } from "@/lib/i18n";
 
 type TFn = (key: string, values?: TransValues) => string;
 
+/** Dernière recherche comptée (survit au démontage de l'écran). */
+let lastCountedSearch: string | null = null;
+/** Délai de stabilité d'une requête avant d'être comptée. */
+const SEARCH_COUNT_SETTLE_MS = 1500;
+
 export const Route = createFileRoute("/recherche")({
   head: () => ({
     meta: [
@@ -424,8 +429,23 @@ export function SearchPage() {
       setHistory(pushSearchHistory(trimmed));
     }, 900);
 
+    // Mesure d'usage : la recherche est instantanée (un scan par frappe) ;
+    // seule une requête restée stable est comptée, une seule fois. Un
+    // rafraîchissement, un retour sur l'écran ou une mise à jour de la
+    // liste ne recomptent rien. Le terme recherché n'est jamais transmis.
+    const countTimer = window.setTimeout(() => {
+      if (cacheKey === lastCountedSearch) return;
+      lastCountedSearch = cacheKey;
+      trackEvent("search_performed", {
+        operation: scope ? "folder" : filters.rootId === "all" ? "all_storage" : "one_storage",
+        item_count: latestResults.length,
+        result: "success",
+      });
+    }, SEARCH_COUNT_SETTLE_MS);
+
     return () => {
       active = false;
+      window.clearTimeout(countTimer);
       window.clearTimeout(timer);
       runRef.current?.abort();
     };
