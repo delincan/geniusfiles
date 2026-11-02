@@ -13,7 +13,7 @@
  *  - the export re-runs the very same pipeline at full resolution, off the
  *    interaction path, so quality is never degraded by the preview scale.
  */
-import { trackEditorSave, useEditorUsage } from "@/lib/native/useAnalyticsScreen";
+import { useEditorUsage } from "@/lib/native/useAnalyticsScreen";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { InlineAdBanner } from "@/components/ads/InlineAdBanner";
