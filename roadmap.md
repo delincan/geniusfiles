@@ -17,3 +17,10 @@
 - [x] Harmonize touch and keyboard behavior without changing the design.
 - [x] Check shared focus rules and keyboard accessibility; five interaction tests passed and rapid taps confirmed in settings.
 - [ ] Validate scrolling inertia, system gestures and all readers on a physical Android device — requires an Android device.
+
+# Firebase Analytics audit
+
+- [x] Readable screen names, automatic Android screen tracking disabled, no duplicate screen views.
+- [x] New event naming with success/failure results; one event per user action.
+- [x] Crashlytics: JS errors grouped by real cause, current screen attached to crashes.
+- [ ] Confirm events in Firebase DebugView on a phone — requires a rebuilt APK on a physical device.
