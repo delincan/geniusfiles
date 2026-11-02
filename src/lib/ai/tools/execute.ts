@@ -57,6 +57,39 @@ const COMMAND_TYPES = new Set([
   "filter",
 ]);
 
+/**
+ * Catégorie générale d'une commande Genius AI (mesure d'usage). Seul le
+ * type de commande est utilisé — jamais la demande, ni ses paramètres.
+ */
+export function aiCommandCategory(type: string): string {
+  switch (type) {
+    case "list_storage_roots":
+    case "list":
+    case "properties":
+      return "browse";
+    case "search":
+    case "sort":
+    case "filter":
+      return "search";
+    case "analyze":
+      return "analyze";
+    case "create":
+    case "rename":
+    case "delete":
+    case "copy":
+    case "move":
+    case "share":
+      return "file_management";
+    case "organize":
+      return "organize";
+    case "compress":
+    case "extract":
+      return "archive";
+    default:
+      return "other";
+  }
+}
+
 function toOutput(result: EngineResult): ToolOutput {
   if (result.ok) {
     return {
@@ -225,12 +258,10 @@ export async function runEngineTool(toolName: string, rawInput: unknown): Promis
   const out = await runEngineToolImpl(toolName, rawInput);
   // Mesure d'usage : type général d'opération et issue uniquement — jamais
   // le prompt, la réponse, les chemins ni le contenu analysé.
-  trackEvent("ai_usage", {
-    action: "tool",
-    tool:
-      typeof (rawInput as { type?: unknown })?.type === "string"
-        ? String((rawInput as { type?: unknown }).type)
-        : "unknown",
+  const type = String((rawInput as { type?: unknown } | null)?.type ?? "");
+  trackEvent("ai_command_executed", {
+    action_category: aiCommandCategory(type),
+    operation: COMMAND_TYPES.has(type) ? type : "unknown",
     result: out.ok ? "success" : "failure",
   });
   return out;
