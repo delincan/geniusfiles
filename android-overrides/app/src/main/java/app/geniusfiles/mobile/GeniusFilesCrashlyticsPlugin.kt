@@ -31,14 +31,33 @@ class GeniusFilesCrashlyticsPlugin : Plugin() {
         }
 
     /** Retire tout ce qui pourrait ressembler à un chemin ou un nom de fichier. */
-    private fun sanitize(raw: String?): String {
+    private fun sanitize(raw: String?, max: Int = 256): String {
         val value = raw ?: return ""
         val noPaths = value
             .replace(Regex("""(/[\w.\-]+){2,}"""), "[path]")
             .replace(Regex("""content://\S+"""), "[uri]")
             .replace(Regex("""file://\S+"""), "[uri]")
             .replace(Regex("""[\w.\-]+@[\w.\-]+"""), "[email]")
-        return if (noPaths.length > 256) noPaths.take(256) else noPaths
+        return if (noPaths.length > max) noPaths.take(max) else noPaths
+    }
+
+    /**
+     * Cadres de pile JavaScript → `StackTraceElement`. Crashlytics regroupe
+     * les problèmes par pile : sans cela, TOUTES les erreurs de la WebView
+     * partageaient la pile de ce plug-in et apparaissaient comme un seul et
+     * même problème, rendant le classement des causes inexploitable.
+     * Formats reconnus : `at fn (file.js:1:2)`, `at file.js:1:2`, `fn@file.js:1:2`.
+     */
+    private fun jsFrames(stack: String): Array<StackTraceElement> {
+        val frame = Regex("""(?:at\s+)?(?:([\w$.<>\[\] ]+?)\s*[@(]\s*)?([\w.\-]+\.m?js):(\d+)(?::\d+)?\)?""")
+        return stack.split(" | ", "\n")
+            .mapNotNull { line ->
+                val m = frame.find(line.trim()) ?: return@mapNotNull null
+                val fn = m.groupValues[1].trim().ifEmpty { "<anonymous>" }.take(80)
+                StackTraceElement("WebView", fn, m.groupValues[2], m.groupValues[3].toIntOrNull() ?: 0)
+            }
+            .take(12)
+            .toTypedArray()
     }
 
     @PluginMethod
@@ -53,14 +72,17 @@ class GeniusFilesCrashlyticsPlugin : Plugin() {
     fun recordError(call: PluginCall) {
         val name = sanitize(call.getString("name")).ifEmpty { "NonFatal" }
         val message = sanitize(call.getString("message"))
-        val stack = sanitize(call.getString("stack"))
+        val stack = sanitize(call.getString("stack"), 1000)
         val fc = crashlytics
         if (fc == null) {
             call.resolve()
             return
         }
-        if (stack.isNotEmpty()) fc.log(stack)
-        fc.recordException(RuntimeException("$name: $message"))
+        val error = WebViewJsException("$name: $message")
+        val frames = jsFrames(stack)
+        if (frames.isNotEmpty()) error.stackTrace = frames
+        else if (stack.isNotEmpty()) fc.log(stack)
+        fc.recordException(error)
         call.resolve()
     }
 
@@ -90,3 +112,6 @@ class GeniusFilesCrashlyticsPlugin : Plugin() {
         call.resolve(result)
     }
 }
+
+/** Erreur JavaScript non fatale de la WebView (type distinct dans Crashlytics). */
+class WebViewJsException(message: String) : RuntimeException(message)
