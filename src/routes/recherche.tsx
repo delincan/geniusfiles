@@ -11,6 +11,7 @@
  * de défilement) est conservé : ouvrir un fichier puis revenir ne
  * réinitialise jamais la recherche.
  */
+import { fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
 import { useListScrollMemory } from "@/lib/files/use-list-scroll";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppNavigate } from "@/lib/navigation/pick-nav";
@@ -606,10 +607,19 @@ export function SearchPage() {
 
   const doShare = useCallback(
     async (items: SearchResult[]) => {
+      let shared = true;
       for (const g of groupByParent(items)) {
         const r = await shareEntries(g.parent, g.entries);
-        if (!r.ok) toast.error(errorMessage(r.error, t("files.recent.sharePartial")));
+        if (!r.ok) {
+          shared = false;
+          toast.error(errorMessage(r.error, t("files.recent.sharePartial")));
+        }
       }
+      trackEvent("file_shared", {
+        result: resultOf(shared),
+        file_type: fileTypeOf(items),
+        item_count: items.length,
+      });
     },
     [t],
   );
@@ -624,6 +634,12 @@ export function SearchPage() {
         ok += r.succeeded;
         failed += r.failed.length;
       }
+      trackEvent("file_deleted", {
+        operation: permanent ? "permanent" : "trash",
+        result: resultOf(failed === 0),
+        file_type: fileTypeOf(items),
+        item_count: ok,
+      });
       clearSelection();
       setResults((prev) => prev.filter((r) => !removed.has(resultId(r))));
       refreshAfterMutation();
@@ -694,6 +710,7 @@ export function SearchPage() {
   const doRename = useCallback(
     async (entry: SearchResult, newName: string) => {
       const r = await renameEntry(parentOf(entry), entry, newName);
+      trackEvent("file_renamed", { result: resultOf(r.ok), file_type: fileTypeOf([entry]) });
       if (r.ok) {
         toast.success(t("home.rename.done"));
         clearSelection();

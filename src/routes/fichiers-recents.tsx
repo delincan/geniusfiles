@@ -8,6 +8,7 @@
  * d'ajout réelles) sur une fenêtre de 7 jours ; la liste connue
  * s'affiche instantanément puis se rafraîchit en arrière-plan.
  */
+import { fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
 import { useListScrollMemory } from "@/lib/files/use-list-scroll";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppNavigate } from "@/lib/navigation/pick-nav";
@@ -354,10 +355,19 @@ export function AddedFilesPage() {
 
   const doShare = useCallback(
     async (items: AddedFile[]) => {
+      let shared = true;
       for (const g of groupByParent(items)) {
         const r = await shareEntries(g.parent, g.entries);
-        if (!r.ok) toast.error(errorMessage(r.error, t("files.recent.sharePartial")));
+        if (!r.ok) {
+          shared = false;
+          toast.error(errorMessage(r.error, t("files.recent.sharePartial")));
+        }
       }
+      trackEvent("file_shared", {
+        result: resultOf(shared),
+        file_type: fileTypeOf(items),
+        item_count: items.length,
+      });
     },
     [t],
   );
@@ -371,6 +381,12 @@ export function AddedFilesPage() {
         ok += r.succeeded;
         failed += r.failed.length;
       }
+      trackEvent("file_deleted", {
+        operation: permanent ? "permanent" : "trash",
+        result: resultOf(failed === 0),
+        file_type: fileTypeOf(items),
+        item_count: ok,
+      });
       clearSelection();
       refreshAfterMutation();
       const s = batchSummary(
@@ -441,6 +457,7 @@ export function AddedFilesPage() {
   const doRename = useCallback(
     async (entry: FileEntry, parent: PathRef, newName: string) => {
       const r = await renameEntry(parent, entry, newName);
+      trackEvent("file_renamed", { result: resultOf(r.ok), file_type: fileTypeOf([entry]) });
       if (r.ok) {
         toast.success(t("home.rename.done"));
         clearSelection();

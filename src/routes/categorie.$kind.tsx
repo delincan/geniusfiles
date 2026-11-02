@@ -5,6 +5,7 @@
  * dossier d'origine. Les résultats streament pendant l'analyse et
  * sont mis en cache : réouvrir la catégorie est quasi instantané.
  */
+import { fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppNavigate } from "@/lib/navigation/pick-nav";
 import { useListScrollMemory } from "@/lib/files/use-list-scroll";
@@ -596,6 +597,12 @@ export function CategoryPage({ kind }: { kind: CategoryKind }) {
         ok += r.succeeded;
         failed += r.failed.length;
       }
+      trackEvent("file_deleted", {
+        operation: permanent ? "permanent" : "trash",
+        result: resultOf(failed === 0),
+        file_type: fileTypeOf(items),
+        item_count: ok,
+      });
       clearSelection();
       refreshAfterMutation();
       const s = batchSummary(
@@ -613,10 +620,19 @@ export function CategoryPage({ kind }: { kind: CategoryKind }) {
   const doShare = useCallback(
     async (items: CategoryFile[]) => {
       const groups = groupByParent(items);
+      let shared = true;
       for (const g of groups) {
         const r = await shareEntries(g.parent, g.entries);
-        if (!r.ok) toast.error(errorMessage(r.error, t("home.share.failed")));
+        if (!r.ok) {
+          shared = false;
+          toast.error(errorMessage(r.error, t("home.share.failed")));
+        }
       }
+      trackEvent("file_shared", {
+        result: resultOf(shared),
+        file_type: fileTypeOf(items),
+        item_count: items.length,
+      });
     },
     [t],
   );
@@ -680,6 +696,7 @@ export function CategoryPage({ kind }: { kind: CategoryKind }) {
   const doRename = useCallback(
     async (entry: FileEntry, parent: PathRef, newName: string) => {
       const r = await renameEntry(parent, entry, newName);
+      trackEvent("file_renamed", { result: resultOf(r.ok), file_type: fileTypeOf([entry]) });
       if (r.ok) {
         toast.success(t("home.rename.done"));
         clearSelection();
