@@ -486,6 +486,11 @@ export async function runAutomation(
   if (!opts.simulate) {
     markRunning(automation.id);
     commitQuota(hold);
+    trackEvent("automation_executed", {
+      operation: "execute",
+      tool_type: automation.trigger.kind,
+      action_category: actionCategoryOf(automation.actions.map((a) => a.kind)),
+    });
   }
 
   for (const action of automation.actions) {
@@ -522,12 +527,14 @@ export async function runAutomation(
   if (!opts.simulate) {
     // Mesure d'usage : APRÈS l'exécution réelle, avec son issue (une
     // exécution partielle est un échec). Ni nom, ni dossier, ni fichier.
-    trackEvent("automation_executed", {
+    trackEvent("automation_completed", {
       result: failed === 0 ? "success" : "failure",
       operation: status,
       tool_type: automation.trigger.kind,
       action_category: actionCategoryOf(automation.actions.map((a) => a.kind)),
+      error_category: failed === 0 ? undefined : errorCategoryOf(errors[0]),
       item_count: record.filesProcessed,
+      duration_ms: elapsedMs(startedAt),
     });
     recordRun(automation.id);
     markStopped(automation.id);

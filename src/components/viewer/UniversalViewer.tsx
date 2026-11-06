@@ -224,6 +224,7 @@ export function UniversalViewer({
     } else if (kind === "pdf" || kind === "text" || kind === "office" || kind === "ebook") {
       trackEvent("document_viewer_used", { tool_type: reader, operation: "open" });
     }
+    // Les feuilles et menus du lecteur ne créent ni événement ni écran.
   }, [open, entry, kind]);
 
   /* Écran consulté : le lecteur correspondant au type affiché. L'audio est
