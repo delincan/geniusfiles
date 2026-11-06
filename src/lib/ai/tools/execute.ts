@@ -1,4 +1,4 @@
-import { trackEvent } from "@/lib/native/analytics";
+import { elapsedMs, errorCategoryOf, trackEvent } from "@/lib/native/analytics";
 /**
  * Pont unique entre Genius AI et le moteur d'exécution.
  *

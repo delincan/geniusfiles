@@ -1,11 +1,8 @@
 import { useEffect } from "react";
-import { pushScreen, trackEvent, type ScreenId, type ScreenLayer } from "./analytics";
+import { elapsedMs, errorCategoryOf, pushScreen, trackEvent } from "./analytics";
+import type { ScreenId, ScreenLayer } from "./analytics";
 
-/**
- * Déclare l'écran affiché par un composant tant qu'il est monté (et que
- * `screen` n'est pas `null`). À réserver aux vrais écrans : lecteurs,
- * éditeurs, sections plein écran — jamais aux dialogues ni aux feuilles.
- */
+/** Déclare uniquement un vrai écran, jamais un dialogue ou une feuille. */
 export function useAnalyticsScreen(screen: ScreenId | null, layer: ScreenLayer): void {
   useEffect(() => {
     if (!screen) return;
@@ -15,11 +12,7 @@ export function useAnalyticsScreen(screen: ScreenId | null, layer: ScreenLayer):
 
 export type EditorTool = "photo_editor" | "audio_editor" | "document_editor";
 
-/**
- * Éditeur ouvert : déclare son écran et enregistre UNE utilisation
- * (`editor_used`, operation `open`) par ouverture. Les enregistrements sont
- * comptés séparément par `trackEditorSave`.
- */
+/** Une ouverture d'éditeur ; les enregistrements ont leur propre résultat. */
 export function useEditorUsage(tool: EditorTool): void {
   useAnalyticsScreen(tool, "editor");
   useEffect(() => {
@@ -27,11 +20,19 @@ export function useEditorUsage(tool: EditorTool): void {
   }, [tool]);
 }
 
-/** Enregistrement d'un éditeur, après son exécution réelle. */
+/** Enregistrement réel, avec durée et catégorie d'erreur facultatives. */
 export function trackEditorSave(
   tool: EditorTool,
   operation: "save_new" | "save_replace" | "save_split",
   ok: boolean,
+  startedAt?: number,
+  error?: unknown,
 ): void {
-  trackEvent("editor_used", { tool_type: tool, operation, result: ok ? "success" : "failure" });
+  trackEvent("editor_used", {
+    tool_type: tool,
+    operation,
+    result: ok ? "success" : "failure",
+    ...(ok || error === undefined ? {} : { error_category: errorCategoryOf(error) }),
+    ...(startedAt === undefined ? {} : { duration_ms: elapsedMs(startedAt) }),
+  });
 }

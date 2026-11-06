@@ -567,7 +567,8 @@ async function run(
   trackEvent(task.mode === "copy" ? "file_copied" : "file_moved", {
     result: resultOf(task.failures.length === 0, cancelled),
     file_type: fileTypeOf(groups.flatMap((g) => g.entries)),
-    item_count: task.succeeded,
+    item_count: groups.reduce((total, group) => total + group.entries.length, 0),
+    duration_ms: Date.now() - task.startedAt,
     source_screen: sourceScreen,
   });
 

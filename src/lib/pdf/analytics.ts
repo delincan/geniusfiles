@@ -1,14 +1,14 @@
 /**
- * Mesure d'usage des outils PDF.
- *
- * `pdf_tool_used` est enregistré à l'ouverture d'un outil (popularité,
- * entonnoir) ; l'opération elle-même produit UN événement de résultat,
- * après son exécution réelle, avec son issue. Jamais de nom, de chemin, de
- * texte saisi ni de contenu de document.
+ * Mesure d'usage des outils PDF : une ouverture d'outil, puis UN résultat
+ * par opération réelle. Aucun nom, chemin, texte saisi ou contenu de document.
  */
-import { trackEvent, type AnalyticsEvent } from "@/lib/native/analytics";
+import {
+  elapsedMs,
+  errorCategoryOf,
+  trackEvent,
+  type AnalyticsEvent,
+} from "@/lib/native/analytics";
 
-/** Événement de résultat de chaque outil (null = outil de consultation). */
 export const PDF_RESULT_EVENT: Record<string, AnalyticsEvent | null> = {
   "images-to-pdf": "pdf_created",
   scan: "pdf_created",
@@ -37,46 +37,43 @@ function toolType(tool: string): string {
   return tool.replace(/-/g, "_");
 }
 
-/** Ouverture d'un outil PDF. */
 export function trackPdfToolOpened(tool: string): void {
   trackEvent("pdf_tool_used", { tool_type: toolType(tool), operation: "open" });
 }
 
 function isAbort(err: unknown): boolean {
-  return (
-    (err instanceof DOMException && err.name === "AbortError") ||
-    (err instanceof Error && err.name === "AbortError")
-  );
+  return err instanceof Error && err.name === "AbortError";
 }
 
-/**
- * Exécute une opération PDF et enregistre son issue une seule fois.
- * L'erreur éventuelle est relancée telle quelle : le comportement de l'outil
- * est inchangé.
- */
+/** L'erreur est relancée sans modifier le comportement de l'outil. */
 export async function trackPdf<T>(
   tool: string,
   run: () => Promise<T>,
   count?: (result: T) => number,
 ): Promise<T> {
   const event = PDF_RESULT_EVENT[tool];
+  const startedAt = Date.now();
   try {
-    const res = await run();
+    const result = await run();
     if (event) {
       trackEvent(event, {
         tool_type: toolType(tool),
         result: "success",
-        item_count: count ? count(res) : undefined,
+        item_count: count ? count(result) : undefined,
+        duration_ms: elapsedMs(startedAt),
       });
     }
-    return res;
-  } catch (err) {
+    return result;
+  } catch (error) {
     if (event) {
+      const cancelled = isAbort(error);
       trackEvent(event, {
         tool_type: toolType(tool),
-        result: isAbort(err) ? "cancelled" : "failure",
+        result: cancelled ? "cancelled" : "failure",
+        error_category: cancelled ? "cancelled" : errorCategoryOf(error),
+        duration_ms: elapsedMs(startedAt),
       });
     }
-    throw err;
+    throw error;
   }
 }
