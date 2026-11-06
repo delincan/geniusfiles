@@ -1,4 +1,4 @@
-import { trackEvent } from "@/lib/native/analytics";
+import { elapsedMs, errorCategoryOf, trackEvent } from "@/lib/native/analytics";
 /**
  * Pont unique entre Genius AI et le moteur d'exécution.
  *
@@ -255,16 +255,30 @@ function summarizeEntry(entry: FileEntry) {
 /* ---------- Routeur unique ---------- */
 
 export async function runEngineTool(toolName: string, rawInput: unknown): Promise<ToolOutput> {
-  const out = await runEngineToolImpl(toolName, rawInput);
-  // Mesure d'usage : type général d'opération et issue uniquement — jamais
-  // le prompt, la réponse, les chemins ni le contenu analysé.
+  const startedAt = Date.now();
   const type = String((rawInput as { type?: unknown } | null)?.type ?? "");
-  trackEvent("ai_command_executed", {
-    action_category: aiCommandCategory(type),
-    operation: COMMAND_TYPES.has(type) ? type : "unknown",
-    result: out.ok ? "success" : "failure",
-  });
-  return out;
+  try {
+    const out = await runEngineToolImpl(toolName, rawInput);
+    // Catégorie et issue uniquement — jamais le prompt, la réponse, les
+    // chemins, les termes recherchés ni le contenu analysé.
+    trackEvent("ai_command_executed", {
+      action_category: aiCommandCategory(type),
+      operation: COMMAND_TYPES.has(type) ? type : "unknown",
+      result: out.ok ? "success" : "failure",
+      error_category: out.ok ? undefined : errorCategoryOf(out.error.code),
+      duration_ms: elapsedMs(startedAt),
+    });
+    return out;
+  } catch (error) {
+    trackEvent("ai_command_executed", {
+      action_category: aiCommandCategory(type),
+      operation: COMMAND_TYPES.has(type) ? type : "unknown",
+      result: "failure",
+      error_category: errorCategoryOf(error),
+      duration_ms: elapsedMs(startedAt),
+    });
+    throw error;
+  }
 }
 
 async function runEngineToolImpl(toolName: string, rawInput: unknown): Promise<ToolOutput> {

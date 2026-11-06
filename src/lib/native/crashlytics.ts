@@ -1,17 +1,8 @@
 /**
- * Surveillance de stabilité GeniusFiles (Firebase Crashlytics).
- *
- * Principe : Crashlytics capture nativement les crashs et les ANR. Ce module
- * ajoute uniquement les erreurs JavaScript non fatales importantes de la
- * WebView, après un assainissement STRICT.
- *
- * Jamais transmis : contenu de fichier, nom de fichier personnel, chemin
- * complet, contenu du coffre-fort, message ou prompt Genius AI, code PIN /
- * mot de passe / biométrie, identifiant utilisateur. Le module n'envoie que
- * des libellés techniques (type d'erreur, message assaini, pile de code de
- * l'application, route logique, version).
- *
- * Sans runtime natif (web / SSR / aperçu Lovable) tout est no-op.
+ * Crashlytics capture nativement les crashs et ANR. Ce module ajoute les
+ * erreurs JavaScript non fatales avec des codes fixes et leurs cadres techniques.
+ * Les messages d'erreur complets ne sont jamais envoyés : ils peuvent contenir
+ * un nom de fichier, un chemin, une recherche ou du texte utilisateur.
  */
 import { isNativeRuntime, nativePlatform } from "./platform";
 
@@ -24,9 +15,6 @@ type CrashlyticsBridge = {
 
 let bridge: CrashlyticsBridge | null = null;
 
-/* Le pont n'est mis en cache que s'il est trouvé : au tout premier rendu,
-   `window.Capacitor.Plugins` peut ne pas encore être peuplé, et mémoriser
-   `null` coupait définitivement les rapports non fatals de la WebView. */
 function plugin(): CrashlyticsBridge | null {
   if (bridge) return bridge;
   if (!isNativeRuntime() || nativePlatform() !== "android") return null;
@@ -36,38 +24,30 @@ function plugin(): CrashlyticsBridge | null {
   return bridge;
 }
 
-/**
- * Retire tout ce qui pourrait identifier un utilisateur ou ses documents.
- * Conserve les identifiants techniques (noms de classes, fonctions, codes).
- */
+/** Utilitaire de fil d'Ariane ; seules des valeurs techniques sont acceptées à l'appel. */
 export function sanitizeDiagnostic(input: unknown, max = 240): string {
   let text = typeof input === "string" ? input : String(input ?? "");
   text = text
-    // URI de contenu / fichiers Android
     .replace(/(content|file|blob):\/\/\S+/gi, "[uri]")
-    // chemins absolus (≥ 2 segments)
     .replace(/(\/[\w.\-% ]+){2,}/g, "[path]")
-    // adresses e-mail
     .replace(/[\w.+-]+@[\w-]+\.[\w.-]+/g, "[email]")
-    // contenus entre guillemets (souvent un nom de fichier ou un extrait)
     .replace(/"[^"]{0,400}"/g, '"[redacted]"')
     .replace(/'[^']{0,400}'/g, "'[redacted]'")
-    // noms de fichiers isolés
     .replace(
       /\b[\w.\- ]{1,80}\.(pdf|docx?|xlsx?|pptx?|jpe?g|png|gif|webp|heic|mp[34]|m4a|wav|mkv|avi|mov|zip|rar|7z|apk|txt|csv|epub)\b/gi,
       "[file]",
     )
-    // longues séquences de chiffres (numéros, identifiants)
     .replace(/\b\d{6,}\b/g, "[num]");
   text = text.replace(/\s+/g, " ").trim();
   return text.length > max ? `${text.slice(0, max)}…` : text;
 }
 
-/** Pile réduite aux emplacements de code de l'app (aucune donnée métier). */
+/** Conserve uniquement les lignes qui sont réellement des cadres de pile. */
 function sanitizeStack(stack: unknown): string | undefined {
   if (typeof stack !== "string" || !stack) return undefined;
   const lines = stack
     .split("\n")
+    .filter((line) => /(?:^\s*at\s+|[\w$]+@).+\.m?js:\d+:\d+/.test(line))
     .slice(0, 12)
     .map((line) =>
       line
@@ -77,47 +57,49 @@ function sanitizeStack(stack: unknown): string | undefined {
     )
     .filter(Boolean);
   const joined = lines.join(" | ");
+  if (!joined) return undefined;
   return joined.length > 900 ? joined.slice(0, 900) : joined;
 }
 
-/** Journal de navigation technique (fil d'Ariane Crashlytics). */
 export function logBreadcrumb(message: string): void {
-  const p = plugin();
-  if (!p) return;
-  void p.log({ message: sanitizeDiagnostic(message, 120) }).catch(() => {});
+  const native = plugin();
+  if (!native || !/^screen:[a-z0-9_-]{1,40}$/.test(message)) return;
+  void native.log({ message }).catch(() => {});
 }
 
-/** Erreur non fatale importante. */
+const ERROR_NAMES = new Set([
+  "Error",
+  "TypeError",
+  "ReferenceError",
+  "SyntaxError",
+  "RangeError",
+  "EvalError",
+  "URIError",
+  "DOMException",
+  "AbortError",
+  "NetworkError",
+]);
+
+/** Le contexte est un code fixe ; le message brut de l'erreur est ignoré. */
 export function recordNonFatal(error: unknown, context?: string): void {
-  const p = plugin();
-  if (!p) return;
+  const native = plugin();
+  if (!native) return;
   const err = error instanceof Error ? error : undefined;
-  const name = sanitizeDiagnostic(err?.name ?? "Error", 60) || "Error";
-  const base = err?.message ?? (typeof error === "string" ? error : "unknown");
-  const message = sanitizeDiagnostic(context ? `${context}: ${base}` : base);
-  void p.recordError({ name, message, stack: sanitizeStack(err?.stack) }).catch(() => {});
+  const name = ERROR_NAMES.has(err?.name ?? "") ? (err?.name ?? "Error") : "Error";
+  const code = context === "window.onerror" ? "window_onerror" : "unhandledrejection";
+  void native
+    .recordError({ name, message: code, stack: sanitizeStack(err?.stack) })
+    .catch(() => {});
 }
 
 let installed = false;
+let retries = 0;
+let retryTimer: ReturnType<typeof setTimeout> | undefined;
 
-/**
- * Branche les rapports non fatals de la WebView. Deux écouteurs passifs,
- * aucun minuteur, aucune I/O : impact mémoire et batterie négligeable.
- */
+/** Branche aussi les rapports lorsque Capacitor expose son pont après le premier rendu. */
 export function installCrashReporting(): () => void {
-  if (installed || typeof window === "undefined") return () => {};
-  const p = plugin();
-  if (!p) return () => {};
-  installed = true;
-
-  void p
-    .setKeys({
-      keys: {
-        app_version: __APP_VERSION__,
-        language: (navigator.language || "unknown").slice(0, 12),
-      },
-    })
-    .catch(() => {});
+  if (typeof window === "undefined") return () => {};
+  let disposed = false;
 
   const onError = (event: ErrorEvent) => {
     recordNonFatal(event.error ?? event.message, "window.onerror");
@@ -125,24 +107,48 @@ export function installCrashReporting(): () => void {
   const onRejection = (event: PromiseRejectionEvent) => {
     recordNonFatal(event.reason, "unhandledrejection");
   };
-  window.addEventListener("error", onError);
-  window.addEventListener("unhandledrejection", onRejection);
 
+  const attach = () => {
+    if (disposed || installed) return;
+    const native = plugin();
+    if (!native) {
+      if (retries < 8) {
+        retries += 1;
+        retryTimer = setTimeout(attach, 400 * retries);
+      }
+      return;
+    }
+    installed = true;
+    retries = 0;
+    void native
+      .setKeys({
+        keys: {
+          app_version: __APP_VERSION__,
+          language: (navigator.language || "unknown").slice(0, 12),
+        },
+      })
+      .catch(() => {});
+    window.addEventListener("error", onError);
+    window.addEventListener("unhandledrejection", onRejection);
+  };
+
+  attach();
   return () => {
-    window.removeEventListener("error", onError);
-    window.removeEventListener("unhandledrejection", onRejection);
-    installed = false;
+    disposed = true;
+    if (retryTimer !== undefined) clearTimeout(retryTimer);
+    retryTimer = undefined;
+    retries = 0;
+    if (installed) {
+      window.removeEventListener("error", onError);
+      window.removeEventListener("unhandledrejection", onRejection);
+      installed = false;
+    }
   };
 }
 
-/**
- * Met à jour la clé « écran courant » (appelée par la mesure d'audience à
- * chaque vue d'écran comptée) : un crash est ainsi rattaché à l'écran où
- * il s'est produit. Identifiant logique uniquement (ex. `pdf_tools`).
- */
 export function setCrashRoute(screenId: string): void {
-  const p = plugin();
-  if (!p) return;
+  const native = plugin();
+  if (!native) return;
   const screen = /^[a-z0-9_-]{1,40}$/.test(screenId) ? screenId : "other";
-  void p.setKeys({ keys: { webview_screen: screen } }).catch(() => {});
+  void native.setKeys({ keys: { webview_screen: screen } }).catch(() => {});
 }

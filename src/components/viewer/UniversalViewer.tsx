@@ -214,10 +214,17 @@ export function UniversalViewer({
     }
     if (openCountedRef.current || !entry || entry.isDirectory || kind === "none") return;
     openCountedRef.current = true;
+    const reader = READER_SCREEN[kind] ?? "other";
     trackEvent("file_opened", {
       file_type: fileTypeOf([entry]),
-      tool_type: READER_SCREEN[kind] ?? "other",
+      tool_type: reader,
     });
+    if (kind === "image" || kind === "video" || kind === "audio") {
+      trackEvent("media_player_used", { tool_type: reader, operation: "open" });
+    } else if (kind === "pdf" || kind === "text" || kind === "office" || kind === "ebook") {
+      trackEvent("document_viewer_used", { tool_type: reader, operation: "open" });
+    }
+    // Les feuilles et menus du lecteur ne créent ni événement ni écran.
   }, [open, entry, kind]);
 
   /* Écran consulté : le lecteur correspondant au type affiché. L'audio est

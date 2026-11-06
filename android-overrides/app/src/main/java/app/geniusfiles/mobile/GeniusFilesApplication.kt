@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.libraries.ads.mobile.sdk.MobileAds
 import com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 /**
@@ -28,8 +29,26 @@ class GeniusFilesApplication : Application() {
                 else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             }
         )
+        initAnalytics()
         initCrashlyticsKeys()
         initMobileAds()
+    }
+
+    /**
+     * Initialise Firebase avant la WebView : les signaux automatiques
+     * app_open, session_start et user_engagement existent ainsi même si le
+     * pont Capacitor met quelques secondes à devenir disponible. Le suivi
+     * automatique des écrans reste désactivé dans le manifeste.
+     */
+    private fun initAnalytics() {
+        try {
+            FirebaseAnalytics.getInstance(this).apply {
+                setAnalyticsCollectionEnabled(true)
+                setSessionTimeoutDuration(30 * 60 * 1000L)
+            }
+        } catch (_: Throwable) {
+            /* Firebase indisponible : aucune donnée artificielle ne sera créée */
+        }
     }
 
     /**

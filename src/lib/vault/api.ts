@@ -695,31 +695,70 @@ export async function addFromPublic(
   sources: PublicSource[],
   opts: AddOptions,
 ): Promise<VaultAddResult> {
-  const res = await addFromPublicImpl(sources, opts);
-  trackEvent("vault_file_added", {
-    result: resultOf(res.failed.length === 0),
-    item_count: res.added,
-  });
-  return res;
+  const startedAt = Date.now();
+  try {
+    const res = await addFromPublicImpl(sources, opts);
+    trackEvent("vault_operation_completed", {
+      operation: "add",
+      result: resultOf(res.failed.length === 0),
+      item_count: sources.length,
+      duration_ms: Date.now() - startedAt,
+    });
+    return res;
+  } catch (error) {
+    trackEvent("vault_operation_completed", {
+      operation: "add",
+      result: "failure",
+      item_count: sources.length,
+      duration_ms: Date.now() - startedAt,
+    });
+    throw error;
+  }
 }
 
 export async function restoreItems(
   items: VaultItem[],
   opts: RestoreOptions = {},
 ): Promise<VaultRestoreResult> {
-  const res = await restoreItemsImpl(items, opts);
-  trackEvent("vault_file_restored", {
-    result: resultOf(res.failed.length === 0),
-    item_count: items.length - res.failed.length,
-  });
-  return res;
+  const startedAt = Date.now();
+  try {
+    const res = await restoreItemsImpl(items, opts);
+    trackEvent("vault_operation_completed", {
+      operation: "restore",
+      result: resultOf(res.failed.length === 0),
+      item_count: items.length,
+      duration_ms: Date.now() - startedAt,
+    });
+    return res;
+  } catch (error) {
+    trackEvent("vault_operation_completed", {
+      operation: "restore",
+      result: "failure",
+      item_count: items.length,
+      duration_ms: Date.now() - startedAt,
+    });
+    throw error;
+  }
 }
 
 export async function permanentDelete(items: VaultItem[]): Promise<VaultDeleteResult> {
-  const res = await permanentDeleteImpl(items);
-  trackEvent("vault_file_deleted", {
-    result: resultOf(res.failed.length === 0),
-    item_count: items.length - res.failed.length,
-  });
-  return res;
+  const startedAt = Date.now();
+  try {
+    const res = await permanentDeleteImpl(items);
+    trackEvent("vault_operation_completed", {
+      operation: "delete",
+      result: resultOf(res.failed.length === 0),
+      item_count: items.length,
+      duration_ms: Date.now() - startedAt,
+    });
+    return res;
+  } catch (error) {
+    trackEvent("vault_operation_completed", {
+      operation: "delete",
+      result: "failure",
+      item_count: items.length,
+      duration_ms: Date.now() - startedAt,
+    });
+    throw error;
+  }
 }

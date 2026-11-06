@@ -1100,6 +1100,7 @@ export function FilesPage() {
       setProgressTitle(t("home.archive.creatingTitle"));
       setProgressSubtitle(t("home.archive.creatingSubtitle"));
       setProgressOpen(true);
+      const startedAt = Date.now();
       const res = await createArchive({
         parent: path,
         entries,
@@ -1113,12 +1114,13 @@ export function FilesPage() {
       });
       setProgressOpen(false);
       signalRef.current = null;
-      trackEvent("file_compressed", {
+      trackEvent("files_compressed", {
         result: resultOf(res.ok, res.cancelled),
         tool_type: opts.format,
         operation: opts.password ? "encrypted" : "standard",
         file_type: fileTypeOf(entries),
         item_count: entries.length,
+        duration_ms: Date.now() - startedAt,
       });
       clearSelection();
       onRefresh();
@@ -1147,6 +1149,7 @@ export function FilesPage() {
       setProgressTitle(t("home.extract.title"));
       setProgressSubtitle(t("home.extract.subtitle"));
       setProgressOpen(true);
+      const startedAt = Date.now();
       const res = await extractArchive({
         parent: path,
         entry,
@@ -1159,11 +1162,12 @@ export function FilesPage() {
       });
       setProgressOpen(false);
       signalRef.current = null;
-      trackEvent("file_extracted", {
+      trackEvent("files_extracted", {
         result: resultOf(res.ok, res.cancelled),
-        tool_type: (entry.ext ?? "archive").toLowerCase(),
+        tool_type: archiveTypeOf(entry.ext),
         operation: selection.length > 0 ? "partial_selection" : "all",
         item_count: res.completed ?? 0,
+        duration_ms: Date.now() - startedAt,
       });
       onRefresh();
       if (res.cancelled) toast.warning(t("home.extract.cancelled"));

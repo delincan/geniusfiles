@@ -1,44 +1,29 @@
 /**
  * Google Analytics for Firebase — instrumentation GeniusFiles.
  *
- * ── Écrans ──────────────────────────────────────────────────────────────
- * Le suivi automatique des écrans du SDK Android est DÉSACTIVÉ dans le
- * manifeste (`google_analytics_automatic_screen_reporting_enabled=false`) :
- * sans cela Firebase remontait « MainActivity » (l'unique activité qui
- * héberge la WebView) et « AdActivity » (activité du SDK publicitaire) au
- * lieu des vrais écrans. Le seul `screen_view` envoyé est donc celui de ce
- * module : un nom lisible, stable, en français, issu d'une liste blanche.
+ * Un seul émetteur de screen_view : ce module. Le suivi automatique Android
+ * reste désactivé dans le manifeste pour ne jamais remonter MainActivity ou
+ * AdActivity. Les routes, sections, lecteurs et éditeurs partagent une pile
+ * d'écrans ; dialogues, menus, filtres et miniatures n'en font pas partie.
  *
- * L'écran courant est la couche de plus haute priorité d'une petite pile :
- *   route (ex. Corbeille) < section (Accueil ↔ Gestionnaire de fichiers)
- *   < lecteur (visionneuse, lecteur vidéo…) < éditeur (photo, document…).
- * Les changements sont regroupés sur un court délai : un écran affiché
- * moins de `SCREEN_SETTLE_MS` (transition, redirection, ouverture/fermeture
- * immédiate) n'est jamais compté, et un même écran n'est jamais compté deux
- * fois de suite. Les dialogues, feuilles, miniatures et changements visuels
- * internes ne poussent aucune couche : ils ne créent pas de vue d'écran.
- *
- * ── Événements ──────────────────────────────────────────────────────────
- * Noms en liste blanche et paramètres standardisés (voir `EventParams`).
- * Chaque opération est enregistrée UNE fois, après son exécution réelle,
- * avec son issue ; une sélection multiple produit un seul événement portant
- * `item_count`. Les opérations déclenchées par Genius AI, les automatisations
- * ou le rangement automatique ne sont pas recomptées comme des actions
- * manuelles de fichiers : elles ont leurs propres événements.
- *
- * ── Confidentialité ─────────────────────────────────────────────────────
- * Jamais transmis : nom, chemin ou contenu de fichier, terme de recherche,
- * texte Genius AI (demande comme réponse), PIN / mot de passe / biométrie,
- * toute information du coffre-fort, identifiant utilisateur. Les valeurs
- * texte sont des jetons courts (a-z, 0-9, `_`) et le pont natif refuse à
- * nouveau tout nom ou clé hors liste blanche.
- *
- * Hors runtime Android natif (web, SSR, aperçu Lovable) : entièrement no-op.
+ * Confidentialité : les paramètres texte ne sont pas « nettoyés » puis
+ * transmis. Seules des valeurs techniques présentes dans les listes blanches
+ * ci-dessous sont acceptées, côté WebView puis une seconde fois côté Kotlin.
+ * Une valeur libre (nom de fichier, recherche, prompt…) est donc abandonnée.
+ * Aucun texte du coffre-fort, code PIN, mot de passe ou donnée biométrique
+ * n'est accepté. Les opérations groupées produisent un seul événement.
  */
 import { isNativeRuntime, nativePlatform } from "./platform";
 import { logBreadcrumb, setCrashRoute } from "./crashlytics";
 import type { FileKind } from "@/lib/files/types";
 import { getLocale } from "@/lib/i18n/store";
+
+type PendingEvent = {
+  name: AnalyticsEvent;
+  params: Record<string, string>;
+  count?: number;
+  duration?: number;
+};
 
 type AnalyticsBridge = {
   logScreenView(options: { screen: string }): Promise<void>;
@@ -46,6 +31,7 @@ type AnalyticsBridge = {
     name: string;
     params?: Record<string, string>;
     count?: number;
+    duration?: number;
   }): Promise<void>;
   setUserProperty(options: { name: string; value: string }): Promise<void>;
   setEnabled(options: { enabled: boolean }): Promise<void>;
@@ -54,11 +40,7 @@ type AnalyticsBridge = {
 
 let bridge: AnalyticsBridge | null = null;
 
-/**
- * Résolution paresseuse du pont. Le résultat n'est mis en cache QUE s'il est
- * trouvé : au tout premier rendu, `window.Capacitor.Plugins` peut ne pas
- * encore être peuplé.
- */
+/** Ne jamais mémoriser l'absence du pont pendant le démarrage de Capacitor. */
 function plugin(): AnalyticsBridge | null {
   if (bridge) return bridge;
   if (!isNativeRuntime() || nativePlatform() !== "android") return null;
@@ -72,15 +54,7 @@ function plugin(): AnalyticsBridge | null {
    Écrans
    ──────────────────────────────────────────────────────────────── */
 
-/**
- * Identifiant technique stable (utilisé dans `source_screen`) → nom
- * affiché dans Firebase (`screen_name` / `screen_class`). Les noms ne sont
- * PAS traduits selon la langue de l'interface : un écran garde le même nom
- * dans les rapports quelle que soit la langue de l'utilisateur.
- *
- * Toute modification doit être reportée dans `ALLOWED_SCREENS` de
- * `GeniusFilesAnalyticsPlugin.kt` (un test vérifie la cohérence).
- */
+/** Identifiant stable → nom français utilisé dans screen_name ET screen_class. */
 export const SCREENS = {
   home: "Accueil",
   file_manager: "Gestionnaire de fichiers",
@@ -138,7 +112,7 @@ const CATEGORY_SCREENS: Record<string, ScreenId> = {
   downloads: "category_downloads",
 };
 
-/** Écran logique d'une URL (jamais de segment dynamique, jamais de chemin). */
+/** Aucun segment dynamique ou chemin réel ne devient un nom d'écran. */
 export function screenForPath(pathname: string): ScreenId {
   const parts = pathname
     .split(/[?#]/)[0]
@@ -152,27 +126,27 @@ export function screenForPath(pathname: string): ScreenId {
   return ROUTE_SCREENS[first] ?? "other";
 }
 
-/** Priorité des couches d'écran (la plus haute est l'écran consulté). */
 export type ScreenLayer = "section" | "viewer" | "editor";
 const LAYER_PRIORITY: Record<ScreenLayer, number> = { section: 1, viewer: 2, editor: 3 };
-
 type Layer = { id: number; screen: ScreenId; priority: number };
 
-/** Durée minimale d'affichage avant qu'une vue d'écran soit comptée. */
 export const SCREEN_SETTLE_MS = 400;
-
 let routeScreen: ScreenId | null = null;
 let layers: Layer[] = [];
 let layerSeq = 0;
 let lastLogged: ScreenId | null = null;
+let screenInFlight: ScreenId | null = null;
 let flushTimer: ReturnType<typeof setTimeout> | undefined;
 
-/** Écran actuellement affiché (avant même qu'il soit compté). */
 export function currentScreen(): ScreenId {
   let top: Layer | null = null;
-  for (const l of layers) {
-    if (!top || l.priority > top.priority || (l.priority === top.priority && l.id > top.id)) {
-      top = l;
+  for (const layer of layers) {
+    if (
+      !top ||
+      layer.priority > top.priority ||
+      (layer.priority === top.priority && layer.id > top.id)
+    ) {
+      top = layer;
     }
   }
   return top?.screen ?? routeScreen ?? "home";
@@ -188,68 +162,94 @@ function scheduleFlush(): void {
   flushTimer = setTimeout(flushScreen, SCREEN_SETTLE_MS);
 }
 
+const SCREEN_OPEN_EVENT: Partial<Record<ScreenId, AnalyticsEvent>> = {
+  recent_files: "recent_files_opened",
+  trash: "trash_opened",
+  category_images: "category_opened",
+  category_videos: "category_opened",
+  category_audio: "category_opened",
+  category_documents: "category_opened",
+  category_downloads: "category_opened",
+};
+
 function flushScreen(): void {
   flushTimer = undefined;
-  // En arrière-plan, rien n'est consulté : la vue sera comptée au retour.
   if (isHidden()) return;
   const screen = currentScreen();
-  if (screen === lastLogged) return;
-  lastLogged = screen;
-  setCrashRoute(screen);
-  logBreadcrumb(`screen:${screen}`);
-  const p = plugin();
-  if (!p) return;
-  void p.logScreenView({ screen: SCREENS[screen] }).catch(() => {});
+  if (screen === lastLogged || screen === screenInFlight) return;
+  const native = plugin();
+  if (!native) {
+    retryInstall();
+    return;
+  }
+
+  const previous = lastLogged;
+  screenInFlight = screen;
+  void native
+    .logScreenView({ screen: SCREENS[screen] })
+    .then(() => {
+      if (screenInFlight === screen) screenInFlight = null;
+      lastLogged = screen;
+      setCrashRoute(screen);
+      logBreadcrumb(`screen:${screen}`);
+      if (screen !== previous) {
+        const event = SCREEN_OPEN_EVENT[screen];
+        if (event) trackEvent(event, { tool_type: screen });
+      }
+      if (currentScreen() !== screen) scheduleFlush();
+    })
+    .catch(() => {
+      if (screenInFlight === screen) screenInFlight = null;
+      // Ne pas marquer l'écran comme livré : le prochain retour au premier
+      // plan ou la prochaine navigation pourra réellement le comptabiliser.
+      if (lastLogged === screen) lastLogged = null;
+    });
 }
 
-/** Écran de base, déduit de la route. */
 export function trackRoute(pathname: string): void {
   routeScreen = screenForPath(pathname);
   scheduleFlush();
 }
 
-/** Compatibilité : ancien point d'entrée. */
 export const trackScreen = trackRoute;
 
-/**
- * Pousse une couche d'écran (section, lecteur, éditeur). Renvoie la
- * fonction de retrait — à appeler quand l'écran se ferme.
- */
 export function pushScreen(screen: ScreenId, layer: ScreenLayer): () => void {
   const entry: Layer = { id: ++layerSeq, screen, priority: LAYER_PRIORITY[layer] };
   layers = [...layers, entry];
   scheduleFlush();
   return () => {
     const before = layers.length;
-    layers = layers.filter((l) => l !== entry);
+    layers = layers.filter((candidate) => candidate !== entry);
     if (layers.length !== before) scheduleFlush();
   };
 }
 
 /* ────────────────────────────────────────────────────────────────
-   Événements
+   Événements et listes blanches
    ──────────────────────────────────────────────────────────────── */
 
-/**
- * Événements autorisés. Toute modification doit être reportée dans
- * `ALLOWED_EVENTS` de `GeniusFilesAnalyticsPlugin.kt`.
- */
 export const ANALYTICS_EVENTS = [
-  // Utilisation générale
-  "application_opened",
+  "app_opened",
+  "category_opened",
+  "recent_files_opened",
+  "favorites_opened",
+  "trash_opened",
   "search_performed",
   "file_opened",
+  "media_player_used",
+  "document_viewer_used",
   "file_shared",
   "folder_created",
-  // Gestionnaire de fichiers
   "file_copied",
   "file_moved",
   "file_renamed",
   "file_deleted",
   "file_restored",
-  "file_compressed",
-  "file_extracted",
-  // PDF
+  "files_compressed",
+  "files_extracted",
+  "cleaner_completed",
+  "organization_completed",
+  "application_action_completed",
   "pdf_tool_used",
   "pdf_created",
   "pdf_merged",
@@ -258,30 +258,197 @@ export const ANALYTICS_EVENTS = [
   "pdf_signed",
   "pdf_extracted",
   "pdf_edited",
-  // Genius AI
   "ai_conversation_started",
   "ai_request_completed",
   "ai_command_executed",
-  // Coffre-fort
   "vault_opened",
-  "vault_file_added",
-  "vault_file_restored",
-  "vault_file_deleted",
-  // Automatisations
+  "vault_operation_completed",
   "automation_created",
   "automation_enabled",
   "automation_disabled",
   "automation_executed",
-  // Éditeurs
+  "automation_completed",
   "editor_used",
 ] as const;
 
 export type AnalyticsEvent = (typeof ANALYTICS_EVENTS)[number];
 const EVENT_SET = new Set<string>(ANALYTICS_EVENTS);
-
 export type AnalyticsResult = "success" | "failure" | "cancelled";
 
-/** Clés texte autorisées (reportées dans `ALLOWED_KEYS` côté Kotlin). */
+const PDF_TOOLS = [
+  "images_to_pdf",
+  "scan",
+  "text_to_pdf",
+  "merge",
+  "compress",
+  "files_to_pdf",
+  "pdf_to_images",
+  "signature",
+  "extract",
+  "extract_text",
+  "split",
+  "delete_pages",
+  "reorder",
+  "rotate",
+  "watermark",
+  "add_text",
+  "add_image",
+  "fill_form",
+  "duplicate",
+  "search",
+  "info",
+] as const;
+
+const AI_OPERATIONS = [
+  "list_storage_roots",
+  "list",
+  "search",
+  "analyze",
+  "properties",
+  "create",
+  "rename",
+  "delete",
+  "copy",
+  "move",
+  "organize",
+  "compress",
+  "extract",
+  "share",
+  "sort",
+  "filter",
+] as const;
+
+const AUTOMATION_TRIGGERS = [
+  "scheduled_time",
+  "daily",
+  "weekly",
+  "app_open",
+  "file_added",
+  "folder_changed",
+  "storage_low",
+  "device_connected",
+] as const;
+
+const AUTOMATION_CATEGORIES = [
+  "copy",
+  "move",
+  "rename",
+  "trash",
+  "compress",
+  "extract",
+  "backup",
+  "mkdir",
+  "organize",
+  "cleaner_scan",
+  "notify",
+  "open_module",
+] as const;
+
+export const EVENT_PARAM_VALUES = {
+  operation: [
+    "cold_start",
+    "resume",
+    "open",
+    "setup",
+    "unlock",
+    "folder",
+    "all_storage",
+    "one_storage",
+    "permanent",
+    "trash",
+    "encrypted",
+    "standard",
+    "partial_selection",
+    "all",
+    "from_trash",
+    "permanent_from_trash",
+    "empty_trash",
+    "message",
+    "retry",
+    "manual",
+    "ai",
+    "template",
+    "recommendation",
+    "ok",
+    "partial",
+    "failed",
+    "simulated",
+    "save_new",
+    "save_replace",
+    "save_split",
+    "add",
+    "restore",
+    "delete",
+    "execute",
+    "cleanup",
+    "apply_plan",
+    "settings",
+    "backup",
+    "uninstall_request",
+    "unknown",
+    ...AI_OPERATIONS,
+  ],
+  result: ["success", "failure", "cancelled"],
+  file_type: [
+    "folder",
+    "image",
+    "video",
+    "audio",
+    "document",
+    "pdf",
+    "archive",
+    "apk",
+    "other",
+    "mixed",
+  ],
+  source_screen: Object.keys(SCREENS),
+  tool_type: [
+    ...Object.keys(SCREENS),
+    ...PDF_TOOLS,
+    ...AUTOMATION_TRIGGERS,
+    "zip",
+    "7z",
+    "tar",
+    "gz",
+    "tgz",
+    "rar",
+    "archive",
+    "other",
+  ],
+  action_category: [
+    "navigation",
+    "file_management",
+    "browse",
+    "search",
+    "analyze",
+    "archive",
+    "pdf",
+    "ai",
+    "vault",
+    "automation",
+    "editor",
+    "media",
+    "document",
+    "cleaner",
+    "application",
+    "mixed",
+    "none",
+    "other",
+    ...AUTOMATION_CATEGORIES,
+  ],
+  error_category: [
+    "network_error",
+    "permission_error",
+    "storage_error",
+    "processing_error",
+    "quota_exceeded",
+    "invalid_input",
+    "unsupported_format",
+    "cancelled",
+    "unknown_error",
+  ],
+} as const;
+
 export const EVENT_PARAM_KEYS = [
   "operation",
   "result",
@@ -289,71 +456,167 @@ export const EVENT_PARAM_KEYS = [
   "source_screen",
   "tool_type",
   "action_category",
+  "error_category",
 ] as const;
 
+type TextParamKey = (typeof EVENT_PARAM_KEYS)[number];
+
 export type EventParams = {
-  /** Variante de l'opération (trash, permanent, new_copy, open, save…). */
   operation?: string;
-  /** Issue : success, failure ou cancelled (annulation volontaire). */
   result?: AnalyticsResult;
-  /** Type générique : image, video, audio, document, pdf, archive, folder, mixed… */
   file_type?: string;
-  /** Écran d'origine — rempli automatiquement avec l'écran courant. */
   source_screen?: ScreenId;
-  /** Module ou outil : pdf_reader, photo_editor, merge, zip… */
   tool_type?: string;
-  /** Catégorie générale (commandes Genius AI, actions d'automatisation). */
   action_category?: string;
-  /** Nombre d'éléments concernés par l'opération globale. */
+  error_category?: string;
   item_count?: number;
+  duration_ms?: number;
 };
 
-/** Jeton court et neutre : impossible d'y loger un nom ou un chemin. */
-function token(value: string | undefined): string | null {
+const EVENT_CATEGORY: Partial<Record<AnalyticsEvent, string>> = {
+  app_opened: "navigation",
+  category_opened: "navigation",
+  recent_files_opened: "navigation",
+  favorites_opened: "navigation",
+  trash_opened: "navigation",
+  search_performed: "search",
+  file_opened: "browse",
+  media_player_used: "media",
+  document_viewer_used: "document",
+  file_shared: "file_management",
+  folder_created: "file_management",
+  file_copied: "file_management",
+  file_moved: "file_management",
+  file_renamed: "file_management",
+  file_deleted: "file_management",
+  file_restored: "file_management",
+  files_compressed: "archive",
+  files_extracted: "archive",
+  cleaner_completed: "cleaner",
+  organization_completed: "organize",
+  application_action_completed: "application",
+  pdf_tool_used: "pdf",
+  pdf_created: "pdf",
+  pdf_merged: "pdf",
+  pdf_compressed: "pdf",
+  pdf_converted: "pdf",
+  pdf_signed: "pdf",
+  pdf_extracted: "pdf",
+  pdf_edited: "pdf",
+  ai_conversation_started: "ai",
+  ai_request_completed: "ai",
+  ai_command_executed: "ai",
+  vault_opened: "vault",
+  vault_operation_completed: "vault",
+  automation_created: "automation",
+  automation_enabled: "automation",
+  automation_disabled: "automation",
+  automation_executed: "automation",
+  automation_completed: "automation",
+  editor_used: "editor",
+};
+
+function allowedToken(key: TextParamKey, value: string | undefined): string | null {
   if (!value) return null;
-  const clean = value
-    .toLowerCase()
-    .replace(/[^a-z0-9_]+/g, "_")
-    .replace(/^_+|_+$/g, "");
-  return clean ? clean.slice(0, 40) : null;
+  return (EVENT_PARAM_VALUES[key] as readonly string[]).includes(value) ? value : null;
 }
 
-/** Paramètres réellement transmis (exporté pour les tests). */
-export function buildEventParams(params: EventParams): {
-  params: Record<string, string>;
-  count?: number;
-} {
+function nonNegativeInt(value: number | undefined, max: number): number | undefined {
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) return undefined;
+  return Math.min(Math.round(value), max);
+}
+
+/** Paramètres réellement transmis. Toute valeur libre est ignorée, jamais transformée. */
+export function buildEventParams(
+  params: EventParams,
+  name?: AnalyticsEvent,
+): Pick<PendingEvent, "params" | "count" | "duration"> {
+  const enriched: EventParams = {
+    source_screen: currentScreen(),
+    action_category: name ? EVENT_CATEGORY[name] : undefined,
+    ...params,
+  };
+  if (enriched.result === "failure" && !enriched.error_category) {
+    enriched.error_category = "unknown_error";
+  }
+  if (enriched.result === "cancelled" && !enriched.error_category) {
+    enriched.error_category = "cancelled";
+  }
+
   const out: Record<string, string> = {};
-  const withScreen: EventParams = { source_screen: currentScreen(), ...params };
   for (const key of EVENT_PARAM_KEYS) {
-    const value = token(withScreen[key] as string | undefined);
+    const value = allowedToken(key, enriched[key]);
     if (value) out[key] = value;
   }
-  const n = params.item_count;
-  const count =
-    typeof n === "number" && Number.isFinite(n) && n > 0
-      ? Math.min(Math.round(n), 100000)
-      : undefined;
-  return { params: out, count };
+  return {
+    params: out,
+    count: nonNegativeInt(params.item_count, 100000),
+    duration: nonNegativeInt(params.duration_ms, 86_400_000),
+  };
 }
 
-/**
- * Enregistre un événement. No-op hors Android natif ; appel asynchrone non
- * bloquant (le SDK met en file d'attente), aucune I/O côté WebView.
- */
+/* File bornée : les actions effectuées pendant le démarrage du pont ne sont
+   plus perdues. Elle ne tourne pas en boucle et ne fabrique aucun événement. */
+let pendingEvents: PendingEvent[] = [];
+let drainingEvents = false;
+
+function drainEvents(): void {
+  if (drainingEvents) return;
+  const native = plugin();
+  if (!native) return;
+  drainingEvents = true;
+  void (async () => {
+    while (pendingEvents.length > 0) {
+      const event = pendingEvents[0];
+      try {
+        await native.logEvent(event);
+        pendingEvents.shift();
+      } catch {
+        break;
+      }
+    }
+    drainingEvents = false;
+  })();
+}
+
 export function trackEvent(name: AnalyticsEvent, params: EventParams = {}): void {
-  const p = plugin();
-  if (!p || !EVENT_SET.has(name)) return;
-  const built = buildEventParams(params);
-  void p.logEvent({ name, params: built.params, count: built.count }).catch(() => {});
+  if (!EVENT_SET.has(name) || !isNativeRuntime() || nativePlatform() !== "android") return;
+  const built = buildEventParams(params, name);
+  pendingEvents.push({ name, ...built });
+  if (pendingEvents.length > 100) pendingEvents = pendingEvents.slice(-100);
+  drainEvents();
 }
 
-/** Issue standard d'une opération. */
 export function resultOf(ok: boolean, cancelled = false): AnalyticsResult {
   return cancelled ? "cancelled" : ok ? "success" : "failure";
 }
 
-/** Catégorie générique d'un type de fichier. */
+export function elapsedMs(startedAt: number): number {
+  return Math.max(0, Date.now() - startedAt);
+}
+
+/** Convertit une erreur en code général ; son message n'est jamais transmis. */
+export function errorCategoryOf(error: unknown): string {
+  const text = error instanceof Error ? `${error.name} ${error.message}` : String(error ?? "");
+  const normalized = text.toLowerCase();
+  if (normalized.includes("aborterror") || normalized.includes("cancel")) return "cancelled";
+  if (normalized.includes("quota")) return "quota_exceeded";
+  if (normalized.includes("permission") || normalized.includes("denied")) {
+    return "permission_error";
+  }
+  if (normalized.includes("network") || normalized.includes("fetch") || normalized.includes("http")) {
+    return "network_error";
+  }
+  if (normalized.includes("storage") || normalized.includes("disk") || normalized.includes("space")) {
+    return "storage_error";
+  }
+  if (normalized.includes("invalid") || normalized.includes("params")) return "invalid_input";
+  if (normalized.includes("unsupported") || normalized.includes("format")) {
+    return "unsupported_format";
+  }
+  return "processing_error";
+}
+
 function coarseKind(kind: FileKind): string {
   switch (kind) {
     case "text":
@@ -366,94 +629,93 @@ function coarseKind(kind: FileKind): string {
   }
 }
 
-/** Type générique d'une sélection : un seul type, ou `mixed`. */
 export function fileTypeOf(entries: readonly { kind: FileKind }[]): string | undefined {
   let type: string | undefined;
-  for (const e of entries) {
-    const k = coarseKind(e.kind);
-    if (type === undefined) type = k;
-    else if (type !== k) return "mixed";
+  for (const entry of entries) {
+    const kind = coarseKind(entry.kind);
+    if (type === undefined) type = kind;
+    else if (type !== kind) return "mixed";
   }
   return type;
 }
 
+export function archiveTypeOf(extension: string | null | undefined): string {
+  const value = (extension ?? "archive").toLowerCase();
+  return (EVENT_PARAM_VALUES.tool_type as readonly string[]).includes(value) ? value : "other";
+}
+
 /* ────────────────────────────────────────────────────────────────
-   Initialisation, ouvertures de l'application
+   Initialisation et cycle de vie
    ──────────────────────────────────────────────────────────────── */
 
-/** Au-delà de cette absence, un retour au premier plan est une ouverture. */
 const RESUME_AS_OPEN_MS = 30 * 60 * 1000;
-
 let installed = false;
+let lifecycleInstalled = false;
+let appOpenTracked = false;
 let hiddenAt: number | null = null;
+let retries = 0;
+let retryTimer: ReturnType<typeof setTimeout> | undefined;
 
-/**
- * Initialise la mesure : collecte activée, langue d'interface, écran courant,
- * ouverture de l'application (une seule fois par démarrage du processus).
- *
- * Si le pont natif n'est pas encore exposé, l'installation est retentée
- * quelques fois (sans cela aucun écran ni événement ne remontait).
- */
+function onVisibilityChange(): void {
+  if (document.visibilityState === "hidden") {
+    hiddenAt = Date.now();
+    if (flushTimer !== undefined) clearTimeout(flushTimer);
+    flushTimer = undefined;
+    return;
+  }
+
+  if (!installed) installAnalytics();
+  drainEvents();
+  const away = hiddenAt === null ? 0 : Date.now() - hiddenAt;
+  hiddenAt = null;
+  if (away >= RESUME_AS_OPEN_MS) {
+    lastLogged = null;
+    trackEvent("app_opened", { operation: "resume" });
+  }
+  scheduleFlush();
+}
+
+function installLifecycle(): void {
+  if (lifecycleInstalled) return;
+  lifecycleInstalled = true;
+  document.addEventListener("visibilitychange", onVisibilityChange);
+}
+
 export function installAnalytics(): void {
   if (installed || typeof window === "undefined") return;
-  const p = plugin();
-  if (!p) {
+  installLifecycle();
+  const native = plugin();
+  if (!native) {
     retryInstall();
     return;
   }
   installed = true;
+  retries = 0;
 
-  void p.setEnabled({ enabled: true }).catch(() => {});
-  // Langue choisie dans GeniusFiles (la langue du système est déjà
-  // collectée automatiquement par le SDK).
-  void p.setUserProperty({ name: "app_language", value: safeLocale() }).catch(() => {});
-  // Ancienne propriété redondante avec la dimension intégrée « Version de
-  // l'application » : elle est effacée (valeur vide = suppression).
-  void p.setUserProperty({ name: "app_version", value: "" }).catch(() => {});
+  // Le SDK est aussi initialisé dans GeniusFilesApplication, avant la WebView,
+  // pour les signaux automatiques app_open/session_start/user_engagement.
+  void native.setEnabled({ enabled: true }).catch(() => {});
+  void native.setUserProperty({ name: "app_language", value: safeLocale() }).catch(() => {});
+  void native.setUserProperty({ name: "app_version", value: "" }).catch(() => {});
 
-  trackEvent("application_opened", { operation: "cold_start" });
+  if (!appOpenTracked) {
+    appOpenTracked = true;
+    trackEvent("app_opened", { operation: "cold_start" });
+  }
+  drainEvents();
   scheduleFlush();
-
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden") {
-      hiddenAt = Date.now();
-      if (flushTimer !== undefined) {
-        clearTimeout(flushTimer);
-        flushTimer = undefined;
-      }
-      return;
-    }
-    const away = hiddenAt === null ? 0 : Date.now() - hiddenAt;
-    hiddenAt = null;
-    if (away >= RESUME_AS_OPEN_MS) {
-      // Nouvelle session côté Firebase : l'écran affiché est recompté pour
-      // qu'elle ait un écran d'arrivée. Un aller-retour bref (sélecteur de
-      // fichiers, partage, notification) ne compte ni ouverture ni écran.
-      lastLogged = null;
-      trackEvent("application_opened", { operation: "resume" });
-    }
-    scheduleFlush();
-  });
 }
 
 function safeLocale(): string {
   try {
-    return (
-      getLocale()
-        .slice(0, 12)
-        .replace(/[^\w-]/g, "") || "unknown"
-    );
+    return getLocale().slice(0, 12).replace(/[^\w-]/g, "") || "unknown";
   } catch {
     return "unknown";
   }
 }
 
-let retries = 0;
-let retryTimer: ReturnType<typeof setTimeout> | undefined;
-
 function retryInstall(): void {
-  if (installed || retryTimer !== undefined || retries >= 5) return;
-  if (!isNativeRuntime()) return;
+  if (installed || retryTimer !== undefined || retries >= 8 || !isNativeRuntime()) return;
   retries += 1;
   retryTimer = setTimeout(() => {
     retryTimer = undefined;
@@ -461,15 +723,23 @@ function retryInstall(): void {
   }, 400 * retries);
 }
 
-/** Réinitialisation de l'état (tests uniquement). */
 export function __resetAnalyticsForTests(): void {
   routeScreen = null;
   layers = [];
   layerSeq = 0;
   lastLogged = null;
+  screenInFlight = null;
   if (flushTimer !== undefined) clearTimeout(flushTimer);
   flushTimer = undefined;
+  if (retryTimer !== undefined) clearTimeout(retryTimer);
+  retryTimer = undefined;
+  if (lifecycleInstalled) document.removeEventListener("visibilitychange", onVisibilityChange);
+  lifecycleInstalled = false;
   bridge = null;
   installed = false;
+  appOpenTracked = false;
+  hiddenAt = null;
   retries = 0;
+  pendingEvents = [];
+  drainingEvents = false;
 }

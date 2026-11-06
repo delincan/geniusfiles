@@ -18,9 +18,13 @@
 - [x] Check shared focus rules and keyboard accessibility; five interaction tests passed and rapid taps confirmed in settings.
 - [ ] Validate scrolling inertia, system gestures and all readers on a physical Android device — requires an Android device.
 
-# Firebase Analytics audit
+# Firebase Analytics full audit
 
-- [x] Readable screen names, automatic Android screen tracking disabled, no duplicate screen views.
-- [x] New event naming with success/failure results; one event per user action.
-- [x] Crashlytics: JS errors grouped by real cause, current screen attached to crashes.
-- [ ] Confirm events in Firebase DebugView on a phone — requires a rebuilt APK on a physical device.
+- [ ] Audit native initialization, lifecycle, routes, event call sites, privacy and Crashlytics.
+- [ ] Complete stable French screen coverage and eliminate duplicate screen views.
+- [ ] Apply the final event taxonomy, parameters and one-event-per-action instrumentation.
+- [ ] Verify SDK collection, app lifecycle and Crashlytics without artificial events.
+- [ ] Add behavioral and native-contract tests for screens, events, parameters and privacy.
+- [ ] Run all tests and `bun run verify`.
+- [ ] Document Firebase dimensions, explorations and the Android DebugView protocol.
+- [ ] Confirm real events in Firebase DebugView on a phone — requires a rebuilt APK on a physical device.

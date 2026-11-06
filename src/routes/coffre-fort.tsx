@@ -1137,6 +1137,7 @@ function VaultBrowser() {
             icon={Star}
             label={t("vault.filter.favorites", { count: favs.length })}
             onClick={() => {
+              if (!showFavorites) trackEvent("favorites_opened", { tool_type: "vault" });
               setShowFavorites(true);
               setQuery("");
             }}

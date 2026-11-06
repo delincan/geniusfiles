@@ -9,27 +9,12 @@ import com.getcapacitor.annotation.CapacitorPlugin
 import com.google.firebase.analytics.FirebaseAnalytics
 
 /**
- * Pont entre la WebView et Google Analytics for Firebase.
+ * Second verrou de confidentialité, appliqué dans le processus Android.
  *
- *  - `logScreenView` : seul émetteur de `screen_view`. Le suivi automatique
- *    du SDK est désactivé dans le manifeste
- *    (`google_analytics_automatic_screen_reporting_enabled=false`) : il ne
- *    voyait que MainActivity / AdActivity. Seuls les noms d'écran de
- *    `ALLOWED_SCREENS` sont acceptés.
- *  - `logEvent` : noms d'événements et clés de paramètres en liste blanche,
- *    valeurs réduites à des jetons courts, plus un compteur `item_count`.
- *  - sessions, engagement, versions d'app, appareil, OS, pays, langue :
- *    collectés automatiquement par le SDK, aucun code requis.
- *
- * Confidentialité — ne transitent JAMAIS par ce pont : contenu ou nom ou
- * chemin de fichier, terme de recherche, données du coffre-fort, PIN / mot
- * de passe, texte Genius AI. `setUserId` n'est volontairement pas exposé.
- *
- * Coût : écritures en file d'attente asynchrone du SDK, aucune I/O
- * bloquante côté WebView.
- *
- * Les listes ci-dessous doivent rester alignées avec
- * `src/lib/native/analytics.ts` (vérifié par `analytics.test.ts`).
+ * Les chaînes ne sont jamais transformées en jetons : une valeur absente des
+ * listes blanches est ignorée. Un nom de fichier ou une recherche ne peut
+ * donc pas réapparaître sous une forme normalisée. Seuls des identifiants
+ * techniques et des nombres agrégés atteignent Firebase Analytics.
  */
 @CapacitorPlugin(name = "GeniusFilesAnalytics")
 class GeniusFilesAnalyticsPlugin : Plugin() {
@@ -40,14 +25,6 @@ class GeniusFilesAnalyticsPlugin : Plugin() {
             null
         }
 
-    /** Jetons techniques uniquement : lettres minuscules, chiffres, `_`. */
-    private fun token(raw: String?, max: Int): String {
-        val value = raw ?: return ""
-        val cleaned = value.lowercase().filter { (it in 'a'..'z') || (it in '0'..'9') || it == '_' }
-        return if (cleaned.length > max) cleaned.take(max) else cleaned
-    }
-
-    /** Noms d'écran autorisés (identiques à `SCREENS` côté WebView). */
     private val allowedScreens = setOf(
         "Accueil",
         "Gestionnaire de fichiers",
@@ -79,39 +56,16 @@ class GeniusFilesAnalyticsPlugin : Plugin() {
         "Autre écran",
     )
 
-    /** Vue d'écran : seul le nom logique et lisible de l'écran est transmis. */
-    @PluginMethod
-    fun logScreenView(call: PluginCall) {
-        val screen = call.getString("screen") ?: ""
-        val fa = analytics
-        if (fa == null || screen !in allowedScreens) {
-            call.resolve()
-            return
-        }
-        val params = Bundle()
-        params.putString(FirebaseAnalytics.Param.SCREEN_NAME, screen)
-        // La classe porte le même nom lisible : le rapport « Titre de la
-        // page et classe de l'écran » n'affiche plus « GeniusFiles ».
-        params.putString(FirebaseAnalytics.Param.SCREEN_CLASS, screen)
-        fa.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
-        call.resolve()
-    }
-
-    /** Clés de paramètres texte autorisées : aucune autre n'est transmise. */
-    private val allowedKeys = setOf(
-        "operation",
-        "result",
-        "file_type",
-        "source_screen",
-        "tool_type",
-        "action_category",
-    )
-
-    /** Événements autorisés : toute autre valeur est ignorée. */
     private val allowedEvents = setOf(
-        "application_opened",
+        "app_opened",
+        "category_opened",
+        "recent_files_opened",
+        "favorites_opened",
+        "trash_opened",
         "search_performed",
         "file_opened",
+        "media_player_used",
+        "document_viewer_used",
         "file_shared",
         "folder_created",
         "file_copied",
@@ -119,8 +73,11 @@ class GeniusFilesAnalyticsPlugin : Plugin() {
         "file_renamed",
         "file_deleted",
         "file_restored",
-        "file_compressed",
-        "file_extracted",
+        "files_compressed",
+        "files_extracted",
+        "cleaner_completed",
+        "organization_completed",
+        "application_action_completed",
         "pdf_tool_used",
         "pdf_created",
         "pdf_merged",
@@ -133,59 +90,159 @@ class GeniusFilesAnalyticsPlugin : Plugin() {
         "ai_request_completed",
         "ai_command_executed",
         "vault_opened",
-        "vault_file_added",
-        "vault_file_restored",
-        "vault_file_deleted",
+        "vault_operation_completed",
         "automation_created",
         "automation_enabled",
         "automation_disabled",
         "automation_executed",
+        "automation_completed",
         "editor_used",
     )
 
+    private val allowedOperations = setOf(
+        "cold_start", "resume", "open", "setup", "unlock", "folder",
+        "all_storage", "one_storage", "permanent", "trash", "encrypted",
+        "standard", "partial_selection", "all", "from_trash",
+        "permanent_from_trash", "empty_trash", "message", "retry", "manual",
+        "ai", "template", "recommendation", "ok", "partial", "failed",
+        "simulated", "save_new", "save_replace", "save_split", "add",
+        "restore", "delete", "execute", "cleanup", "apply_plan", "settings",
+        "backup", "uninstall_request", "unknown", "list_storage_roots", "list",
+        "search", "analyze", "properties", "create", "rename", "copy", "move",
+        "organize", "compress", "extract", "share", "sort", "filter",
+    )
+    private val allowedResults = setOf("success", "failure", "cancelled")
+    private val allowedFileTypes = setOf(
+        "folder", "image", "video", "audio", "document", "pdf", "archive",
+        "apk", "other", "mixed",
+    )
+    private val allowedSourceScreens = setOf(
+        "home", "file_manager", "recent_files", "category_images",
+        "category_videos", "category_audio", "category_documents",
+        "category_downloads", "search", "trash", "vault", "genius_ai",
+        "automations", "automation_history", "settings", "pdf_tools",
+        "photo_editor", "audio_editor", "document_editor", "image_viewer",
+        "video_player", "audio_player", "pdf_reader", "document_reader",
+        "app_manager", "cleaner", "organizer", "other",
+    )
+    private val allowedToolTypes = setOf(
+        "home", "file_manager", "recent_files", "category_images",
+        "category_videos", "category_audio", "category_documents",
+        "category_downloads", "search", "trash", "vault", "genius_ai",
+        "automations", "automation_history", "settings", "pdf_tools",
+        "photo_editor", "audio_editor", "document_editor", "image_viewer",
+        "video_player", "audio_player", "pdf_reader", "document_reader",
+        "app_manager", "cleaner", "organizer", "other", "images_to_pdf", "scan",
+        "text_to_pdf", "merge", "compress", "files_to_pdf", "pdf_to_images",
+        "signature", "extract", "extract_text", "split", "delete_pages",
+        "reorder", "rotate", "watermark", "add_text", "add_image", "fill_form",
+        "duplicate", "info", "scheduled_time", "daily", "weekly", "app_open",
+        "file_added", "folder_changed", "storage_low", "device_connected", "zip",
+        "7z", "tar", "gz", "tgz", "rar", "archive",
+    )
+    private val allowedActionCategories = setOf(
+        "navigation", "file_management", "browse", "search", "analyze", "archive",
+        "pdf", "ai", "vault", "automation", "editor", "media", "document",
+        "cleaner", "application", "mixed", "none", "other", "copy", "move",
+        "rename", "trash", "compress", "extract", "backup", "mkdir", "organize",
+        "cleaner_scan", "notify", "open_module",
+    )
+    private val allowedErrorCategories = setOf(
+        "network_error", "permission_error", "storage_error", "processing_error",
+        "quota_exceeded", "invalid_input", "unsupported_format", "cancelled",
+        "unknown_error",
+    )
+
+    private val allowedKeys = setOf(
+        "operation",
+        "result",
+        "file_type",
+        "source_screen",
+        "tool_type",
+        "action_category",
+        "error_category",
+    )
+
+    private val allowedValues = mapOf(
+        "operation" to allowedOperations,
+        "result" to allowedResults,
+        "file_type" to allowedFileTypes,
+        "source_screen" to allowedSourceScreens,
+        "tool_type" to allowedToolTypes,
+        "action_category" to allowedActionCategories,
+        "error_category" to allowedErrorCategories,
+    )
+
     @PluginMethod
-    fun logEvent(call: PluginCall) {
-        val name = token(call.getString("name"), 40)
-        val fa = analytics
-        if (fa == null || name.isEmpty() || name !in allowedEvents) {
-            call.resolve()
+    fun logScreenView(call: PluginCall) {
+        val screen = call.getString("screen") ?: ""
+        if (screen !in allowedScreens) {
+            call.reject("Unknown screen")
             return
         }
-        val bundle = Bundle()
-        val params = call.getObject("params")
-        if (params != null) {
-            for (key in allowedKeys) {
-                val value = token(params.optString(key, ""), 40)
-                if (value.isNotEmpty()) bundle.putString(key, value)
-            }
+        val fa = analytics
+        if (fa == null) {
+            call.reject("Firebase Analytics unavailable")
+            return
         }
-        val count = call.getInt("count")
-        if (count != null && count > 0) bundle.putLong("item_count", count.coerceAtMost(100000).toLong())
+        val params = Bundle()
+        params.putString(FirebaseAnalytics.Param.SCREEN_NAME, screen)
+        // screen_class reçoit le même libellé : Pages et écrans ne peut plus
+        // retomber sur MainActivity, quelle que soit la dimension affichée.
+        params.putString(FirebaseAnalytics.Param.SCREEN_CLASS, screen)
+        fa.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
+        call.resolve()
+    }
+
+    @PluginMethod
+    fun logEvent(call: PluginCall) {
+        val name = call.getString("name") ?: ""
+        if (name !in allowedEvents) {
+            call.reject("Unknown event")
+            return
+        }
+        val fa = analytics
+        if (fa == null) {
+            call.reject("Firebase Analytics unavailable")
+            return
+        }
+        val input: JSObject = call.getObject("params") ?: JSObject()
+        val bundle = Bundle()
+        val keys = input.keys()
+        while (keys.hasNext()) {
+            val key = keys.next()
+            if (key !in allowedKeys) continue
+            val value = input.getString(key) ?: continue
+            if (allowedValues[key]?.contains(value) == true) bundle.putString(key, value)
+        }
+        if (call.data.has("count")) {
+            val count = call.getInt("count") ?: 0
+            if (count >= 0) bundle.putLong("item_count", count.toLong().coerceAtMost(100000L))
+        }
+        if (call.data.has("duration")) {
+            val duration = call.getLong("duration") ?: 0L
+            if (duration >= 0L) bundle.putLong("duration_ms", duration.coerceAtMost(86400000L))
+        }
         fa.logEvent(name, bundle)
         call.resolve()
     }
 
-    /** Propriétés utilisateur autorisées (valeur vide = suppression). */
-    private val allowedUserProperties = setOf("app_language", "app_version")
-
     @PluginMethod
     fun setUserProperty(call: PluginCall) {
         val name = call.getString("name") ?: ""
-        val raw = call.getString("value") ?: ""
-        val value = raw.filter { it.isLetterOrDigit() || it == '_' || it == '-' || it == '.' }.take(36)
-        val fa = analytics
-        if (fa == null || name !in allowedUserProperties) {
-            call.resolve()
-            return
+        val value = call.getString("value") ?: ""
+        val valid = when (name) {
+            "app_language" -> value.matches(Regex("[A-Za-z0-9_-]{1,12}"))
+            "app_version" -> value.isEmpty() // suppression de l'ancienne propriété
+            else -> false
         }
-        fa.setUserProperty(name, value.ifEmpty { null })
+        if (valid) analytics?.setUserProperty(name, value)
         call.resolve()
     }
 
     @PluginMethod
     fun setEnabled(call: PluginCall) {
-        val enabled = call.getBoolean("enabled", true) ?: true
-        analytics?.setAnalyticsCollectionEnabled(enabled)
+        analytics?.setAnalyticsCollectionEnabled(call.getBoolean("enabled", true) ?: true)
         call.resolve()
     }
 
