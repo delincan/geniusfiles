@@ -780,6 +780,7 @@ function AppDetailsSheet({
 
   const handleOpen = async () => {
     const ok = await openApp(app.packageName);
+    trackEvent("application_action_completed", { operation: "open", result: resultOf(ok) });
     if (!ok)
       toast.error(t("organize.apps.toast.openFailed.title"), {
         description: t("organize.apps.toast.openFailed.desc"),
@@ -788,6 +789,7 @@ function AppDetailsSheet({
 
   const handleSettings = async () => {
     const ok = await openAppSettings(app.packageName);
+    trackEvent("application_action_completed", { operation: "settings", result: resultOf(ok) });
     if (!ok)
       toast.error(t("organize.apps.toast.settingsFailed.title"), {
         description: t("organize.apps.toast.settingsFailed.desc"),
@@ -804,6 +806,7 @@ function AppDetailsSheet({
       updated: formatDate(app.lastUpdateTime),
     });
     const ok = await shareAppInfo(text);
+    trackEvent("application_action_completed", { operation: "share", result: resultOf(ok) });
     if (!ok)
       toast.error(t("organize.apps.toast.shareFailed.title"), {
         description: t("organize.apps.toast.shareFailed.desc"),
@@ -811,9 +814,15 @@ function AppDetailsSheet({
   };
 
   const runBackup = async () => {
+    const startedAt = Date.now();
     setBusy(true);
     const res = await backupApk(app.packageName);
     setBusy(false);
+    trackEvent("application_action_completed", {
+      operation: "backup",
+      result: resultOf(res.ok),
+      duration_ms: Date.now() - startedAt,
+    });
     if (res.ok) {
       toast.success(t("organize.apps.toast.backupDone.title"), {
         description: t("organize.apps.toast.backupDone.desc", {
@@ -856,6 +865,10 @@ function AppDetailsSheet({
       },
       async () => {
         const ok = await uninstallApp(app.packageName);
+        trackEvent("application_action_completed", {
+          operation: "uninstall_request",
+          result: resultOf(ok),
+        });
         if (!ok)
           toast.error(t("organize.apps.toast.uninstallFailed.title"), {
             description: t("organize.apps.toast.uninstallFailed.desc"),

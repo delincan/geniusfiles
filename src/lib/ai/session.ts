@@ -125,6 +125,9 @@ function advance(id: StepId) {
 }
 
 function startTask() {
+  taskStartedAt = Date.now();
+  taskError = null;
+  taskCategories = new Set();
   if (closeTimer) {
     clearTimeout(closeTimer);
     closeTimer = null;
@@ -147,6 +150,9 @@ function startTask() {
 /** Origine de la tâche en cours et annulation volontaire (mesure d'usage). */
 let taskOrigin: "message" | "retry" = "message";
 let taskCancelled = false;
+let taskStartedAt = 0;
+let taskError: unknown = null;
+let taskCategories = new Set<string>();
 
 function endTask(withFailure = false) {
   if (phase === "idle") return;
@@ -156,6 +162,18 @@ function endTask(withFailure = false) {
     trackEvent("ai_request_completed", {
       operation: taskOrigin,
       result: taskCancelled ? "cancelled" : withFailure ? "failure" : "success",
+      action_category:
+        taskCategories.size === 0
+          ? "none"
+          : taskCategories.size === 1
+            ? [...taskCategories][0]
+            : "mixed",
+      error_category: taskCancelled
+        ? "cancelled"
+        : withFailure
+          ? errorCategoryOf(taskError)
+          : undefined,
+      duration_ms: elapsedMs(taskStartedAt),
     });
   }
   taskCancelled = false;
@@ -289,11 +307,14 @@ function createChat(id: string, messages: UIMessage[]): Chat<UIMessage> {
     }),
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
     onError: (err) => {
+      taskError = err;
       aiLog("erreur assistant", err);
       endTask(true);
     },
     onToolCall: ({ toolCall }) => {
       const startedAt = Date.now();
+      const commandType = String((toolCall.input as { type?: unknown } | null)?.type ?? "");
+      taskCategories.add(aiCommandCategory(commandType));
       pendingTools += 1;
       advance("execute");
       lastActivity = Date.now();
@@ -374,6 +395,7 @@ export function sendUserMessage(text: string): boolean {
     void c.sendMessage({ text }).finally(persist);
     commitQuota(hold);
   } catch (err) {
+    taskError = err;
     releaseQuota(hold);
     endTask(true);
     throw err;
@@ -385,8 +407,8 @@ export function sendUserMessage(text: string): boolean {
 }
 
 export function stopTask() {
-  void chat?.stop();
   taskCancelled = true;
+  void chat?.stop();
   endTask(false);
 }
 
