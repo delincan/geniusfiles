@@ -80,6 +80,7 @@ import type {
 } from "@/lib/apps/types";
 import { useT, t as translate } from "@/lib/i18n";
 import type { TransValues } from "@/lib/i18n";
+import { resultOf, trackEvent } from "@/lib/native/analytics";
 
 type TFn = (key: string, values?: TransValues) => string;
 

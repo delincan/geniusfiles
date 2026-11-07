@@ -61,6 +61,7 @@ import { useT, t as translate, formatNumber } from "@/lib/i18n";
 import { BACK_PRIORITY, useBackHandler } from "@/lib/navigation/back-stack";
 import { InlineAdBanner } from "@/components/ads/InlineAdBanner";
 import { resumeAds, suspendAds } from "@/lib/ads/policy";
+import { errorCategoryOf, resultOf, trackEvent } from "@/lib/native/analytics";
 
 export const Route = createFileRoute("/nettoyeur")({
   head: () => ({

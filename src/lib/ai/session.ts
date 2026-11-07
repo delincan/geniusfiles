@@ -1,4 +1,4 @@
-import { trackEvent } from "@/lib/native/analytics";
+import { elapsedMs, errorCategoryOf, trackEvent } from "@/lib/native/analytics";
 /**
  * Session Genius AI — la tâche vit en dehors de l'écran.
  *
@@ -18,7 +18,7 @@ import {
 } from "ai";
 import { chatApiFallbackUrls, chatApiUrl } from "./api-url";
 import { aiLog, chatFetch } from "./diagnostics";
-import { runEngineTool } from "./tools/execute";
+import { aiCommandCategory, runEngineTool } from "./tools/execute";
 import { getEngineStage } from "./tools/stage";
 import { errorMessage } from "@/lib/errors/humanize";
 import { getConversation, newId, saveConversation, setActiveId } from "./conversations";

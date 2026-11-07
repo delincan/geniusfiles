@@ -62,6 +62,7 @@ import type {
   SmartCollection,
 } from "@/lib/organizer";
 import { BACK_PRIORITY, useBackHandler } from "@/lib/navigation/back-stack";
+import { errorCategoryOf, resultOf, trackEvent } from "@/lib/native/analytics";
 
 export const Route = createFileRoute("/organisation")({
   head: () => ({

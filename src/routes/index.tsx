@@ -1,4 +1,4 @@
-import { fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
+import { archiveTypeOf, fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
 import { useAnalyticsScreen } from "@/lib/native/useAnalyticsScreen";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppNavigate } from "@/lib/navigation/pick-nav";
