@@ -26,7 +26,7 @@ describe("PDF operation results", () => {
       "pdf_merged",
       expect.objectContaining({ result: "success", item_count: 3, tool_type: "merge" }),
     );
-    expect(mockedTrack.mock.calls[0][1].duration_ms).toBeGreaterThanOrEqual(0);
+    expect(mockedTrack.mock.calls[0]?.[1]?.duration_ms).toBeGreaterThanOrEqual(0);
   });
 
   it("records one failure with a general network category and no raw error", async () => {
