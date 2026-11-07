@@ -33,7 +33,7 @@ const KOTLIN = readFileSync(
 );
 
 function kotlinSet(name: string): string[] {
-  const match = KOTLIN.match(new RegExp(`val ${name} = setOf\\(([\\s\\S]*?)\\n\\s*\\)`));
+  const match = KOTLIN.match(new RegExp(`val ${name} = setOf\\(([\\s\\S]*?)\\)`));
   if (!match) throw new Error(`set ${name} not found`);
   return [...match[1].matchAll(/"([^"]+)"/g)].map((item) => item[1]);
 }
@@ -66,6 +66,7 @@ const loggedScreens = (bridge: Bridge) =>
 beforeEach(() => {
   vi.useFakeTimers();
   __resetAnalyticsForTests();
+  delete (window as unknown as { Capacitor?: unknown }).Capacitor;
 });
 
 afterEach(() => {

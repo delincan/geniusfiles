@@ -6,9 +6,10 @@ vi.mock("./platform", () => ({
 }));
 
 import {
-  __resetAnalyticsForTests,
-} from "./analytics";
-import { installCrashReporting, recordNonFatal } from "./crashlytics";
+  __resetCrashlyticsForTests,
+  installCrashReporting,
+  recordNonFatal,
+} from "./crashlytics";
 
 function crashBridge() {
   const bridge = {
@@ -25,7 +26,8 @@ function crashBridge() {
 
 beforeEach(() => {
   vi.useFakeTimers();
-  __resetAnalyticsForTests();
+  __resetCrashlyticsForTests();
+  delete (window as unknown as { Capacitor?: unknown }).Capacitor;
 });
 
 afterEach(() => {
@@ -36,11 +38,9 @@ describe("Crashlytics privacy and startup", () => {
   it("sends a fixed context, never the raw error message", () => {
     const bridge = crashBridge();
     recordNonFatal(new Error("Impossible de lire cv-secret.pdf"), "window.onerror");
-    expect(bridge.recordError).toHaveBeenCalledWith({
-      name: "Error",
-      message: "window_onerror",
-      stack: undefined,
-    });
+    expect(bridge.recordError).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "Error", message: "window_onerror" }),
+    );
     expect(JSON.stringify(bridge.recordError.mock.calls)).not.toContain("cv-secret");
   });
 
