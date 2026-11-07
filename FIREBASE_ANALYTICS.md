@@ -123,25 +123,25 @@ Ces réglages sont manuels : le code ne crée pas automatiquement les rapports p
 
 Dans **Administration → Affichage des données → Définitions personnalisées → Dimensions**, créer :
 
-| Nom | Paramètre | Portée |
-|---|---|---|
-| Résultat | `result` | Événement |
-| Opération | `operation` | Événement |
-| Type de fichier | `file_type` | Événement |
-| Écran source | `source_screen` | Événement |
-| Type d’outil | `tool_type` | Événement |
-| Catégorie d’action | `action_category` | Événement |
-| Catégorie d’erreur | `error_category` | Événement |
-| Langue de l’app | `app_language` | Utilisateur |
+| Nom                | Paramètre         | Portée      |
+| ------------------ | ----------------- | ----------- |
+| Résultat           | `result`          | Événement   |
+| Opération          | `operation`       | Événement   |
+| Type de fichier    | `file_type`       | Événement   |
+| Écran source       | `source_screen`   | Événement   |
+| Type d’outil       | `tool_type`       | Événement   |
+| Catégorie d’action | `action_category` | Événement   |
+| Catégorie d’erreur | `error_category`  | Événement   |
+| Langue de l’app    | `app_language`    | Utilisateur |
 
 ### Métriques personnalisées
 
 Dans **Définitions personnalisées → Métriques**, créer :
 
-| Nom | Paramètre | Unité |
-|---|---|---|
-| Éléments concernés | `item_count` | Standard |
-| Durée opération | `duration_ms` | Standard, valeur exprimée en millisecondes |
+| Nom                | Paramètre     | Unité                                      |
+| ------------------ | ------------- | ------------------------------------------ |
+| Éléments concernés | `item_count`  | Standard                                   |
+| Durée opération    | `duration_ms` | Standard, valeur exprimée en millisecondes |
 
 Les nouvelles définitions ne recalculent pas les anciennes données. Les rapports standard peuvent prendre de 24 à 48 heures.
 

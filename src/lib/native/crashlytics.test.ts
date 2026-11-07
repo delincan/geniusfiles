@@ -5,11 +5,7 @@ vi.mock("./platform", () => ({
   nativePlatform: () => "android",
 }));
 
-import {
-  __resetCrashlyticsForTests,
-  installCrashReporting,
-  recordNonFatal,
-} from "./crashlytics";
+import { __resetCrashlyticsForTests, installCrashReporting, recordNonFatal } from "./crashlytics";
 
 function crashBridge() {
   const bridge = {

@@ -149,9 +149,9 @@ describe("screen names and native configuration", () => {
     const services = JSON.parse(
       readFileSync(path.join(ROOT, "android-overrides/app/google-services.json"), "utf8"),
     ) as { client: Array<{ client_info: { android_client_info: { package_name: string } } }> };
-    expect(services.client.map((client) => client.client_info.android_client_info.package_name)).toContain(
-      "app.geniusfiles.mobile",
-    );
+    expect(
+      services.client.map((client) => client.client_info.android_client_info.package_name),
+    ).toContain("app.geniusfiles.mobile");
   });
 });
 

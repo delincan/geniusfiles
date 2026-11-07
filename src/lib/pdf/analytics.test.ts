@@ -14,9 +14,13 @@ beforeEach(() => mockedTrack.mockClear());
 
 describe("PDF operation results", () => {
   it("records one success with its real output count and duration", async () => {
-    await expect(trackPdf("merge", async () => [1, 2, 3], (result) => result.length)).resolves.toEqual([
-      1, 2, 3,
-    ]);
+    await expect(
+      trackPdf(
+        "merge",
+        async () => [1, 2, 3],
+        (result) => result.length,
+      ),
+    ).resolves.toEqual([1, 2, 3]);
     expect(mockedTrack).toHaveBeenCalledTimes(1);
     expect(mockedTrack).toHaveBeenCalledWith(
       "pdf_merged",

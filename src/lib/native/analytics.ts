@@ -604,10 +604,18 @@ export function errorCategoryOf(error: unknown): string {
   if (normalized.includes("permission") || normalized.includes("denied")) {
     return "permission_error";
   }
-  if (normalized.includes("network") || normalized.includes("fetch") || normalized.includes("http")) {
+  if (
+    normalized.includes("network") ||
+    normalized.includes("fetch") ||
+    normalized.includes("http")
+  ) {
     return "network_error";
   }
-  if (normalized.includes("storage") || normalized.includes("disk") || normalized.includes("space")) {
+  if (
+    normalized.includes("storage") ||
+    normalized.includes("disk") ||
+    normalized.includes("space")
+  ) {
     return "storage_error";
   }
   if (normalized.includes("invalid") || normalized.includes("params")) return "invalid_input";
@@ -708,7 +716,11 @@ export function installAnalytics(): void {
 
 function safeLocale(): string {
   try {
-    return getLocale().slice(0, 12).replace(/[^\w-]/g, "") || "unknown";
+    return (
+      getLocale()
+        .slice(0, 12)
+        .replace(/[^\w-]/g, "") || "unknown"
+    );
   } catch {
     return "unknown";
   }

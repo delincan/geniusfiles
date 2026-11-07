@@ -198,8 +198,7 @@ function OrganizationPage() {
         trackEvent("organization_completed", {
           operation,
           result: resultOf(res.failed.length === 0, res.cancelled),
-          error_category:
-            res.failed.length > 0 ? errorCategoryOf(res.failed[0].reason) : undefined,
+          error_category: res.failed.length > 0 ? errorCategoryOf(res.failed[0].reason) : undefined,
           item_count: plan.actions.length,
           duration_ms: Date.now() - startedAt,
         });
