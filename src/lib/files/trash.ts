@@ -511,7 +511,7 @@ export async function restoreItems(
   trackEvent("file_restored", {
     operation: "from_trash",
     result: resultOf(res.failed.length === 0),
-    item_count: res.restored,
+    item_count: items.length,
   });
   return res;
 }

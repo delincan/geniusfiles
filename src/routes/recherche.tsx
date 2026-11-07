@@ -657,7 +657,7 @@ export function SearchPage() {
         operation: permanent ? "permanent" : "trash",
         result: resultOf(failed === 0),
         file_type: fileTypeOf(items),
-        item_count: ok,
+        item_count: items.length,
       });
       clearSelection();
       setResults((prev) => prev.filter((r) => !removed.has(resultId(r))));

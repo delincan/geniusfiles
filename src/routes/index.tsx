@@ -958,7 +958,7 @@ export function FilesPage() {
         operation: opts?.permanent ? "permanent" : "trash",
         result: resultOf(failed.length === 0, cancelled),
         file_type: fileTypeOf(entries),
-        item_count: succeeded,
+        item_count: entries.length,
       });
       // Seuls les éléments réellement supprimés quittent la sélection ;
       // les échecs y restent pour permettre une nouvelle tentative.
