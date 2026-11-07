@@ -232,11 +232,18 @@ function CleanerPage() {
 
   const doCleanup = useCallback(async () => {
     if (!selectedItems.length) return;
+    const startedAt = Date.now();
     setConfirming(false);
     setCleaning(true);
     setProgress({ processed: 0, total: selectedItems.length, bytes: 0, totalBytes: selectedBytes });
     try {
       const res = await runCleanup(selectedItems, (p) => setProgress(p));
+      trackEvent("cleaner_completed", {
+        operation: "cleanup",
+        result: resultOf(res.failed === 0),
+        item_count: selectedItems.length,
+        duration_ms: Date.now() - startedAt,
+      });
       const detail = res.failures
         .slice(0, 3)
         .map((f) => `${f.name} — ${f.reason}`)
@@ -270,6 +277,13 @@ function CleanerPage() {
       setOpenCategory(null);
       setTick((t) => t + 1);
     } catch (err) {
+      trackEvent("cleaner_completed", {
+        operation: "cleanup",
+        result: "failure",
+        error_category: errorCategoryOf(err),
+        item_count: selectedItems.length,
+        duration_ms: Date.now() - startedAt,
+      });
       toast.error(t("cleaner.toast.failed.title"), {
         description: errorMessage(err, t("cleaner.toast.failed.desc")),
       });
