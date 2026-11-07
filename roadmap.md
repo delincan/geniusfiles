@@ -25,6 +25,6 @@
 - [x] Apply the final event taxonomy, parameters and one-event-per-action instrumentation.
 - [x] Verify SDK collection, app lifecycle and Crashlytics without artificial events.
 - [x] Add behavioral and native-contract tests for screens, events, parameters and privacy.
-- [ ] Run all tests and `bun run verify`.
+- [x] Run all tests and `bun run verify` (36 tests passed; typecheck, lint, format and build green).
 - [x] Document Firebase dimensions, explorations and the Android DebugView protocol.
 - [ ] Confirm real events in Firebase DebugView on a phone — requires a rebuilt APK on a physical device.
