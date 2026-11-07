@@ -152,3 +152,11 @@ export function setCrashRoute(screenId: string): void {
   const screen = /^[a-z0-9_-]{1,40}$/.test(screenId) ? screenId : "other";
   void native.setKeys({ keys: { webview_screen: screen } }).catch(() => {});
 }
+
+export function __resetCrashlyticsForTests(): void {
+  if (retryTimer !== undefined) clearTimeout(retryTimer);
+  retryTimer = undefined;
+  retries = 0;
+  installed = false;
+  bridge = null;
+}

@@ -1,4 +1,4 @@
-import { fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
+import { archiveTypeOf, fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
 import { useAnalyticsScreen } from "@/lib/native/useAnalyticsScreen";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppNavigate } from "@/lib/navigation/pick-nav";
@@ -958,7 +958,7 @@ export function FilesPage() {
         operation: opts?.permanent ? "permanent" : "trash",
         result: resultOf(failed.length === 0, cancelled),
         file_type: fileTypeOf(entries),
-        item_count: succeeded,
+        item_count: entries.length,
       });
       // Seuls les éléments réellement supprimés quittent la sélection ;
       // les échecs y restent pour permettre une nouvelle tentative.

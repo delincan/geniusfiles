@@ -100,10 +100,8 @@ import type { TransValues } from "@/lib/i18n";
 
 type TFn = (key: string, values?: TransValues) => string;
 
-/** Dernière recherche comptée (survit au démontage de l'écran). */
+/** Dernière recherche terminée et comptée (survit au démontage de l'écran). */
 let lastCountedSearch: string | null = null;
-/** Délai de stabilité d'une requête avant d'être comptée. */
-const SEARCH_COUNT_SETTLE_MS = 1500;
 
 export const Route = createFileRoute("/recherche")({
   head: () => ({
@@ -379,6 +377,7 @@ export function SearchPage() {
       return;
     }
 
+    const searchStartedAt = Date.now();
     setScanning(true);
     let latestScanned = 0;
     let firstBatch = true;
@@ -412,6 +411,21 @@ export function SearchPage() {
             setResults([]);
           }
           setCachedSearch(cacheKey, latestResults, latestScanned);
+          // Une recherche terminée = un événement, zéro résultat compris.
+          // Le terme, les filtres et les noms de fichiers restent locaux.
+          if (cacheKey !== lastCountedSearch) {
+            lastCountedSearch = cacheKey;
+            trackEvent("search_performed", {
+              operation: scope
+                ? "folder"
+                : filters.rootId === "all"
+                  ? "all_storage"
+                  : "one_storage",
+              item_count: latestResults.length,
+              result: failedProviders.length > 0 ? "failure" : "success",
+              duration_ms: Date.now() - searchStartedAt,
+            });
+          }
           finishRefresh();
           if (failedProviders.length > 0) {
             toast.warning(translate("search.toast.partial.title"), {
@@ -429,23 +443,8 @@ export function SearchPage() {
       setHistory(pushSearchHistory(trimmed));
     }, 900);
 
-    // Mesure d'usage : la recherche est instantanée (un scan par frappe) ;
-    // seule une requête restée stable est comptée, une seule fois. Un
-    // rafraîchissement, un retour sur l'écran ou une mise à jour de la
-    // liste ne recomptent rien. Le terme recherché n'est jamais transmis.
-    const countTimer = window.setTimeout(() => {
-      if (cacheKey === lastCountedSearch) return;
-      lastCountedSearch = cacheKey;
-      trackEvent("search_performed", {
-        operation: scope ? "folder" : filters.rootId === "all" ? "all_storage" : "one_storage",
-        item_count: latestResults.length,
-        result: "success",
-      });
-    }, SEARCH_COUNT_SETTLE_MS);
-
     return () => {
       active = false;
-      window.clearTimeout(countTimer);
       window.clearTimeout(timer);
       runRef.current?.abort();
     };
@@ -658,7 +657,7 @@ export function SearchPage() {
         operation: permanent ? "permanent" : "trash",
         result: resultOf(failed === 0),
         file_type: fileTypeOf(items),
-        item_count: ok,
+        item_count: items.length,
       });
       clearSelection();
       setResults((prev) => prev.filter((r) => !removed.has(resultId(r))));

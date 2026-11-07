@@ -62,6 +62,7 @@ import type {
   SmartCollection,
 } from "@/lib/organizer";
 import { BACK_PRIORITY, useBackHandler } from "@/lib/navigation/back-stack";
+import { errorCategoryOf, resultOf, trackEvent } from "@/lib/native/analytics";
 
 export const Route = createFileRoute("/organisation")({
   head: () => ({
@@ -180,6 +181,10 @@ function OrganizationPage() {
 
   const runApplyPlan = useCallback(
     async (plan: OrgPlan) => {
+      const startedAt = Date.now();
+      const operation = plan.actions.every((action) => action.kind === "rename")
+        ? "rename"
+        : "apply_plan";
       setConfirmPlan(null);
       setPreviewFor(null);
       setProgress({ processed: 0, total: plan.actions.length });
@@ -189,6 +194,13 @@ function OrganizationPage() {
           signal: ctrl,
           onProgress: (p) =>
             setProgress({ processed: p.processed, total: p.total, label: p.currentLabel }),
+        });
+        trackEvent("organization_completed", {
+          operation,
+          result: resultOf(res.failed.length === 0, res.cancelled),
+          error_category: res.failed.length > 0 ? errorCategoryOf(res.failed[0].reason) : undefined,
+          item_count: plan.actions.length,
+          duration_ms: Date.now() - startedAt,
         });
         if (res.cancelled) {
           toast.info(t("organize.toast.interrupted.title"), {
@@ -205,6 +217,13 @@ function OrganizationPage() {
         }
         await runScan();
       } catch (err) {
+        trackEvent("organization_completed", {
+          operation,
+          result: "failure",
+          error_category: errorCategoryOf(err),
+          item_count: plan.actions.length,
+          duration_ms: Date.now() - startedAt,
+        });
         toast.error(t("organize.toast.applyFailed.title"), {
           description: errorMessage(err, t("organize.toast.applyFailed.desc")),
         });

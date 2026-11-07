@@ -42,7 +42,12 @@ export function trackPdfToolOpened(tool: string): void {
 }
 
 function isAbort(err: unknown): boolean {
-  return err instanceof Error && err.name === "AbortError";
+  return (
+    (typeof DOMException !== "undefined" &&
+      err instanceof DOMException &&
+      err.name === "AbortError") ||
+    (err instanceof Error && err.name === "AbortError")
+  );
 }
 
 /** L'erreur est relancée sans modifier le comportement de l'outil. */

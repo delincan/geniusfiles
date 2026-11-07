@@ -20,11 +20,11 @@
 
 # Firebase Analytics full audit
 
-- [ ] Audit native initialization, lifecycle, routes, event call sites, privacy and Crashlytics.
-- [ ] Complete stable French screen coverage and eliminate duplicate screen views.
-- [ ] Apply the final event taxonomy, parameters and one-event-per-action instrumentation.
-- [ ] Verify SDK collection, app lifecycle and Crashlytics without artificial events.
-- [ ] Add behavioral and native-contract tests for screens, events, parameters and privacy.
-- [ ] Run all tests and `bun run verify`.
-- [ ] Document Firebase dimensions, explorations and the Android DebugView protocol.
+- [x] Audit native initialization, lifecycle, routes, event call sites, privacy and Crashlytics.
+- [x] Complete stable French screen coverage and eliminate duplicate screen views.
+- [x] Apply the final event taxonomy, parameters and one-event-per-action instrumentation.
+- [x] Verify SDK collection, app lifecycle and Crashlytics without artificial events.
+- [x] Add behavioral and native-contract tests for screens, events, parameters and privacy.
+- [x] Run all tests and `bun run verify` (36 tests passed; typecheck, lint, format and build green).
+- [x] Document Firebase dimensions, explorations and the Android DebugView protocol.
 - [ ] Confirm real events in Firebase DebugView on a phone — requires a rebuilt APK on a physical device.
