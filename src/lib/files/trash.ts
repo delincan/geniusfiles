@@ -524,7 +524,7 @@ export async function permanentDelete(items: TrashItem[]): Promise<{
   trackEvent("file_deleted", {
     operation: "permanent_from_trash",
     result: resultOf(res.failed.length === 0),
-    item_count: res.deleted,
+    item_count: items.length,
   });
   return res;
 }
@@ -534,7 +534,7 @@ export async function emptyTrash(): Promise<{ deleted: number; failed: number }>
   trackEvent("file_deleted", {
     operation: "empty_trash",
     result: resultOf(res.failed === 0),
-    item_count: res.deleted,
+    item_count: res.deleted + res.failed,
   });
   return res;
 }

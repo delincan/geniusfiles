@@ -60,4 +60,5 @@ le job `validate` échoue et bloque la génération de l'APK/AAB si `verify` éc
 
 - Screen views come only from `src/lib/native/analytics.ts` (route + `useAnalyticsScreen` layers); Firebase automatic screen reporting stays disabled in the manifest, otherwise reports show MainActivity/AdActivity and duplicate `screen_view`.
 - User-facing screens/routes record one event per user action after it completes; shared lib operations (file ops, archive, search engine) stay untracked because AI, automations and multi-folder selections reuse them.
-- Event names, param keys and screen names are whitelisted in both `analytics.ts` and `GeniusFilesAnalyticsPlugin.kt`; `analytics.test.ts` enforces they match.
+- Event names, parameter keys and every text value are allowlisted in both `analytics.ts` and `GeniusFilesAnalyticsPlugin.kt`; unknown free text is dropped rather than normalized, and `analytics.test.ts` enforces parity.
+- Native Firebase initializes in `GeniusFilesApplication` before the WebView; the JS bridge queues real events during startup and marks a screen delivered only after the native call succeeds.

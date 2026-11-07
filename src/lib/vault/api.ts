@@ -705,7 +705,7 @@ export async function addFromPublic(
       duration_ms: Date.now() - startedAt,
     });
     return res;
-  } catch {
+  } catch (error) {
     trackEvent("vault_operation_completed", {
       operation: "add",
       result: "failure",
@@ -730,7 +730,7 @@ export async function restoreItems(
       duration_ms: Date.now() - startedAt,
     });
     return res;
-  } catch {
+  } catch (error) {
     trackEvent("vault_operation_completed", {
       operation: "restore",
       result: "failure",
@@ -752,7 +752,7 @@ export async function permanentDelete(items: VaultItem[]): Promise<VaultDeleteRe
       duration_ms: Date.now() - startedAt,
     });
     return res;
-  } catch {
+  } catch (error) {
     trackEvent("vault_operation_completed", {
       operation: "delete",
       result: "failure",
