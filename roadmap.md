@@ -28,3 +28,8 @@
 - [x] Run all tests and `bun run verify` (36 tests passed; typecheck, lint, format and build green).
 - [x] Document Firebase dimensions, explorations and the Android DebugView protocol.
 - [ ] Confirm real events in Firebase DebugView on a phone — requires a rebuilt APK on a physical device.
+
+# Google Analytics connection guidance
+
+- [x] Explain where to find a web Measurement ID and distinguish browser tracking from access to Android Firebase reports.
+- [ ] Connect for reading Analytics reports — no connection completed; requires the Read analytics insights option.
