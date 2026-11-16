@@ -415,7 +415,7 @@ function TrashPage() {
                   role="menu"
                   className="glass-panel absolute right-0 top-11 z-40 w-60 overflow-hidden rounded-2xl shadow-soft"
                 >
-                  <p className="px-3 pb-1 pt-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                  <p className="px-3 pb-1 pt-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                     {t("cleaner.trash.sortBy")}
                   </p>
                   {(Object.keys(sortLabel(t)) as SortKey[]).map((key) => (
@@ -549,7 +549,7 @@ function TrashPage() {
                         <div className="flex items-center gap-1.5">
                           <p className="gf-row-title truncate">{it.name}</p>
                           {orphan ? (
-                            <span className="shrink-0 rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide text-amber-400">
+                            <span className="shrink-0 rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wide text-amber-400">
                               {t("cleaner.trash.orphanBadge")}
                             </span>
                           ) : null}
@@ -745,7 +745,7 @@ function TrashPage() {
                   className="flex items-center justify-between gap-2 border-b border-border px-3 py-2 text-[12px] last:border-b-0"
                 >
                   <span className="truncate">{f.name}</span>
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     {f.reason === "PARENT_MISSING"
                       ? t("cleaner.trash.restoreOutcome.reason.parentMissing")
                       : f.reason === "MISSING"

@@ -1278,7 +1278,7 @@ function MergeSheet({ onClose }: { onClose: () => void }) {
                       <span className="w-5 text-center text-muted-foreground">{i + 1}</span>
                       <div className="min-w-0 flex-1">
                         <div className="truncate">{s.path.split("/").pop()}</div>
-                        <div className="text-[10px] text-muted-foreground">
+                        <div className="text-[11px] text-muted-foreground">
                           {s.pageCount == null
                             ? t("pdf.analyseEnCours")
                             : `${s.pageCount} page(s)${s.size ? ` · ${formatSize(s.size)}` : ""}`}
@@ -1286,7 +1286,7 @@ function MergeSheet({ onClose }: { onClose: () => void }) {
                       </div>
                       <button
                         onClick={() => setExpanded(s.path)}
-                        className="rounded-md border border-border px-2 py-1 text-[10px]"
+                        className="rounded-md border border-border px-2 py-1 text-[11px]"
                         title={t("organize.preview.defaultTitle")}
                       >
                         {t("organize.preview.defaultTitle")}
@@ -3865,7 +3865,7 @@ function SearchSheet({ onClose }: { onClose: () => void }) {
                       key={i}
                       className="rounded-lg border border-border bg-surface p-2 text-[12px]"
                     >
-                      <span className="mr-2 rounded bg-primary/15 px-1.5 py-0.5 text-[10px] text-primary">
+                      <span className="mr-2 rounded bg-primary/15 px-1.5 py-0.5 text-[11px] text-primary">
                         p. {h.page}
                       </span>
                       {h.snippet}

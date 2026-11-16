@@ -61,7 +61,7 @@ export function SortMenu({
       aria-label={t("files.sort.optionsAria")}
       className={`w-60 overflow-hidden rounded-2xl border border-border-strong bg-popover p-1.5 text-popover-foreground shadow-elevated ${className}`}
     >
-      <p className="px-2.5 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="px-2.5 pb-1 pt-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         {t("files.sort.by")}
       </p>
       {(Object.keys(labels) as SortKey[]).map((k) => {
@@ -85,7 +85,7 @@ export function SortMenu({
         );
       })}
 
-      <p className="px-2.5 pb-1 pt-2 text-[10.5px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="px-2.5 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         {t("files.sort.order")}
       </p>
       <div className="flex gap-1 px-0.5">

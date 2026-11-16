@@ -541,7 +541,7 @@ function BarAction({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className={`flex flex-1 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-[10px] font-medium transition-transform active:scale-95 ${
+      className={`flex flex-1 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-[11px] font-medium transition-transform active:scale-95 ${
         danger ? "text-destructive" : "text-foreground"
       }`}
     >

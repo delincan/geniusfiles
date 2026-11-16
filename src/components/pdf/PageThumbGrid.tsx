@@ -85,20 +85,20 @@ export function PageThumbGrid({
                   style={{ transform: `rotate(${rot}deg)` }}
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
+                <div className="flex h-full w-full items-center justify-center text-[11px] text-muted-foreground">
                   …
                 </div>
               )}
             </button>
 
             {/* Page number + logical position when reordered */}
-            <span className="absolute left-1 top-1 rounded bg-scrim/60 px-1.5 py-0.5 text-[10px] font-medium text-media-foreground">
+            <span className="absolute left-1 top-1 rounded bg-scrim/60 px-1.5 py-0.5 text-[11px] font-medium text-media-foreground">
               {order ? `${idx + 1} · p.${page}` : page}
             </span>
 
             {/* Rotation badge */}
             {rot ? (
-              <span className="absolute right-1 top-1 rounded bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
+              <span className="absolute right-1 top-1 rounded bg-primary px-1.5 py-0.5 text-[11px] font-medium text-primary-foreground">
                 {rot}°
               </span>
             ) : null}
@@ -106,7 +106,7 @@ export function PageThumbGrid({
             {/* Selection dot */}
             {onToggleSelect ? (
               <span
-                className={`absolute bottom-1 right-1 flex h-5 w-5 items-center justify-center rounded-full border text-[10px] ${
+                className={`absolute bottom-1 right-1 flex h-5 w-5 items-center justify-center rounded-full border text-[11px] ${
                   isSel
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-scrim/40 text-media-foreground"

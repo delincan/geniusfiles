@@ -408,7 +408,7 @@ export function TrackLanes({
                 </div>
 
                 {active && !r.main ? (
-                  <label className="flex items-center gap-2 pt-1 text-[10px] text-muted-foreground">
+                  <label className="flex items-center gap-2 pt-1 text-[11px] text-muted-foreground">
                     {t("media.editor.tool.volume")}
                     <input
                       type="range"
@@ -458,7 +458,7 @@ export function TrackLanes({
           <p className="text-[11px] font-semibold text-foreground">
             {t("media.editor.sync.title")}
             {syncedCount > 0 ? (
-              <span className="ml-1.5 rounded-md bg-primary-softer px-1.5 py-0.5 text-[10px] font-medium text-primary">
+              <span className="ml-1.5 rounded-md bg-primary-softer px-1.5 py-0.5 text-[11px] font-medium text-primary">
                 {t("media.editor.sync.count", { count: syncedCount })}
               </span>
             ) : null}
@@ -467,19 +467,19 @@ export function TrackLanes({
             <button
               type="button"
               onClick={onClearSync}
-              className="rounded-lg border border-border px-2 py-1 text-[10px] text-muted-foreground active:scale-95"
+              className="rounded-lg border border-border px-2 py-1 text-[11px] text-muted-foreground active:scale-95"
             >
               {t("media.editor.sync.desync")}
             </button>
           ) : null}
         </div>
 
-        <p className="mb-1.5 text-[10px] leading-tight text-muted-foreground">
+        <p className="mb-1.5 text-[11px] leading-tight text-muted-foreground">
           {t("media.editor.sync.bpmHint")}
         </p>
 
         {rows.length < 2 ? (
-          <p className="text-[10px] leading-tight text-muted-foreground">
+          <p className="text-[11px] leading-tight text-muted-foreground">
             {t("media.editor.sync.needTwoTracksHint")}
           </p>
         ) : (
@@ -530,12 +530,12 @@ export function TrackLanes({
                           const n = Number.parseFloat(e.target.value);
                           if (Number.isFinite(n)) onBpm(r.id, n);
                         }}
-                        className="w-14 rounded-md border border-border bg-background px-1.5 py-1 text-center font-mono text-[10px] text-foreground"
+                        className="w-14 rounded-md border border-border bg-background px-1.5 py-1 text-center font-mono text-[11px] text-foreground"
                       />
-                      <span className="text-[10px] text-muted-foreground">BPM</span>
+                      <span className="text-[11px] text-muted-foreground">BPM</span>
                     </div>
                     {isMaster ? (
-                      <span className="shrink-0 text-[10px] font-medium text-primary">
+                      <span className="shrink-0 text-[11px] font-medium text-primary">
                         {t("media.editor.sync.master")}
                       </span>
                     ) : null}
@@ -568,7 +568,7 @@ export function TrackLanes({
         )}
       </div>
 
-      <p className="px-1 pt-1.5 text-[10px] leading-tight text-muted-foreground">
+      <p className="px-1 pt-1.5 text-[11px] leading-tight text-muted-foreground">
         {t("media.editor.tracks.dragHint")}
       </p>
     </section>

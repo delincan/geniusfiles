@@ -125,7 +125,7 @@ function TopAction({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className="flex min-w-[52px] flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1 text-[10.5px] font-medium leading-none text-muted-foreground transition-colors hover:text-foreground active:bg-secondary/60"
+      className="flex min-w-[52px] flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1 text-[11px] font-medium leading-none text-muted-foreground transition-colors hover:text-foreground active:bg-secondary/60"
     >
       <Icon className="h-[21px] w-[21px]" strokeWidth={2} />
       <span className="max-w-full truncate">{label}</span>

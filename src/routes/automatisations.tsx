@@ -472,7 +472,7 @@ function AutomationCard({
           <div className="flex items-center gap-2">
             <p className="text-[13px] font-medium text-foreground">{automation.name}</p>
             <span
-              className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${st.tone}`}
+              className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wide ${st.tone}`}
             >
               {st.label}
             </span>
@@ -484,7 +484,7 @@ function AutomationCard({
               : ""}
           </p>
           {lastReal ? (
-            <p className="mt-0.5 text-[10px] text-muted-foreground">
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
               {tr("automations.card.lastRun", {
                 when: formatDateValue(lastReal.finishedAt, {
                   dateStyle: "short",
@@ -713,7 +713,7 @@ function StepIndicator({ step, onGo }: { step: Step; onGo: (s: Step) => void }) 
               }`}
             >
               <span
-                className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold ${
+                className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-semibold ${
                   active
                     ? "bg-primary text-primary-foreground"
                     : done
@@ -723,7 +723,7 @@ function StepIndicator({ step, onGo }: { step: Step; onGo: (s: Step) => void }) 
               >
                 {done ? <Check className="h-3.5 w-3.5" /> : n}
               </span>
-              <span className="text-[10px] font-medium">{tr(STEP_KEYS[n as Step])}</span>
+              <span className="text-[11px] font-medium">{tr(STEP_KEYS[n as Step])}</span>
             </button>
           </li>
         );
@@ -1789,7 +1789,7 @@ function SummaryStep({
         <ol className="flex flex-col gap-1.5">
           {preview.map((step, i) => (
             <li key={i} className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary/15 text-[10px] font-semibold text-primary">
+              <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary/15 text-[11px] font-semibold text-primary">
                 {i + 1}
               </span>
               <div>

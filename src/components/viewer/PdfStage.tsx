@@ -595,7 +595,7 @@ export function PdfStage({
                     height={h}
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-[10px] text-reader-backdrop-foreground/50">
+                  <div className="flex h-full w-full items-center justify-center text-[11px] text-reader-backdrop-foreground/50">
                     {n}
                   </div>
                 )}

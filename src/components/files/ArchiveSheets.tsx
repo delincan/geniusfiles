@@ -186,7 +186,7 @@ export function ArchiveCreateSheet({
             onChange={(e) => setLevel(Number(e.target.value))}
             className="w-full accent-primary"
           />
-          <div className="mt-1 flex justify-between text-[10px] text-muted-foreground/80">
+          <div className="mt-1 flex justify-between text-[11px] text-muted-foreground/80">
             <span>{t("files.archive.levelFast")}</span>
             <span>{t("files.archive.levelBalanced")}</span>
             <span>{t("files.archive.levelMax")}</span>
@@ -407,7 +407,7 @@ export function ArchiveViewerSheet({
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md bg-secondary/40 px-2 py-1">
-      <p className="text-[9px] uppercase tracking-wide text-muted-foreground/80">{label}</p>
+      <p className="text-[11px] uppercase tracking-wide text-muted-foreground/80">{label}</p>
       <p className="text-[12px] text-foreground">{value}</p>
     </div>
   );
@@ -479,7 +479,7 @@ function ArchiveTree({
           />
           <FileIcon kind="other" />
           <span className="flex-1 truncate">{n.name}</span>
-          <span className="font-mono text-[10px] text-muted-foreground">{formatSize(n.size)}</span>
+          <span className="font-mono text-[11px] text-muted-foreground">{formatSize(n.size)}</span>
         </label>,
       );
     }
@@ -564,7 +564,7 @@ export function ArchiveExtractSheet({
           <Package className="h-[18px] w-[18px] text-primary" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-[12px] font-medium">{entry?.name}</p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground">
               {selectionCount > 0
                 ? t("files.archive.selectedCount", { count: selectionCount })
                 : t("files.archive.allContent")}
@@ -671,7 +671,7 @@ function ConflictOption({
       }`}
     >
       <p className="text-[12px] font-medium text-foreground">{label}</p>
-      <p className="text-[10px] text-muted-foreground">{hint}</p>
+      <p className="text-[11px] text-muted-foreground">{hint}</p>
     </button>
   );
 }

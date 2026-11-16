@@ -912,7 +912,7 @@ export function SearchPage() {
                   >
                     <SlidersHorizontal className="h-[18px] w-[18px]" />
                     {activeFilterCount > 0 ? (
-                      <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
+                      <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold text-primary-foreground">
                         {activeFilterCount}
                       </span>
                     ) : null}

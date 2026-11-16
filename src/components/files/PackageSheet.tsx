@@ -340,7 +340,7 @@ function Notice({
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 rounded-xl bg-surface-2 px-2.5 py-1.5">
-      <span className="block text-[10px] uppercase tracking-wide opacity-70">{label}</span>
+      <span className="block text-[11px] uppercase tracking-wide opacity-70">{label}</span>
       <span className="block truncate text-[12px] text-foreground">{value}</span>
     </div>
   );

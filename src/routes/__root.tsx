@@ -111,7 +111,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, interactive-widget=resizes-content",
       },
-      { name: "theme-color", content: "#191919" },
+      { name: "theme-color", content: "#090b0f" },
       { name: "color-scheme", content: "light dark" },
 
       { title: "GeniusFiles" },
@@ -203,7 +203,7 @@ if(t==="light"||t==="dark")m=t;
 if(t==="system"&&(s==="light"||s==="dark"))m=s;}
 e.setAttribute("data-theme",m);
 e.classList.toggle("dark",m==="dark");e.style.colorScheme=m;
-var bg=m==="light"?"#f5f6f8":"#191919";
+var bg=m==="light"?"#f5f6f8":"#090b0f";
 e.style.backgroundColor=bg;
 var q=document.querySelector('meta[name="theme-color"]');
 if(q)q.setAttribute("content",bg);

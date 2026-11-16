@@ -2108,7 +2108,7 @@ function CategoryTile({
         <Icon className="h-[21px] w-[21px]" />
       </span>
       <p className="w-full truncate text-[12px] font-semibold leading-tight">{label}</p>
-      <p className="w-full truncate text-[10.5px] leading-none text-muted-foreground tabular-nums">
+      <p className="w-full truncate text-[11px] leading-none text-muted-foreground tabular-nums">
         {sub}
       </p>
     </button>

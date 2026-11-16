@@ -184,7 +184,7 @@ export function IconChip({
       }}
       aria-label={label}
       data-active={active ? "true" : undefined}
-      className={`flex shrink-0 snap-start flex-col items-center gap-1 rounded-2xl px-3 py-2 text-[10px] font-medium transition-transform active:scale-95 ${
+      className={`flex shrink-0 snap-start flex-col items-center gap-1 rounded-2xl px-3 py-2 text-[11px] font-medium transition-transform active:scale-95 ${
         active ? "bg-primary/15 text-primary" : "bg-secondary/60 text-foreground/80"
       }`}
     >
@@ -929,7 +929,7 @@ export function PalettePanel({
               style={{ background: c }}
               className="h-12 w-12 rounded-2xl border border-border/60"
             />
-            <span className="text-[10px] uppercase text-muted-foreground">{c}</span>
+            <span className="text-[11px] uppercase text-muted-foreground">{c}</span>
           </button>
         ))}
       </ScrollRow>

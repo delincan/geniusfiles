@@ -528,7 +528,7 @@ function OrganizationPage() {
                     className="rounded-lg border border-border bg-surface p-2"
                   >
                     <p className="truncate text-[12px] font-medium">{entry.name}</p>
-                    <p className="truncate font-mono text-[10px] text-muted-foreground">
+                    <p className="truncate font-mono text-[11px] text-muted-foreground">
                       /{parent.segments.join("/")}
                     </p>
                   </li>
@@ -594,7 +594,7 @@ function Stat({ label, value, highlight }: { label: string; value: string; highl
         highlight ? "border-primary/40 bg-primary/8" : "border-border bg-surface"
       }`}
     >
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
       <p className="mt-0.5 text-[13px] font-semibold">{value}</p>
     </div>
   );

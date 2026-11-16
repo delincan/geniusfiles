@@ -878,7 +878,7 @@ export function PhotoEditor({
                   type="button"
                   onClick={() => setTool(id)}
                   aria-current={active ? "true" : undefined}
-                  className={`flex shrink-0 flex-col items-center gap-1 rounded-2xl px-3.5 py-2 text-[10px] font-medium transition-all duration-200 active:scale-95 ${
+                  className={`flex shrink-0 flex-col items-center gap-1 rounded-2xl px-3.5 py-2 text-[11px] font-medium transition-all duration-200 active:scale-95 ${
                     active ? "bg-primary/15 text-primary" : "text-muted-foreground"
                   }`}
                 >

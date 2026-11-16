@@ -162,7 +162,7 @@ export function FilesTopBar({
 
 function MenuLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="px-3 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-muted-foreground">
+    <p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
       {children}
     </p>
   );

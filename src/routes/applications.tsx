@@ -532,7 +532,7 @@ const AppRow = memo(function AppRow({
         <div className="flex min-w-0 items-center gap-1.5">
           <p className="truncate text-[14.5px] font-semibold">{app.label}</p>
           {app.isSystem ? (
-            <span className="shrink-0 rounded-full bg-surface-3 px-1.5 py-0.5 text-[9px] uppercase tracking-wide text-muted-foreground">
+            <span className="shrink-0 rounded-full bg-surface-3 px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
               {t("organize.apps.filter.system")}
             </span>
           ) : null}
@@ -563,7 +563,7 @@ const AppTile = memo(function AppTile({
     >
       <AppIconEl app={app} size={44} />
       <p className="line-clamp-1 w-full text-[11px] font-medium">{app.label}</p>
-      <p className="text-[10px] text-muted-foreground">{formatSize(size)}</p>
+      <p className="text-[11px] text-muted-foreground">{formatSize(size)}</p>
     </button>
   );
 });
@@ -974,7 +974,7 @@ function AppDetailsSheet({
             </ul>
           )}
           {permissions && permissions.declared.length > permissions.granted.length ? (
-            <p className="mt-2 text-[10px] text-muted-foreground">
+            <p className="mt-2 text-[11px] text-muted-foreground">
               {t("organize.apps.permissions.moreDeclared", {
                 count: permissions.declared.length - permissions.granted.length,
               })}
@@ -1037,7 +1037,7 @@ function AppDetailsSheet({
 function MetaRow({ label, value, full }: { label: string; value: string; full?: boolean }) {
   return (
     <div className={full ? "col-span-2" : ""}>
-      <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</dt>
       <dd className="truncate">{value}</dd>
     </div>
   );

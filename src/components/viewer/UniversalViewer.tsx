@@ -1030,7 +1030,7 @@ function AudioStage({
           className="w-full accent-primary"
           aria-label={t("viewer.media.progress")}
         />
-        <div className="flex justify-between text-[10px] text-media-muted">
+        <div className="flex justify-between text-[11px] text-media-muted">
           <span>{fmtTime(pos)}</span>
           <span>{fmtTime(dur)}</span>
         </div>

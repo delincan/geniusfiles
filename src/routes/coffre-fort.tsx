@@ -505,7 +505,7 @@ function StepPill({
       }`}
     >
       <span
-        className={`flex h-[18px] w-[18px] items-center justify-center rounded-full text-[9px] font-semibold ${
+        className={`flex h-[18px] w-[18px] items-center justify-center rounded-full text-[11px] font-semibold ${
           active || done ? "bg-primary text-primary-foreground" : "bg-secondary"
         }`}
       >
@@ -1488,7 +1488,7 @@ function SortMenu({
             >
               <o.icon className="h-[18px] w-[18px]" /> {o.label}
               {sort.key === o.key ? (
-                <span className="ml-auto text-[10px] uppercase tracking-wide">{sort.order}</span>
+                <span className="ml-auto text-[11px] uppercase tracking-wide">{sort.order}</span>
               ) : null}
             </button>
           ))}

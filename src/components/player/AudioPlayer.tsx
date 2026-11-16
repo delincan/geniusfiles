@@ -180,7 +180,7 @@ export function AudioPlayer({ onClose }: { onClose: () => void }) {
           <ChevronDown className="h-5 w-5" />
         </GlassButton>
         <div className="min-w-0 flex-1 text-center">
-          <p className="text-[10.5px] font-medium uppercase tracking-[0.16em] text-media-muted">
+          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-media-muted">
             {t("media.player.aria.playing")}
           </p>
           <p className="truncate text-[11px] text-media-muted/85">

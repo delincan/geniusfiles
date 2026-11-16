@@ -201,7 +201,7 @@ export function InlineAdBanner({ slot = "inline", unitId, format = "adaptive" }:
         height > 0 ? "opacity-100" : "pointer-events-none h-0 opacity-0"
       }`}
     >
-      <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground/70">
+      <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground/70">
         {t("ads.label")}
       </p>
       <div

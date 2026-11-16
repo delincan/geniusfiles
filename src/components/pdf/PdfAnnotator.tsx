@@ -365,7 +365,7 @@ export function PdfAnnotator({
             >
               <Redo2 className="h-4 w-4" />
             </button>
-            <span className="ml-2 text-[10px] text-muted-foreground">
+            <span className="ml-2 text-[11px] text-muted-foreground">
               Zoom {Math.round(zoom * 100)}%
             </span>
             <button
@@ -467,11 +467,11 @@ export function PdfAnnotator({
               {t ? (
                 <img src={t} alt="" className="h-full w-full object-contain" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
+                <div className="flex h-full w-full items-center justify-center text-[11px] text-muted-foreground">
                   …
                 </div>
               )}
-              <span className="absolute bottom-0 left-0 right-0 bg-scrim/60 py-0.5 text-center text-[10px] text-media-foreground">
+              <span className="absolute bottom-0 left-0 right-0 bg-scrim/60 py-0.5 text-center text-[11px] text-media-foreground">
                 {p.page}
                 {overlayCount ? ` · ${overlayCount}` : ""}
               </span>

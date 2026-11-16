@@ -161,7 +161,7 @@ export function CategorySheet({
           <span className="shrink-0 text-right">
             <span className="block text-[12px] font-semibold">{formatSize(item.entry.size)}</span>
             {item.evidence ? (
-              <span className="block text-[10px] text-muted-foreground">
+              <span className="block text-[11px] text-muted-foreground">
                 {evidenceLabel(t, item.evidence)}
               </span>
             ) : null}
