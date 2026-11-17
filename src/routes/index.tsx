@@ -2101,7 +2101,7 @@ function CategoryTile({
       variant="ghost"
       type="button"
       onClick={onOpen}
-      className="home-category group grid h-auto min-h-24 min-w-0 grid-cols-[32px_minmax(0,1fr)] items-center gap-2.5 whitespace-normal p-3 text-left min-[400px]:grid-cols-1 min-[400px]:gap-2"
+      className="home-category group grid h-auto min-h-24 min-w-0 grid-cols-1 items-start gap-2 whitespace-normal p-3 text-left"
     >
       <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${tint}`}>
         <Icon className="h-5 w-5" />

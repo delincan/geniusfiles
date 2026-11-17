@@ -178,9 +178,7 @@ function BottomNav({ pathname, keyboardInset = 0 }: { pathname: string; keyboard
               aria-current={active ? "page" : undefined}
               className="relative flex flex-1 basis-0 flex-col items-center justify-center gap-1 pb-2 pt-2.5 transition-transform duration-150 ease-out active:scale-95"
             >
-              {/* Repère supérieur (« lampadaire ») : segment court ancré au
-                  bord haut de la barre, exactement au-dessus de la
-                  destination active. */}
+              {/* Un seul repère actif : la pastille discrète derrière l'icône. */}
               <span
                 aria-hidden
                 className={`flex h-9 w-12 items-center justify-center rounded-xl transition-colors duration-200 ease-out ${
