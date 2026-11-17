@@ -36,6 +36,6 @@
 
 # Genius AI and Automations UI
 
-- [ ] Redesign Genius AI conversation; quota shown only when limit is reached.
-- [ ] Redesign Automations hierarchy; quota notice only when limit is reached.
-- [ ] Suggest next steps after the remix.
+- [x] Redesign Genius AI conversation; quota shown only when limit is reached.
+- [x] Redesign Automations hierarchy; quota notice only when limit is reached.
+- [x] Suggest next steps after the remix.
