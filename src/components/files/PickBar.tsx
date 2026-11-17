@@ -67,7 +67,7 @@ export function PickBar({ request }: { request: PickRequest }) {
                 onClick={cancelPick}
                 className="flex h-11 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-muted-foreground transition-colors active:bg-secondary/60"
               >
-                <X className="h-[18px] w-[18px]" strokeWidth={2.1} />
+                <X className="h-[18px] w-[18px]" />
                 {t("action.cancel")}
               </button>
               <span className="min-w-0 flex-1 truncate px-1 text-[12.5px] font-medium text-muted-foreground">
@@ -83,7 +83,7 @@ export function PickBar({ request }: { request: PickRequest }) {
                 disabled={count === 0}
                 className="flex h-11 items-center gap-1.5 rounded-full bg-primary px-5 text-[13.5px] font-semibold text-primary-foreground shadow-sm transition-opacity disabled:opacity-40"
               >
-                <Check className="h-[18px] w-[18px]" strokeWidth={2.4} />
+                <Check className="h-[18px] w-[18px]" />
                 {count > 0 && request.multi
                   ? t("files.pickBar.validateCount", { count })
                   : t("files.pickBar.validate")}
@@ -135,7 +135,7 @@ function DestinationBar({ request, hidden }: { request: PickRequest; hidden: boo
                 onClick={cancelPick}
                 className="flex h-11 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-muted-foreground transition-colors active:bg-secondary/60"
               >
-                <X className="h-[18px] w-[18px]" strokeWidth={2.1} />
+                <X className="h-[18px] w-[18px]" />
                 {t("action.cancel")}
               </button>
               <span className="min-w-0 flex-1 truncate px-1 text-[12.5px] font-medium text-muted-foreground">
@@ -147,7 +147,7 @@ function DestinationBar({ request, hidden }: { request: PickRequest; hidden: boo
                 disabled={!location}
                 className="flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-primary px-5 text-[13.5px] font-semibold text-primary-foreground shadow-sm transition-opacity disabled:opacity-40"
               >
-                <FolderInput className="h-[18px] w-[18px]" strokeWidth={2.2} />
+                <FolderInput className="h-[18px] w-[18px]" />
                 {request.mode === "move"
                   ? t("files.pickDest.moveHere")
                   : t("files.pickDest.copyHere")}

@@ -153,7 +153,7 @@ export function AssistantDrawer({
               }}
               className="flex h-12 w-full items-center gap-2.5 rounded-2xl bg-primary px-4 text-[14.5px] font-semibold text-primary-foreground transition-transform duration-150 active:scale-[0.98]"
             >
-              <Plus className="h-[18px] w-[18px]" strokeWidth={2.4} />
+              <Plus className="h-[18px] w-[18px]" />
               {t("assistant.drawer.newChat")}
             </button>
 

@@ -407,9 +407,9 @@ const GridCell = memo(function GridCell({
           }`}
         >
           {isSelected ? (
-            <CheckCircle2 className="h-5 w-5 fill-primary/15" strokeWidth={2.2} />
+            <CheckCircle2 className="h-5 w-5 fill-primary/15" />
           ) : (
-            <Circle className="h-5 w-5" strokeWidth={1.8} />
+            <Circle className="h-5 w-5" />
           )}
         </span>
       ) : null}
@@ -478,7 +478,7 @@ function OpenZone({
         {entry.isDirectory ? (
           <ChevronRight className="h-2.5 w-2.5" strokeWidth={3} />
         ) : (
-          <Eye className="h-2.5 w-2.5" strokeWidth={2.6} />
+          <Eye className="h-2.5 w-2.5" />
         )}
       </span>
     </span>

@@ -93,7 +93,7 @@ export function FilesTopBar({
       ) : (
         <div className="flex h-12 items-center gap-1 px-1.5 pl-safe pr-safe">
           <IconButton label={t("action.back")} onClick={onBack}>
-            <ArrowLeft className="h-[21px] w-[21px]" strokeWidth={2.1} />
+            <ArrowLeft className="h-[21px] w-[21px]" />
           </IconButton>
           <div className="min-w-0 flex-1 px-1">
             <p className="truncate text-[17px] font-semibold leading-tight tracking-[-0.01em]">
@@ -106,21 +106,21 @@ export function FilesTopBar({
             ) : null}
           </div>
           <IconButton label={t("action.search")} onClick={onSearch}>
-            <Search className="h-[20px] w-[20px]" strokeWidth={2.1} />
+            <Search className="h-[20px] w-[20px]" />
           </IconButton>
           <IconButton
             label={view === "list" ? t("files.view.grid") : t("files.view.list")}
             onClick={() => onViewChange(view === "list" ? "grid" : "list")}
           >
             {view === "list" ? (
-              <LayoutGrid className="h-[20px] w-[20px]" strokeWidth={2.1} />
+              <LayoutGrid className="h-[20px] w-[20px]" />
             ) : (
-              <List className="h-[20px] w-[20px]" strokeWidth={2.1} />
+              <List className="h-[20px] w-[20px]" />
             )}
           </IconButton>
           <div className="relative" ref={menuRef}>
             <IconButton label={t("action.more")} onClick={() => setMenu((v) => !v)} expanded={menu}>
-              <MoreVertical className="h-[20px] w-[20px]" strokeWidth={2.1} />
+              <MoreVertical className="h-[20px] w-[20px]" />
             </IconButton>
             {menu ? (
               <div className="animate-scale-in absolute right-1 top-[calc(100%+4px)] z-40 origin-top-right">

@@ -135,7 +135,7 @@ function ChatOfflineState({ onRetry }: { onRetry?: () => void }) {
     <div className="animate-fade-in flex flex-col items-center px-4 py-2 text-center">
       <WifiOff
         aria-hidden="true"
-        strokeWidth={1.5}
+       
         className="h-10 w-10 shrink-0 text-muted-foreground"
       />
       <div className="mt-2 flex max-w-[320px] flex-col items-center gap-1.5">

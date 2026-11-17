@@ -125,7 +125,7 @@ export function StorageAccessDialog() {
       <div className="space-y-4 pr-8">
         <div className="flex items-start gap-3">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary-softer text-primary">
-            <FolderOpen className="h-5 w-5" strokeWidth={1.8} />
+            <FolderOpen className="h-5 w-5" />
           </span>
           <div className="min-w-0 space-y-1.5">
             <p className="text-[17px] font-semibold leading-snug text-foreground">

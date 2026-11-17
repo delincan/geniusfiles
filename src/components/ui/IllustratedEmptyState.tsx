@@ -93,7 +93,7 @@ export function IllustratedEmptyState({
             : "bg-secondary/50 text-muted-foreground"
         }`}
       >
-        <Icon size={44} strokeWidth={1.5} />
+        <Icon size={44} />
       </span>
       <div className="gf-empty-copy mt-4 flex max-w-[320px] shrink-0 flex-col items-center gap-1.5">
         <p

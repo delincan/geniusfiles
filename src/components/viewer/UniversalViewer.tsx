@@ -613,7 +613,7 @@ function MenuRow({
           danger ? "bg-destructive/12 text-destructive" : "bg-secondary/60 text-muted-foreground"
         }`}
       >
-        <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
+        <Icon className="h-[18px] w-[18px]" />
       </span>
       <span className="min-w-0 flex-1 truncate">{label}</span>
       {value ? (
