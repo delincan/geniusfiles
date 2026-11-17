@@ -1973,7 +1973,7 @@ function RootView({
       {/* Categories grid — compact */}
       <section aria-label={t("cleaner.categories.title")}>
         <h2 className="mb-3 type-subtitle">{t("cleaner.categories.title")}</h2>
-        <div className="grid grid-cols-2 gap-2.5 min-[400px]:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3">
           {categories
             .filter((c) => !c.hidden)
             .map((c) => (

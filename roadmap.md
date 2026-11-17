@@ -1,11 +1,11 @@
-# Search refresh loop and assistant
-
 # Visual direction — first stage
 
-- [ ] Inspect supplied references, mascot colors and existing shared styles.
-- [ ] Harmonize global visual tokens and refine the home screen only.
-- [ ] Verify small-screen rendering and existing home navigation; run regression tests.
+- [x] Inspect supplied references, mascot colors and existing shared styles.
+- [x] Harmonize global visual tokens and refine the home screen only.
+- [x] Verify small-screen rendering and existing home navigation; run regression tests (36 passed).
 - [ ] Validate native system bars and touch feel on a physical Android device — requires a rebuilt APK and a device.
+
+# Search refresh loop and assistant
 
 - [x] Stop the search screen's background refresh loop and verify it settles.
 - [x] Fix formatting so `bun run verify` passes.

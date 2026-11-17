@@ -43,4 +43,4 @@ Source unique : `@/components/icons`. Trait 1,75 forcé partout (1,5 pour les gr
 
 ## Accueil — première étape
 
-En-tête compact avec logo officiel, nom et salutation. Sections titrées à 15/600, séparées par 24 px. Stockage sur une carte unique avec barre pleine largeur ; catégories en deux colonnes sous 400 px, trois au-delà ; libellés sur plusieurs lignes plutôt que tronqués. Fichiers récents et outils en listes ouvertes, sans cartes imbriquées. Métadonnées à 12 px. Navigation neutre, seule la destination active porte le bleu signature.
+En-tête compact avec logo officiel, nom et salutation. Sections titrées à 15/600, séparées par 24 px. Stockage sur une carte unique avec barre pleine largeur ; catégories en deux colonnes sous 480 px, trois au-delà ; libellés sur plusieurs lignes plutôt que tronqués. Fichiers récents et outils en listes ouvertes, sans cartes imbriquées. Métadonnées à 12 px. Navigation neutre, seule la destination active porte le bleu signature.
