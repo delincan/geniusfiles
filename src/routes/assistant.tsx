@@ -356,21 +356,21 @@ function AssistantPage() {
             <div className="gf-appear gf-chat-safe flex gap-3 rounded-2xl border border-destructive/30 bg-surface px-3.5 py-3 text-[13px]">
               <AlertTriangle className="mt-0.5 h-[18px] w-[18px] shrink-0 text-destructive" />
               <div className="min-w-0 flex-1">
-              <p className="mb-1 font-medium text-foreground">{describeChatError(error)}</p>
-              {describeChatErrorDetail(error) ? (
-                <p className="mb-2 break-words text-[11px] text-muted-foreground">
-                  {describeChatErrorDetail(error)}
-                </p>
-              ) : (
-                <div className="mb-1" />
-              )}
-              <button
-                type="button"
-                onClick={() => retryTask()}
-                className="gf-press h-8 rounded-lg bg-surface-2 px-3 text-[12px] font-semibold text-foreground"
-              >
-                {t("action.retry")}
-              </button>
+                <p className="mb-1 font-medium text-foreground">{describeChatError(error)}</p>
+                {describeChatErrorDetail(error) ? (
+                  <p className="mb-2 break-words text-[11px] text-muted-foreground">
+                    {describeChatErrorDetail(error)}
+                  </p>
+                ) : (
+                  <div className="mb-1" />
+                )}
+                <button
+                  type="button"
+                  onClick={() => retryTask()}
+                  className="gf-press h-8 rounded-lg bg-surface-2 px-3 text-[12px] font-semibold text-foreground"
+                >
+                  {t("action.retry")}
+                </button>
               </div>
             </div>
           ) : null}
@@ -528,11 +528,7 @@ function CopyButton({ text, align }: { text: string; align: "start" | "end" }) {
         aria-label={copied ? t("assistant.message.copiedAria") : t("assistant.message.copyAria")}
         className="gf-press flex h-8 items-center gap-1.5 rounded-lg px-2 text-[11.5px] font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground"
       >
-        {copied ? (
-          <Check className="h-4 w-4 text-primary" />
-        ) : (
-          <Copy className="h-4 w-4" />
-        )}
+        {copied ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
         <span>{copied ? t("assistant.message.copied") : t("assistant.message.copy")}</span>
       </button>
     </div>
