@@ -1218,8 +1218,8 @@ html.gf-immersive .gf-thumb-bar {
    Les espacements sont posés dès l'apparition du texte : aucune
    recomposition, aucun saut de mise en page pendant la rédaction. */
 .gf-answer {
-  font-size: 14.5px;
-  line-height: 1.65;
+  font-size: 15px;
+  line-height: 1.75;
   color: var(--foreground);
   overflow-wrap: anywhere;
 }
@@ -1236,11 +1236,10 @@ html.gf-immersive .gf-thumb-bar {
 .gf-answer-title {
   margin: 1.15rem 0 0.5rem;
   font-family: var(--font-display, inherit);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--muted-foreground) 78%, var(--foreground));
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--foreground);
 }
 .gf-answer-list {
   margin: 0 0 0.9rem;
@@ -1265,6 +1264,17 @@ html.gf-immersive .gf-thumb-bar {
   border-radius: 999px /* la puce reprend la couleur d'accent pour guider l'œil */;
   background: color-mix(in oklab, var(--primary) 70%, transparent);
 }
+ol.gf-answer-list {
+  padding-left: 1.4rem;
+  list-style: decimal;
+}
+ol.gf-answer-list > .gf-answer-item {
+  padding-left: 0.3rem;
+}
+ol.gf-answer-list > .gf-answer-item::before {
+  content: none;
+}
+
 .gf-answer-item > .gf-answer-p {
   margin-bottom: 0.25rem;
 }

@@ -77,6 +77,8 @@ export const Route = createFileRoute("/organisation")({
         property: "og:description",
         content: translate("meta.organize.ogDescription"),
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: OrganizationPage,

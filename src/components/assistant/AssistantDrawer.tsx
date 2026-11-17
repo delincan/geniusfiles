@@ -8,6 +8,7 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, MessageSquare, Pencil, Plus, Search, Trash2, X } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 import { Portal } from "@/components/common/Portal";
 import { BACK_PRIORITY, registerBackHandler } from "@/lib/navigation/back-stack";
 import {
@@ -114,7 +115,8 @@ export function AssistantDrawer({
         aria-modal="true"
         aria-label={t("assistant.drawer.ariaLabel")}
       >
-        <button
+        <Button
+          variant="ghost"
           type="button"
           aria-label={t("assistant.drawer.closeAria")}
           onClick={onClose}
@@ -122,7 +124,7 @@ export function AssistantDrawer({
           style={{ opacity: visible ? 1 : 0 }}
         />
         <aside
-          className="absolute inset-y-0 left-0 flex w-[86%] max-w-[340px] flex-col bg-surface-elevated shadow-[0_0_40px_-8px_rgba(0,0,0,0.55)] transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          className="absolute inset-y-0 left-0 flex w-[86%] max-w-[340px] flex-col bg-surface shadow-elevated transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{
             transform: visible ? "translateX(0)" : "translateX(-100%)",
             paddingTop: "env(safe-area-inset-top, 0px)",
@@ -134,28 +136,30 @@ export function AssistantDrawer({
             <p className="font-display truncate text-[17px] font-bold tracking-tight text-foreground">
               {t("assistant.drawer.title")}
             </p>
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={onClose}
               aria-label={t("action.close")}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-2 text-muted-foreground transition-transform duration-150 active:scale-95"
+              className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface-2 text-muted-foreground transition-transform duration-150 active:scale-95"
             >
               <X className="h-[18px] w-[18px]" />
-            </button>
+            </Button>
           </div>
 
           <div className="space-y-2.5 px-4 pb-3">
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={() => {
                 onNewConversation();
                 onClose();
               }}
-              className="flex h-12 w-full items-center gap-2.5 rounded-2xl bg-primary px-4 text-[14.5px] font-semibold text-primary-foreground transition-transform duration-150 active:scale-[0.98]"
+              className="flex h-12 w-full items-center gap-2.5 rounded-xl bg-surface-2 px-4 text-[14px] font-semibold text-foreground transition-transform duration-150 active:scale-[0.98]"
             >
               <Plus className="h-[18px] w-[18px]" />
               {t("assistant.drawer.newChat")}
-            </button>
+            </Button>
 
             <div className="flex h-11 items-center gap-2.5 rounded-2xl bg-surface-2 px-3.5">
               <Search className="h-[18px] w-[18px] shrink-0 text-muted-foreground" />
@@ -178,7 +182,7 @@ export function AssistantDrawer({
             ) : (
               groups.map((g) => (
                 <section key={g.label} className="mb-3">
-                  <p className="px-2 pb-1.5 pt-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                  <p className="px-2 pb-1.5 pt-2 text-[12px] font-medium text-muted-foreground">
                     {g.label}
                   </p>
                   <ul className="space-y-1">
@@ -189,7 +193,7 @@ export function AssistantDrawer({
                         <li
                           key={c.id}
                           className={`rounded-2xl px-2 py-1.5 transition-colors duration-150 ${
-                            active ? "bg-primary/10" : "bg-transparent"
+                            active ? "bg-surface-2" : "bg-transparent"
                           }`}
                         >
                           {editing ? (
@@ -202,7 +206,8 @@ export function AssistantDrawer({
                                 aria-label={t("assistant.drawer.renameLabel")}
                                 className="min-w-0 flex-1 rounded-xl bg-surface-2 px-3 py-2 text-[14px] text-foreground focus:outline-none"
                               />
-                              <button
+                              <Button
+                                variant="ghost"
                                 type="button"
                                 aria-label={t("action.confirm")}
                                 onClick={() => {
@@ -210,22 +215,24 @@ export function AssistantDrawer({
                                   setEditingId(null);
                                   setTick((t) => t + 1);
                                 }}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary active:scale-95"
+                                className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 text-primary active:scale-95"
                               >
                                 <Check className="h-[18px] w-[18px]" />
-                              </button>
-                              <button
+                              </Button>
+                              <Button
+                                variant="ghost"
                                 type="button"
                                 aria-label={t("action.cancel")}
                                 onClick={() => setEditingId(null)}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 text-muted-foreground active:scale-95"
+                                className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface-2 text-muted-foreground active:scale-95"
                               >
                                 <X className="h-[18px] w-[18px]" />
-                              </button>
+                              </Button>
                             </div>
                           ) : (
-                            <div className="flex items-center gap-1">
-                              <button
+                            <div className="flex items-center gap-0">
+                              <Button
+                                variant="ghost"
                                 type="button"
                                 onClick={() => {
                                   onOpenConversation(c.id);
@@ -234,9 +241,9 @@ export function AssistantDrawer({
                                 className="flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-xl px-1 text-left transition-transform duration-150 active:scale-[0.99]"
                               >
                                 <span
-                                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
                                     active
-                                      ? "bg-primary text-primary-foreground"
+                                      ? "bg-transparent text-primary"
                                       : "bg-surface-2 text-muted-foreground"
                                   }`}
                                 >
@@ -255,29 +262,31 @@ export function AssistantDrawer({
                                     {c.preview ? ` \u00b7 ${c.preview}` : ""}
                                   </span>
                                 </span>
-                              </button>
-                              <button
+                              </Button>
+                              <Button
+                                variant="ghost"
                                 type="button"
                                 aria-label={t("assistant.drawer.renameAria", { title: c.title })}
                                 onClick={() => {
                                   setEditingId(c.id);
                                   setDraft(c.title);
                                 }}
-                                className="flex h-10 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors duration-150 hover:text-foreground active:scale-95"
+                                className="flex h-11 w-11 items-center justify-center rounded-xl text-muted-foreground transition-colors duration-150 hover:text-foreground active:scale-95"
                               >
                                 <Pencil className="h-[18px] w-[18px]" />
-                              </button>
-                              <button
+                              </Button>
+                              <Button
+                                variant="ghost"
                                 type="button"
                                 aria-label={t("assistant.drawer.deleteAria", { title: c.title })}
                                 onClick={() => {
                                   deleteConversation(c.id);
                                   setTick((t) => t + 1);
                                 }}
-                                className="flex h-10 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors duration-150 hover:text-destructive active:scale-95"
+                                className="flex h-11 w-11 items-center justify-center rounded-xl text-muted-foreground transition-colors duration-150 hover:text-destructive active:scale-95"
                               >
                                 <Trash2 className="h-[18px] w-[18px]" />
-                              </button>
+                              </Button>
                             </div>
                           )}
                         </li>

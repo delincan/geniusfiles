@@ -47,6 +47,8 @@ export const Route = createFileRoute("/automatisations/historique")({
         property: "og:description",
         content: translate("meta.automationHistory.ogDescription"),
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: HistoryPage,

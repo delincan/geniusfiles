@@ -1,5 +1,12 @@
 # Visual direction — first stage
 
+# Genius AI — premium second stage
+
+- [x] Refine welcome, transcript, composer, suggestions and conversation menu using existing tokens.
+- [x] Present real pipeline milestones; hold current answer during processing, never report failed/cancelled work as 100%.
+- [x] Run 42 regression tests; verify a real request, suggestions, history restoration/rename, offline state and four mobile widths plus short viewport. Preview builds, lint and formatting pass; native keyboard remains unverified.
+- [ ] Verify native keyboard, rewarded quota and file operations on a physical Android device — requires a rebuilt APK and a device.
+
 - [x] Inspect supplied references, mascot colors and existing shared styles.
 - [x] Harmonize global visual tokens and refine the home screen only.
 - [x] Verify small-screen rendering and existing home navigation; run regression tests (36 passed).
