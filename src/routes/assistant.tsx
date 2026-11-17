@@ -4,6 +4,7 @@ import type { UIMessage } from "ai";
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   useSyncExternalStore,
@@ -195,7 +196,7 @@ function AssistantPage() {
   const chat = useChat({ chat: chatInstance });
   const { status, error } = chat;
   // Stored messages are browser-only; first paint must match the empty SSR transcript.
-  const messages = hydrated ? chat.messages : [];
+  const messages = useMemo(() => (hydrated ? chat.messages : []), [hydrated, chat.messages]);
 
   const task = useSyncExternalStore(subscribeTask, getTask, getServerTask);
   const isBusy = status === "submitted" || status === "streaming";
