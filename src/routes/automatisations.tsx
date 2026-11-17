@@ -327,7 +327,7 @@ function AutomationsPage() {
             <button
               type="button"
               onClick={openCreate}
-              className="gf-press mt-3 flex h-10 items-center gap-1.5 rounded-xl bg-primary px-3.5 text-[13px] font-semibold text-primary-foreground"
+              className="gf-press mt-3 flex h-10 w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-primary px-3.5 text-[13px] font-semibold text-primary-foreground"
             >
               <Plus className="h-[18px] w-[18px]" />
               {tr("automations.empty.cta")}
