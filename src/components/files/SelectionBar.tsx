@@ -1,4 +1,4 @@
-import { MoreHorizontal, X } from "@/components/icons";
+import { Check, MoreHorizontal, X } from "@/components/icons";
 import {
   GfTransfer as ArrowLeftRight,
   GfSelectAll as CheckCheck,
@@ -50,15 +50,20 @@ export function SelectionActionRow({
       >
         <X className="h-[22px] w-[22px]" />
       </button>
-      <span className="flex min-w-0 flex-col justify-center px-1 leading-tight">
-        <span className="truncate text-[16px] font-semibold tabular-nums text-foreground">
-          {t("unit.selected", { count })}
+      <span className="flex min-w-0 items-center gap-2.5 px-1">
+        <span aria-hidden data-selected="true" className="gf-select-mark">
+          <Check className="h-3.5 w-3.5" strokeWidth={3} />
         </span>
-        {sizeLabel ? (
-          <span className="mt-0.5 truncate text-[12px] tabular-nums text-muted-foreground">
-            {sizeLabel}
+        <span className="flex min-w-0 flex-col justify-center leading-tight">
+          <span className="truncate text-[16px] font-semibold tabular-nums tracking-[-0.01em] text-foreground">
+            {t("unit.selected", { count })}
           </span>
-        ) : null}
+          {sizeLabel ? (
+            <span className="mt-0.5 truncate text-[12px] tabular-nums text-muted-foreground">
+              {sizeLabel}
+            </span>
+          ) : null}
+        </span>
       </span>
       <div className="flex shrink-0 items-center gap-1 pr-0.5">
         <TopAction icon={CheckCheck} label={t("action.selectAll")} onClick={onSelectAll} />
@@ -125,10 +130,9 @@ function TopAction({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className="flex min-h-11 min-w-[56px] flex-col items-center justify-center gap-1 rounded-lg px-1.5 py-1 text-[11px] font-medium leading-none text-muted-foreground transition-colors hover:text-foreground active:bg-surface-2"
+      className="flex h-11 w-11 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground active:bg-surface-2"
     >
       <Icon className="h-5 w-5" />
-      <span className="max-w-full whitespace-nowrap">{label}</span>
     </button>
   );
 }
@@ -198,7 +202,7 @@ export function SelectionBar({
           }}
         >
           <div
-            className="@container grid items-stretch gap-0.5 rounded-2xl border border-border/70 bg-popover p-1 shadow-elevated"
+            className="@container grid items-stretch gap-0.5 rounded-2xl border border-border bg-popover p-1 shadow-elevated"
             style={{ gridTemplateColumns: `repeat(${actions.length}, minmax(0, 1fr))` }}
           >
             {actions.map((a) => (

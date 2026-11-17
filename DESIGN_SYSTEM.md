@@ -50,3 +50,11 @@ En-tête compact avec logo officiel, nom et salutation. Sections titrées à 15/
 Accueil avec la mascotte officielle, titre 24/600, introduction 14 px et confidentialité dépliable. Conversation ouverte : réponses sans carte à 15 px/1,75, titres 16/600, listes numérotées conservées ; messages utilisateur sur `surface-2`, texte `foreground`. Copier reste une icône avec nom accessible et infobulle. Saisie sur `surface-2`, envoi en `primary`, arrêt neutre. Suggestions défilables au doigt, jamais animées automatiquement. Menu de conversations sur `surface`, sélection neutre avec icône bleue.
 
 Progression : pourcentage des jalons terminés, non une estimation du temps restant. Aucun compteur temporel artificiel ; la barre reste au dernier jalon connu pendant un travail sans total mesurable. 100 % uniquement à la fin réussie du traitement ; échec et annulation ne valent jamais 100 %. La réponse en cours reste masquée jusqu'à la fin réelle. Les quotas et annonces restent contextuels.
+
+## Gestionnaire de fichiers
+
+- Vignettes : `.gf-file-tile` (`data-kind`, `data-size`), teinte du type sur le pictogramme uniquement, fond neutre ; dossiers neutres.
+- Lignes : 72 px, séparateur aligné sur le texte, nom sur deux lignes au plus, date et type à gauche, taille ou nombre d'éléments à droite.
+- Sélection : `.gf-select-mark` bleu plein, fond de ligne `primary-soft`, aucun aplat bleu plus large.
+- Menus d'actions : `SheetActionRow`, pictogramme sans pastille, rouge réservé à Supprimer.
+- Confirmations : action principale pleine largeur, Annuler en dessous.

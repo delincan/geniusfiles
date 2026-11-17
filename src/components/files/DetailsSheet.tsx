@@ -64,7 +64,7 @@ export function DetailsSheet({
           <p className="mt-1 text-[12px] text-muted-foreground">{typeLabel}</p>
         </div>
       </div>
-      <dl className="divide-y divide-border overflow-hidden rounded-2xl border border-border">
+      <dl className="divide-y divide-border/60 overflow-hidden rounded-xl bg-surface-2/60">
         <Row label={t("files.details.name")} value={info.name} />
         <Row label={t("files.details.location")} value={info.path} mono />
         <Row label={t("files.details.type")} value={typeLabel} />
@@ -87,9 +87,9 @@ export function DetailsSheet({
 function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="px-3.5 py-2.5 text-[13px]">
-      <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dt className="text-[12px] text-muted-foreground">{label}</dt>
       <dd
-        className={`mt-0.5 break-words text-foreground ${mono ? "font-mono text-[12px] leading-relaxed" : ""}`}
+        className={`mt-0.5 break-words text-[14px] text-foreground ${mono ? "font-mono text-[12px] leading-relaxed" : ""}`}
         style={{ overflowWrap: "anywhere" }}
       >
         {value}

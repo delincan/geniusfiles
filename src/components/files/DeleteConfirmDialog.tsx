@@ -47,19 +47,19 @@ export function DeleteConfirmDialog({
       extra={
         <button
           type="button"
-          className="mt-4 flex w-full cursor-pointer items-center gap-3 rounded-2xl border border-border bg-surface-2 p-3.5 text-left text-[14px] font-medium text-foreground"
+          className="mt-4 flex min-h-12 w-full cursor-pointer items-center gap-3 rounded-xl bg-surface-2 px-3.5 py-3 text-left text-[14px] font-medium text-foreground transition-colors active:bg-surface-3"
           onClick={() => setForever((v) => !v)}
           role="checkbox"
           aria-checked={forever}
         >
           <span
-            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition-colors ${
+            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] border-2 transition-colors ${
               forever
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-muted-foreground/50 bg-surface"
             }`}
           >
-            {forever ? <Check className="h-4 w-4" strokeWidth={3} /> : null}
+            {forever ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : null}
           </span>
           {t("copy.confirm.deleteForever.toggle")}
         </button>

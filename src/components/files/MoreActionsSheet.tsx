@@ -14,6 +14,7 @@ import {
   type AppIcon,
 } from "@/components/icons";
 import { BottomSheet } from "./BottomSheet";
+import { SheetActionRow } from "./SheetActionRow";
 import type { MoreAction, MoreActionId } from "@/lib/files/selection-actions";
 import { useT } from "@/lib/i18n";
 
@@ -49,35 +50,23 @@ export function MoreActionsSheet({
 }) {
   const t = useT();
   return (
-    <BottomSheet open={open} onClose={onClose}>
-      <div className="flex flex-col">
+    <BottomSheet open={open} onClose={onClose} title={t("action.more")}>
+      <div className="-mx-2.5 -mt-3 flex flex-col">
         {actions.map((a) => {
           let Icon: AppIcon = ICONS[a.id];
           if (a.id === "pin" && isPinned) Icon = PinOff;
           if (a.id === "addToHome") Icon = ArrowUpFromLine;
           return (
-            <button
+            <SheetActionRow
               key={a.id}
-              type="button"
+              icon={Icon}
+              label={a.label}
+              danger={a.danger}
               onClick={() => {
                 onClose();
                 a.onClick();
               }}
-              className={`flex min-h-11 items-center gap-3 rounded-lg px-2 py-2 text-left text-[13.5px] transition-colors active:bg-secondary/60 hover:bg-secondary/60 ${
-                a.danger ? "text-destructive" : "text-foreground"
-              }`}
-            >
-              <span
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                  a.danger
-                    ? "bg-destructive/12 text-destructive"
-                    : "bg-secondary/70 text-foreground/80"
-                }`}
-              >
-                <Icon className="h-5 w-5" />
-              </span>
-              <span className="min-w-0 flex-1 truncate">{a.label}</span>
-            </button>
+            />
           );
         })}
         {actions.length === 0 ? (

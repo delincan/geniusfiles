@@ -1,8 +1,8 @@
-import { CheckCircle2, ChevronRight, Circle, Eye, MoreVertical } from "@/components/icons";
+import { Check, ChevronRight, Eye, MoreVertical } from "@/components/icons";
 import { memo, useRef } from "react";
 import { countLabel } from "@/lib/copy";
 import { useT } from "@/lib/i18n";
-import { fileMetaLine, formatDate, formatSize, kindLabel } from "@/lib/files/format";
+import { formatDate, formatSize, kindLabel } from "@/lib/files/format";
 import { useFolderCount } from "@/lib/files/folder-count";
 import type { FileEntry, PathRef } from "@/lib/files/types";
 import { FileIcon } from "./FileIcon";
@@ -10,8 +10,8 @@ import { useWindowVirtualList } from "@/hooks/use-virtual-list";
 
 // Hauteurs FIXES : aucune re-mesure pendant le défilement, donc aucune
 // « danse » des éléments, même en défilement rapide sur 100 000 fichiers.
-const ROW_HEIGHT = 80;
-const GRID_CELL_HEIGHT = 138;
+const ROW_HEIGHT = 72;
+const GRID_CELL_HEIGHT = 156;
 const GRID_ROW_HEIGHT = GRID_CELL_HEIGHT + 10; // + gap vertical
 
 type Props = {
@@ -100,7 +100,7 @@ export function FileListView({
 
   if (!enabled) {
     return (
-      <div className="divide-y divide-border/45">
+      <div>
         {entries.map((entry) => (
           <FileRow
             key={entryKey(entry)}
@@ -123,18 +123,13 @@ export function FileListView({
   const items = virtualizer.getVirtualItems();
   const totalSize = virtualizer.getTotalSize();
   return (
-    <div
-      ref={parentRef}
-      className="divide-y divide-border/45"
-      style={{ position: "relative", height: `${totalSize}px` }}
-    >
+    <div ref={parentRef} style={{ position: "relative", height: `${totalSize}px` }}>
       {items.map((v) => {
         const entry = entries[v.index];
         return (
           <div
             key={entryKey(entry)}
             data-index={v.index}
-            className="border-b border-border/45"
             style={{
               position: "absolute",
               top: 0,
@@ -196,7 +191,7 @@ export const FileRow = memo(function FileRow({
       ? ""
       : countLabel(count, "item")
     : formatSize(entry.size);
-  const secondary = entry.isDirectory ? kindLabel(entry.kind) : kindLabel(entry.kind, entry.ext);
+  const secondary = entry.isDirectory ? "" : kindLabel(entry.kind, entry.ext);
 
   return (
     <button
@@ -210,33 +205,10 @@ export const FileRow = memo(function FileRow({
       }}
       aria-pressed={selectionMode ? isSelected : undefined}
       style={{ height: ROW_HEIGHT }}
-      className={`group relative flex w-full items-center gap-3 overflow-hidden px-4 py-2 text-left transition-colors duration-150 ${
-        isSelected ? "bg-primary-soft" : "active:bg-surface-2 hover:bg-surface/70"
+      className={`gf-file-row group relative flex w-full items-center gap-3 px-4 text-left transition-colors duration-150 ${
+        isSelected ? "bg-primary-soft" : "hover:bg-surface/70 active:bg-surface-2"
       }`}
     >
-      {isSelected ? (
-        <span aria-hidden className="absolute inset-y-1 left-0 w-[3px] rounded-r-full bg-primary" />
-      ) : null}
-      {selectionMode ? (
-        <span
-          role="button"
-          tabIndex={-1}
-          aria-label={isSelected ? t("action.deselect") : t("action.select")}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleSelect(entry);
-          }}
-          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors ${
-            isSelected ? "text-primary" : "text-muted-foreground/60"
-          }`}
-        >
-          {isSelected ? (
-            <CheckCircle2 className="h-[22px] w-[22px] fill-primary/20" />
-          ) : (
-            <Circle className="h-[22px] w-[22px]" />
-          )}
-        </span>
-      ) : null}
       <OpenZone
         entry={entry}
         active={selectionMode}
@@ -251,22 +223,29 @@ export const FileRow = memo(function FileRow({
       </OpenZone>
 
       <div className="min-w-0 flex-1">
-        <p className="gf-row-title line-clamp-2 break-all">{entry.name}</p>
+        <p className="gf-row-title line-clamp-2 [overflow-wrap:anywhere]">{entry.name}</p>
         <div className="mt-0.5 flex items-baseline gap-3">
-          <span className="gf-row-meta min-w-0 flex-1 truncate">
+          <span className="gf-row-meta mt-0 min-w-0 flex-1 truncate">
             {formatDate(entry.mtime)}
-            {!entry.isDirectory && secondary ? (
-              <span className="text-muted-foreground/70"> · {secondary}</span>
-            ) : null}
+            {secondary ? <span className="text-muted-foreground-2"> · {secondary}</span> : null}
           </span>
           {trailing ? (
-            <span className="shrink-0 whitespace-nowrap text-[12px] tabular-nums text-muted-foreground">
+            <span className="gf-row-meta mt-0 shrink-0 whitespace-nowrap tabular-nums">
               {trailing}
             </span>
           ) : null}
         </div>
       </div>
-      {!selectionMode && !entry.isDirectory ? <MoreAction onClick={() => onMore(entry)} /> : null}
+      {selectionMode ? (
+        <SelectToggle selected={isSelected} onToggle={() => onToggleSelect(entry)} />
+      ) : entry.isDirectory ? (
+        <ChevronRight
+          aria-hidden
+          className="-mr-1 h-[18px] w-[18px] shrink-0 text-muted-foreground-2"
+        />
+      ) : (
+        <MoreAction onClick={() => onMore(entry)} />
+      )}
     </button>
   );
 });
@@ -292,15 +271,14 @@ export function FileGridView({
     overscan: 6,
     threshold: 40,
   });
-  void parent;
-
   if (!enabled) {
     return (
-      <div className="grid grid-cols-3 gap-2.5 px-4">
+      <div className="grid grid-cols-3 gap-x-2 gap-y-2.5 px-3">
         {entries.map((entry) => (
           <GridCell
             key={entryKey(entry)}
             entry={entry}
+            parent={parent ?? null}
             onOpen={onOpen}
             onQuickOpen={onQuickOpen}
             renderIcon={renderIcon}
@@ -335,11 +313,12 @@ export function FileGridView({
               contain: "layout paint style",
             }}
           >
-            <div className="grid grid-cols-3 gap-2.5 px-4 pb-2.5">
+            <div className="grid grid-cols-3 gap-x-2 px-3 pb-2.5">
               {rowEntries.map((entry) => (
                 <GridCell
                   key={entryKey(entry)}
                   entry={entry}
+                  parent={parent ?? null}
                   onOpen={onOpen}
                   onQuickOpen={onQuickOpen}
                   renderIcon={renderIcon}
@@ -359,6 +338,7 @@ export function FileGridView({
 
 const GridCell = memo(function GridCell({
   entry,
+  parent,
   onOpen,
   onQuickOpen,
   renderIcon,
@@ -368,6 +348,7 @@ const GridCell = memo(function GridCell({
   onToggleSelect,
 }: {
   entry: FileEntry;
+  parent: PathRef | null;
   onOpen: (e: FileEntry) => void;
   onQuickOpen?: (e: FileEntry) => void;
   renderIcon?: (entry: FileEntry) => React.ReactNode;
@@ -378,6 +359,13 @@ const GridCell = memo(function GridCell({
 }) {
   const t = useT();
   const press = usePressBinder(entry, onLongPress);
+  const count = useFolderCount(parent, entry.name, entry.isDirectory);
+  const meta = entry.isDirectory
+    ? count == null
+      ? kindLabel(entry.kind)
+      : countLabel(count, "item")
+    : formatSize(entry.size);
+  const custom = renderIcon?.(entry);
   return (
     <button
       type="button"
@@ -388,53 +376,86 @@ const GridCell = memo(function GridCell({
         if (selectionMode) onToggleSelect(entry);
         else onOpen(entry);
       }}
+      aria-pressed={selectionMode ? isSelected : undefined}
       style={{ height: GRID_CELL_HEIGHT }}
-      className={`gf-card gf-press group relative flex flex-col items-start gap-2 overflow-hidden p-3 text-left ${
-        isSelected ? "bg-primary-softer ring-2 ring-primary" : ""
+      className={`gf-press group relative flex min-w-0 flex-col gap-2 rounded-xl p-1.5 text-left transition-colors duration-150 ${
+        isSelected ? "bg-primary-soft" : "hover:bg-surface/70 active:bg-surface-2"
       }`}
     >
-      {selectionMode ? (
-        <span
-          role="button"
-          tabIndex={-1}
-          aria-label={isSelected ? t("action.deselect") : t("action.select")}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleSelect(entry);
-          }}
-          className={`absolute left-2 top-2 z-10 rounded-full bg-surface/85 ${
-            isSelected ? "text-primary" : "text-muted-foreground/70"
-          }`}
-        >
-          {isSelected ? (
-            <CheckCircle2 className="h-5 w-5 fill-primary/15" />
-          ) : (
-            <Circle className="h-5 w-5" />
-          )}
-        </span>
-      ) : null}
       <OpenZone
         entry={entry}
         active={selectionMode}
         onOpen={entry.isDirectory ? onOpen : (onQuickOpen ?? onOpen)}
+        className="block h-[100px] w-full"
         label={
           entry.isDirectory
             ? t("files.list.openFolder", { name: entry.name })
             : t("files.list.openFile", { name: entry.name })
         }
       >
-        {renderIcon?.(entry) ?? <FileIcon kind={entry.kind} size="lg" path={entry.path} />}
+        <span
+          className={`flex h-[100px] w-full items-center justify-center overflow-hidden rounded-lg ${
+            isSelected ? "ring-2 ring-primary" : ""
+          } ${custom ? "bg-surface" : ""}`}
+        >
+          {custom ?? <FileIcon kind={entry.kind} size="fill" path={entry.path} />}
+        </span>
       </OpenZone>
+      {selectionMode ? (
+        <SelectToggle
+          selected={isSelected}
+          onToggle={() => onToggleSelect(entry)}
+          className="absolute right-1.5 top-1.5 z-10"
+          overlay
+        />
+      ) : null}
 
-      <div className="min-w-0">
-        <p className="truncate text-[12.5px] font-semibold leading-tight">{entry.name}</p>
-        <p className="mt-1 truncate text-[11px] text-muted-foreground">
-          {entry.isDirectory ? kindLabel(entry.kind) : fileMetaLine(entry)}
+      <div className="min-w-0 px-0.5">
+        <p className="truncate text-[13px] font-medium leading-[18px] text-foreground">
+          {entry.name}
         </p>
+        <p className="truncate text-[11.5px] leading-4 text-muted-foreground">{meta}</p>
       </div>
     </button>
   );
 });
+
+/** Case de sélection partagée : même forme et même bleu en liste et en grille. */
+function SelectToggle({
+  selected,
+  onToggle,
+  className = "",
+  overlay,
+}: {
+  selected: boolean;
+  onToggle: () => void;
+  className?: string;
+  /** Posée sur une vignette : pastille opaque pour rester lisible. */
+  overlay?: boolean;
+}) {
+  const t = useT();
+  return (
+    <span
+      role="button"
+      tabIndex={-1}
+      aria-label={selected ? t("action.deselect") : t("action.select")}
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle();
+      }}
+      className={`-mr-2 flex h-11 w-11 shrink-0 items-center justify-center ${
+        overlay ? "mr-0 h-9 w-9" : ""
+      } ${className}`}
+    >
+      <span
+        data-selected={selected}
+        className={`gf-select-mark ${overlay && !selected ? "bg-background/70" : ""}`}
+      >
+        {selected ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : null}
+      </span>
+    </span>
+  );
+}
 
 /**
  * Zone d'ouverture rapide (icône / vignette).
@@ -449,15 +470,17 @@ function OpenZone({
   active,
   onOpen,
   label,
+  className = "",
   children,
 }: {
   entry: FileEntry;
   active: boolean;
   onOpen: (e: FileEntry) => void;
   label: string;
+  className?: string;
   children: React.ReactNode;
 }) {
-  if (!active) return <>{children}</>;
+  if (!active) return className ? <span className={className}>{children}</span> : <>{children}</>;
   return (
     <span
       role="button"
@@ -468,12 +491,12 @@ function OpenZone({
         e.stopPropagation();
         onOpen(entry);
       }}
-      className="relative shrink-0 rounded-xl transition-transform active:scale-95"
+      className={`relative shrink-0 rounded-lg transition-transform active:scale-95 ${className}`}
     >
       {children}
       <span
         aria-hidden
-        className="pointer-events-none absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm"
+        className="pointer-events-none absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-foreground text-background shadow-sm"
       >
         {entry.isDirectory ? (
           <ChevronRight className="h-2.5 w-2.5" strokeWidth={3} />

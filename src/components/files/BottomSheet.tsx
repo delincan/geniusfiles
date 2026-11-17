@@ -391,14 +391,16 @@ export function ConfirmDialog({
       onClose={onCancel}
       title={title}
       footer={
-        <>
-          <PrimaryButton variant="ghost" onClick={onCancel}>
-            {t("action.cancel")}
-          </PrimaryButton>
+        /* Empilés pleine largeur : un libellé long (« Déplacer vers la
+           corbeille ») ne passe jamais à la ligne de façon bancale. */
+        <div className="grid w-full gap-2">
           <PrimaryButton variant={danger ? "danger" : "primary"} onClick={go} disabled={busy}>
             {confirmLabel ?? t("action.confirm")}
           </PrimaryButton>
-        </>
+          <PrimaryButton variant="ghost" onClick={onCancel}>
+            {t("action.cancel")}
+          </PrimaryButton>
+        </div>
       }
     >
       <div className="text-[15px] leading-relaxed text-muted-foreground">{description}</div>

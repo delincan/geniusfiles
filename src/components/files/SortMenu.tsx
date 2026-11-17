@@ -59,7 +59,7 @@ export function SortMenu({
     <div
       role="menu"
       aria-label={t("files.sort.optionsAria")}
-      className={`w-60 overflow-hidden rounded-2xl border border-border-strong bg-popover p-1.5 text-popover-foreground shadow-elevated ${className}`}
+      className={`w-60 overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-elevated ${className}`}
     >
       <p className="px-2.5 pb-1 pt-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         {t("files.sort.by")}
@@ -73,10 +73,10 @@ export function SortMenu({
             role="menuitemradio"
             aria-checked={active}
             onClick={() => setDraftKey(k)}
-            className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-left text-[13.5px] transition-colors ${
+            className={`flex min-h-10 w-full items-center justify-between rounded-lg px-2.5 text-left text-[14px] transition-colors ${
               active
-                ? "bg-primary-soft font-medium text-foreground"
-                : "text-muted-foreground hover:bg-secondary"
+                ? "font-medium text-foreground"
+                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
             }`}
           >
             <span className="truncate">{labels[k]}</span>
@@ -109,7 +109,7 @@ export function SortMenu({
           role="menuitemcheckbox"
           aria-checked={draftFolders}
           onClick={() => setDraftFolders((v) => !v)}
-          className="mt-1.5 flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-left text-[13.5px] text-muted-foreground transition-colors hover:bg-secondary"
+          className="mt-1 flex min-h-10 w-full items-center justify-between rounded-lg px-2.5 text-left text-[14px] text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
         >
           <span className="truncate">{t("files.sort.foldersFirst")}</span>
           <span
@@ -135,7 +135,7 @@ export function SortMenu({
             }
             onApply(draftKey, draftOrder);
           }}
-          className="w-full rounded-xl bg-primary py-2 text-[13.5px] font-semibold text-primary-foreground transition-colors active:bg-primary/90"
+          className="min-h-10 w-full rounded-lg bg-primary text-[14px] font-semibold text-primary-foreground transition-colors active:bg-primary/90"
         >
           {t("action.ok")}
         </button>
@@ -160,9 +160,9 @@ function OrderButton({
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`flex flex-1 items-center justify-center gap-1 rounded-xl py-2 text-[12px] transition-colors ${
+      className={`flex min-h-9 flex-1 items-center justify-center gap-1 rounded-lg text-[12.5px] transition-colors ${
         active
-          ? "bg-primary text-primary-foreground"
+          ? "bg-primary-soft font-medium text-primary"
           : "bg-secondary text-muted-foreground hover:text-foreground"
       }`}
     >

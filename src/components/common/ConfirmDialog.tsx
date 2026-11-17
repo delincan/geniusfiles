@@ -37,10 +37,7 @@ export function ConfirmDialog({
       onClose={busy ? () => {} : onCancel}
       fullScreen={false}
       footer={
-        <>
-          <PrimaryButton variant="ghost" onClick={onCancel} disabled={busy}>
-            {t("action.cancel")}
-          </PrimaryButton>
+        <div className="grid w-full gap-2">
           <PrimaryButton
             variant={danger ? "danger" : "primary"}
             onClick={onConfirm}
@@ -48,13 +45,16 @@ export function ConfirmDialog({
           >
             {busy ? t("home.confirm.working") : copy.confirmLabel}
           </PrimaryButton>
-        </>
+          <PrimaryButton variant="ghost" onClick={onCancel} disabled={busy}>
+            {t("action.cancel")}
+          </PrimaryButton>
+        </div>
       }
     >
       <div className="space-y-4 pr-8">
         <div className="flex items-start gap-3">
           <span
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
               danger ? "bg-destructive/10 text-destructive" : "bg-primary-softer text-primary"
             }`}
           >
@@ -65,7 +65,7 @@ export function ConfirmDialog({
             <p className="text-[14px] leading-relaxed text-muted-foreground">{copy.description}</p>
           </div>
         </div>
-        {extra ? <div className="rounded-2xl bg-surface-2 p-3.5 text-[13px]">{extra}</div> : null}
+        {extra ? <div className="rounded-xl bg-surface-2 p-3.5 text-[13px]">{extra}</div> : null}
       </div>
     </BottomSheet>
   );

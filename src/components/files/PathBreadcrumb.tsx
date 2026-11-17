@@ -34,12 +34,14 @@ export function PathBreadcrumb({
   return (
     <div
       ref={scrollerRef}
-      className="scrollbar-none flex items-center gap-0.5 overflow-x-auto px-2 py-1.5"
+      className="scrollbar-none flex h-10 items-center gap-0.5 overflow-x-auto px-2"
       aria-label={t("files.breadcrumb.aria")}
     >
-      <Crumb onClick={onHome} icon={<Home className="h-4 w-4" />}>
-        {t("files.breadcrumb.home")}
-      </Crumb>
+      <Crumb
+        onClick={onHome}
+        label={t("files.breadcrumb.home")}
+        icon={<Home className="h-[18px] w-[18px]" />}
+      />
       {path ? (
         <>
           <Sep />
@@ -64,7 +66,7 @@ export function PathBreadcrumb({
 }
 
 function Sep() {
-  return <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/45" />;
+  return <ChevronRight aria-hidden className="h-3.5 w-3.5 shrink-0 text-muted-foreground-2" />;
 }
 
 function Crumb({
@@ -72,25 +74,32 @@ function Crumb({
   onClick,
   active,
   icon,
+  label,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onClick: () => void;
   active?: boolean;
   icon?: React.ReactNode;
+  /** Libellé accessible d'un segment réduit à son icône. */
+  label?: string;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      aria-label={label}
+      title={label}
       aria-current={active ? "page" : undefined}
-      className={`flex min-h-8 max-w-[160px] shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-[background-color,color,transform] duration-150 active:scale-95 ${
+      className={`flex h-8 max-w-[168px] shrink-0 items-center gap-1.5 rounded-lg text-[13px] leading-none transition-[background-color,color] duration-150 ${
+        children ? "px-2" : "w-8 justify-center"
+      } ${
         active
-          ? "bg-surface-2 text-foreground"
-          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+          ? "font-semibold text-foreground"
+          : "font-medium text-muted-foreground hover:bg-secondary hover:text-foreground active:bg-secondary"
       }`}
     >
       {icon}
-      <span className="truncate">{children}</span>
+      {children ? <span className="truncate">{children}</span> : null}
     </button>
   );
 }

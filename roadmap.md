@@ -53,3 +53,10 @@
 - [x] Redesign Genius AI conversation; quota shown only when limit is reached.
 - [x] Redesign Automations hierarchy; quota notice only when limit is reached.
 - [x] Suggest next steps after the remix.
+
+# File manager — premium third stage
+
+- [x] Refine breadcrumb, file rows, grid, thumbnails and type icons with shared tokens.
+- [x] Clarify multiple selection marks, count and action bar; harmonize action sheets, sort menu and confirmations.
+- [x] Verify the manager in the preview (360 px: list, grid, selection, More, delete, actions, sort) and run `bun run verify`; 42 tests pass.
+- [ ] Check long names, thumbnails and native file operations on a physical Android device — requires a rebuilt APK and a device.

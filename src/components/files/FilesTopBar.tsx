@@ -100,7 +100,7 @@ export function FilesTopBar({
               {title}
             </p>
             {count != null ? (
-              <p className="truncate text-[11.5px] leading-tight text-muted-foreground">
+              <p className="truncate text-[12px] leading-tight text-muted-foreground tabular-nums">
                 {t("count.items", { count })}
               </p>
             ) : null}
@@ -125,7 +125,7 @@ export function FilesTopBar({
             {menu ? (
               <div className="animate-scale-in absolute right-1 top-[calc(100%+4px)] z-40 origin-top-right">
                 {onNewFolder ? (
-                  <div className="mb-1.5 w-60 overflow-hidden rounded-2xl border border-border-strong bg-popover p-1.5 shadow-elevated">
+                  <div className="mb-1.5 w-60 overflow-hidden rounded-xl border border-border bg-popover p-1 shadow-elevated">
                     <button
                       type="button"
                       role="menuitem"
@@ -133,7 +133,7 @@ export function FilesTopBar({
                         setMenu(false);
                         onNewFolder();
                       }}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-[13.5px] text-foreground transition-colors hover:bg-secondary active:bg-secondary"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-2.5 text-left text-[14px] text-foreground transition-colors hover:bg-secondary active:bg-secondary"
                     >
                       <FolderPlus className="h-[18px] w-[18px] text-muted-foreground" />
                       <span className="flex-1 truncate">{t("action.newFolder")}</span>

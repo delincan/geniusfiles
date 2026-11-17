@@ -3,60 +3,24 @@ import type { FileKind } from "@/lib/files/types";
 import { useThumbnail } from "@/hooks/use-thumbnail";
 import { isAndroidNative } from "@/lib/native/geniusfiles-native";
 import { canThumbnail, forgetThumbnail } from "@/lib/native/thumbnails";
-import { FILE_KIND_ICON, type GfIconComponent } from "@/components/icons";
+import { FILE_KIND_ICON, Play, type GfIconComponent } from "@/components/icons";
 
 /**
  * Chaque catégorie possède sa propre silhouette dessinée (jamais la même
- * icône recolorée) ; la teinte ne fait que renforcer une forme déjà
- * distinctive, et reste lisible en thème clair comme en thème sombre.
+ * icône recolorée). La teinte, définie par jeton (`.gf-file-tile`), ne
+ * colore que le pictogramme sur un fond neutre à peine teinté.
  */
-const MAP: Record<FileKind, { Icon: GfIconComponent; tone: string }> = {
-  folder: { Icon: FILE_KIND_ICON.folder, tone: "bg-secondary text-foreground/75" },
-  image: {
-    Icon: FILE_KIND_ICON.image,
-    tone: "bg-[oklch(0.72_0.16_305/0.14)] text-[oklch(0.62_0.16_305)] dark:text-[oklch(0.82_0.16_305)]",
-  },
-  video: {
-    Icon: FILE_KIND_ICON.video,
-    tone: "bg-[oklch(0.72_0.18_25/0.14)] text-[oklch(0.58_0.18_25)] dark:text-[oklch(0.82_0.18_25)]",
-  },
-  audio: {
-    Icon: FILE_KIND_ICON.audio,
-    tone: "bg-[oklch(0.72_0.16_155/0.14)] text-[oklch(0.55_0.16_155)] dark:text-[oklch(0.82_0.16_155)]",
-  },
-  document: {
-    Icon: FILE_KIND_ICON.document,
-    tone: "bg-[oklch(0.72_0.16_235/0.14)] text-[oklch(0.55_0.14_235)] dark:text-[oklch(0.85_0.14_235)]",
-  },
-  pdf: {
-    Icon: FILE_KIND_ICON.pdf,
-    tone: "bg-[oklch(0.65_0.22_25/0.16)] text-[oklch(0.55_0.2_25)] dark:text-[oklch(0.82_0.18_25)]",
-  },
-  archive: {
-    Icon: FILE_KIND_ICON.archive,
-    tone: "bg-[oklch(0.78_0.16_75/0.14)] text-[oklch(0.58_0.14_75)] dark:text-[oklch(0.85_0.14_75)]",
-  },
-  code: {
-    Icon: FILE_KIND_ICON.code,
-    tone: "bg-[oklch(0.72_0.16_190/0.14)] text-[oklch(0.55_0.12_190)] dark:text-[oklch(0.85_0.14_190)]",
-  },
-  apk: {
-    Icon: FILE_KIND_ICON.apk,
-    tone: "bg-[oklch(0.72_0.17_155/0.14)] text-[oklch(0.55_0.16_155)] dark:text-[oklch(0.82_0.16_155)]",
-  },
-  text: { Icon: FILE_KIND_ICON.text, tone: "bg-secondary text-foreground/80" },
-  font: { Icon: FILE_KIND_ICON.font, tone: "bg-secondary text-foreground/80" },
-  other: { Icon: FILE_KIND_ICON.other, tone: "bg-secondary text-muted-foreground" },
-};
+const ICONS: Record<FileKind, GfIconComponent> = FILE_KIND_ICON;
 
 /**
- * Miniatures légèrement agrandies, coins quasi droits : la vignette occupe
- * toute sa zone d'affichage pour un rendu de gestionnaire de fichiers natif.
+ * Tailles partagées : liste compacte (sm/md), feuilles de détails (lg) et
+ * grille (fill, la vignette occupe toute sa zone).
  */
 const DIMS = {
-  sm: { box: "h-11 w-11", icon: "h-5 w-5", radius: "rounded-[4px]", px: 88 },
-  md: { box: "h-13 w-13", icon: "h-6 w-6", radius: "rounded-[5px]", px: 104 },
-  lg: { box: "h-[68px] w-[68px]", icon: "h-7 w-7", radius: "rounded-[6px]", px: 144 },
+  sm: { box: "h-10 w-10", icon: "h-5 w-5", px: 80 },
+  md: { box: "h-11 w-11", icon: "h-[22px] w-[22px]", px: 96 },
+  lg: { box: "h-14 w-14", icon: "h-7 w-7", px: 128 },
+  fill: { box: "", icon: "h-8 w-8", px: 240 },
 } as const;
 
 function hash(input: string): number {
@@ -80,7 +44,7 @@ export function FileIcon({
   path,
 }: {
   kind: FileKind;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "fill";
   className?: string;
   /**
    * Chemin absolu du fichier. Fourni pour les images/vidéos, il déclenche
@@ -88,7 +52,7 @@ export function FileIcon({
    */
   path?: string | null;
 }) {
-  const { box, icon, radius, px } = DIMS[size];
+  const { box, icon, px } = DIMS[size];
   const media = (kind === "image" || kind === "video") && !!path && canThumbnail(path, kind);
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const thumb = useThumbnail(media ? (path as string) : null, px);
@@ -96,16 +60,14 @@ export function FileIcon({
     ? (thumb ?? (isAndroidNative() ? null : webPreviewUrl(path as string, px)))
     : null;
   const src = candidate && candidate !== failedSrc ? candidate : null;
-  const { Icon, tone } = MAP[kind];
+  const Icon = ICONS[kind];
 
   if (src) {
     // L'icône reste sous l'image jusqu'à son décodage asynchrone : aucun
     // changement d'état React pour chacune des miniatures pendant le scroll.
     return (
-      <span
-        className={`relative flex shrink-0 overflow-hidden ${box} items-center justify-center ${radius} ${tone} ${className}`}
-      >
-        <Icon className={`${icon} opacity-70`} strokeWidth={2} />
+      <span data-kind={kind} data-size={size} className={`gf-file-tile ${box} ${className}`}>
+        <Icon className={`${icon} opacity-60`} />
         <img
           src={src}
           alt=""
@@ -120,15 +82,21 @@ export function FileIcon({
           }}
           className="absolute inset-0 h-full w-full object-cover"
         />
+        {kind === "video" ? (
+          <span
+            aria-hidden
+            className="absolute bottom-1 left-1 flex h-4 w-4 items-center justify-center rounded-full bg-scrim/60 text-media-foreground"
+          >
+            <Play className="h-2.5 w-2.5" />
+          </span>
+        ) : null}
       </span>
     );
   }
 
   return (
-    <span
-      className={`flex shrink-0 ${box} items-center justify-center ${radius} ${tone} ${className}`}
-    >
-      <Icon className={icon} strokeWidth={2} />
+    <span data-kind={kind} data-size={size} className={`gf-file-tile ${box} ${className}`}>
+      <Icon className={icon} />
     </span>
   );
 }

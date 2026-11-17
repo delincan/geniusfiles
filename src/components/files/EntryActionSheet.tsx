@@ -14,6 +14,8 @@ import {
 } from "@/components/icons";
 import type { FileEntry } from "@/lib/files/types";
 import { FileIcon } from "./FileIcon";
+import { SheetActionRow as ActionRow, SheetDivider } from "./SheetActionRow";
+import { fileMetaLine, formatDate } from "@/lib/files/format";
 import { BottomSheet } from "./BottomSheet";
 import { canReadArchive } from "@/lib/files/archive";
 import { packageKindOf } from "@/lib/files/package";
@@ -63,11 +65,19 @@ export function EntryActionSheet({
     <BottomSheet open={open && !!entry} onClose={onClose}>
       {entry ? (
         <>
-          <div className="mb-3 flex items-center gap-3">
+          <div className="mb-2 flex items-center gap-3 pr-10">
             <FileIcon kind={entry.kind} path={entry.path} />
-            <p className="min-w-0 flex-1 truncate text-[13px] font-semibold">{entry.name}</p>
+            <div className="min-w-0 flex-1">
+              <p className="line-clamp-2 text-[15px] font-semibold leading-5 text-foreground [overflow-wrap:anywhere]">
+                {entry.name}
+              </p>
+              <p className="mt-0.5 truncate text-[12px] text-muted-foreground tabular-nums">
+                {entry.isDirectory ? formatDate(entry.mtime) : fileMetaLine(entry)}
+              </p>
+            </div>
           </div>
-          <div className="flex flex-col">
+          <SheetDivider />
+          <div className="-mx-2.5 flex flex-col">
             {pkgKind ? (
               <>
                 <ActionRow
@@ -93,7 +103,7 @@ export function EntryActionSheet({
                     />
                   </>
                 ) : null}
-                <div className="my-1 h-px bg-border/40" />
+                <SheetDivider />
               </>
             ) : null}
             {isArchive ? (
@@ -108,7 +118,7 @@ export function EntryActionSheet({
                   label={t("files.actions.extractEllipsis")}
                   onClick={() => onAction("extract")}
                 />
-                <div className="my-1 h-px bg-border/40" />
+                <SheetDivider />
               </>
             ) : null}
             {showOpen ? (
@@ -160,7 +170,7 @@ export function EntryActionSheet({
               onClick={() => onAction("compress")}
             />
             <ActionRow icon={Info} label={t("action.details")} onClick={() => onAction("info")} />
-            <div className="my-1 h-px bg-border/40" />
+            <SheetDivider />
             <ActionRow
               icon={Trash2}
               label={t("action.delete")}
@@ -171,36 +181,5 @@ export function EntryActionSheet({
         </>
       ) : null}
     </BottomSheet>
-  );
-}
-
-function ActionRow({
-  icon: Icon,
-  label,
-  onClick,
-  danger,
-}: {
-  icon: typeof Info;
-  label: string;
-  onClick: () => void;
-  danger?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex min-h-11 items-center gap-3 rounded-lg px-2 py-2 text-left text-[13.5px] transition-colors active:bg-secondary/60 hover:bg-secondary/60 ${
-        danger ? "text-destructive" : "text-foreground"
-      }`}
-    >
-      <span
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-          danger ? "bg-destructive/12 text-destructive" : "bg-secondary/70 text-foreground/80"
-        }`}
-      >
-        <Icon className="h-5 w-5" />
-      </span>
-      <span className="min-w-0 flex-1 truncate">{label}</span>
-    </button>
   );
 }

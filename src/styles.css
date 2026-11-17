@@ -223,6 +223,8 @@
   --cat-archive: #fdb022;
   --cat-apk: #f97066;
   --cat-other: #8a939f;
+  --cat-pdf: #f38b7d;
+  --cat-code: #5cc8e0;
 
   /* Ombres — neutres et très discrètes */
   --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.3);
@@ -359,6 +361,8 @@ html[data-theme="light"] {
   --cat-archive: #a95d05;
   --cat-apk: #d92d20;
   --cat-other: #6b7280;
+  --cat-pdf: #c4321f;
+  --cat-code: #0e7490;
 
   /* Ombres — douces, jamais grises et sales */
   --shadow-xs: 0 1px 2px rgb(21 23 28 / 0.05);
@@ -1867,4 +1871,153 @@ svg.gf-icon.h-16 {
 }
 .home-dashboard section {
   min-width: 0;
+}
+
+/* ============================================================
+   Gestionnaire de fichiers — vignettes et lignes partagées
+   Une seule recette pour la liste, la grille et les feuilles
+   d'actions : la teinte du type colore uniquement le pictogramme
+   sur un fond neutre à peine teinté, jamais une carte entière.
+   ============================================================ */
+.gf-file-tile {
+  --tone: var(--cat-other);
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  color: var(--tone);
+  background-color: color-mix(in oklab, var(--tone) 12%, var(--surface));
+}
+.gf-file-tile[data-kind="folder"] {
+  --tone: var(--foreground);
+  color: color-mix(in oklab, var(--foreground) 82%, transparent);
+  background-color: var(--surface-2);
+}
+.gf-file-tile[data-kind="image"] {
+  --tone: var(--cat-image);
+}
+.gf-file-tile[data-kind="video"] {
+  --tone: var(--cat-video);
+}
+.gf-file-tile[data-kind="audio"] {
+  --tone: var(--cat-audio);
+}
+.gf-file-tile[data-kind="document"] {
+  --tone: var(--cat-document);
+}
+.gf-file-tile[data-kind="pdf"] {
+  --tone: var(--cat-pdf);
+}
+.gf-file-tile[data-kind="archive"] {
+  --tone: var(--cat-archive);
+}
+.gf-file-tile[data-kind="code"] {
+  --tone: var(--cat-code);
+}
+.gf-file-tile[data-kind="apk"] {
+  --tone: var(--cat-audio);
+}
+.gf-file-tile[data-kind="text"],
+.gf-file-tile[data-kind="font"] {
+  --tone: var(--muted-foreground);
+}
+.gf-file-tile[data-size="lg"] {
+  border-radius: var(--radius-md);
+}
+/* Grille : la vignette remplit sa zone, le fond reste neutre. */
+.gf-file-tile[data-size="fill"] {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  background-color: var(--surface);
+}
+.gf-file-tile[data-size="fill"][data-kind="folder"] {
+  background-color: var(--surface);
+}
+
+/* Ligne de fichier : séparateur aligné sur le texte, pas sur l'icône. */
+.gf-file-row::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  bottom: 0;
+  left: 72px;
+  height: 1px;
+  background-color: color-mix(in oklab, var(--border) 60%, transparent);
+  pointer-events: none;
+}
+.gf-file-row[aria-pressed="true"]::after {
+  opacity: 0;
+}
+
+/* Indicateur de sélection unique (liste et grille). */
+.gf-select-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 1.75px solid color-mix(in oklab, var(--muted-foreground) 65%, transparent);
+  color: var(--primary-foreground);
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+.gf-select-mark[data-selected="true"] {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  animation: gf-select-pop var(--duration-base) var(--ease-emphasized);
+}
+@keyframes gf-select-pop {
+  from {
+    transform: scale(0.8);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gf-select-mark[data-selected="true"] {
+    animation: none;
+  }
+}
+
+/* Feuilles d'actions : rangées sobres, pictogramme sans pastille. */
+.gf-sheet-action {
+  display: flex;
+  min-height: 48px;
+  width: 100%;
+  align-items: center;
+  gap: 14px;
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--foreground);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+.gf-sheet-action:hover,
+.gf-sheet-action:active {
+  background-color: var(--surface-2);
+}
+.gf-sheet-action-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+.gf-sheet-action[data-danger="true"],
+.gf-sheet-action[data-danger="true"] .gf-sheet-action-icon {
+  color: var(--destructive);
+}
+.gf-sheet-action[data-danger="true"]:hover,
+.gf-sheet-action[data-danger="true"]:active {
+  background-color: color-mix(in oklab, var(--destructive) 10%, transparent);
 }

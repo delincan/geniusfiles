@@ -12,3 +12,4 @@ android
 android-overrides
 .lovable/plan
 RAPPORT_*.md
+.oj-cache
