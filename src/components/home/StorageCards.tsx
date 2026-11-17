@@ -137,12 +137,10 @@ export function StorageCards({
 
   return (
     <section aria-label={t("home.storage.aria")}>
-      <h2 className="mb-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {t("home.storage.title")}
-      </h2>
+      <h2 className="mb-2.5 px-0.5 type-overline">{t("home.storage.title")}</h2>
       {/* Toujours vertical : chaque stockage occupe une ligne pleine largeur,
           quel que soit leur nombre — aucun débordement horizontal. */}
-      <div className="flex w-full flex-col gap-2.5">
+      <div className="flex w-full flex-col gap-2">
         {cards.map((c) => (
           <StorageTile key={c.id} card={c} onOpen={() => onOpenRoot(c.id)} />
         ))}
@@ -162,24 +160,24 @@ function StorageTile({ card, onOpen }: { card: StorageCard; onOpen: () => void }
       type="button"
       onClick={onOpen}
       aria-label={t("home.storage.open", { label: card.label })}
-      className="group flex w-full items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-2.5 text-left transition-transform duration-100 ease-out active:scale-[0.98] hover:border-primary/30"
+      className="gf-tile group flex w-full items-center gap-3 px-3.5 py-3 text-left"
     >
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary">
-        <Icon className="h-[19px] w-[19px]" />
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/12 text-primary">
+        <Icon className="h-5 w-5" />
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-baseline gap-2">
-          <span className="min-w-0 flex-1 truncate text-[14px] font-semibold leading-tight">
+          <span className="min-w-0 flex-1 truncate text-[14px] font-medium leading-tight">
             {card.label}
           </span>
           {known && (
-            <span className="shrink-0 text-[11.5px] font-semibold tabular-nums text-primary">
+            <span className="shrink-0 text-[12px] font-medium tabular-nums text-foreground/80">
               {pct} %
             </span>
           )}
         </span>
         <span
-          className="mt-1.5 block h-[3px] overflow-hidden rounded-full bg-secondary"
+          className="mt-2 block h-1 overflow-hidden rounded-full bg-surface-3"
           aria-hidden="true"
         >
           <span
@@ -187,7 +185,7 @@ function StorageTile({ card, onOpen }: { card: StorageCard; onOpen: () => void }
             style={{ width: `${known ? Math.max(pct, 2) : 0}%` }}
           />
         </span>
-        <span className="mt-1.5 block truncate text-[11px] leading-none text-muted-foreground tabular-nums">
+        <span className="mt-2 block truncate text-[11.5px] leading-none text-muted-foreground tabular-nums">
           {known
             ? t("home.storage.usage", {
                 used: formatSize(card.used),
@@ -197,7 +195,7 @@ function StorageTile({ card, onOpen }: { card: StorageCard; onOpen: () => void }
             : t("home.storage.readingSpace")}
         </span>
       </span>
-      <ChevronRight className="h-[18px] w-[18px] shrink-0 text-muted-foreground/70" />
+      <ChevronRight className="h-[18px] w-[18px] shrink-0 text-muted-foreground/60" />
     </button>
   );
 }

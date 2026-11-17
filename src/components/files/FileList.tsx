@@ -211,7 +211,7 @@ export const FileRow = memo(function FileRow({
       aria-pressed={selectionMode ? isSelected : undefined}
       style={{ height: ROW_HEIGHT }}
       className={`group relative flex w-full items-center gap-3 overflow-hidden px-4 py-2 text-left transition-colors duration-150 ${
-        isSelected ? "bg-primary-softer" : "active:bg-secondary/60 hover:bg-secondary/35"
+        isSelected ? "bg-primary-soft" : "active:bg-surface-2 hover:bg-surface/70"
       }`}
     >
       {isSelected ? (
@@ -231,9 +231,9 @@ export const FileRow = memo(function FileRow({
           }`}
         >
           {isSelected ? (
-            <CheckCircle2 className="h-[22px] w-[22px] fill-primary/15" strokeWidth={2.2} />
+            <CheckCircle2 className="h-[22px] w-[22px] fill-primary/20" />
           ) : (
-            <Circle className="h-[22px] w-[22px]" strokeWidth={1.8} />
+            <Circle className="h-[22px] w-[22px]" />
           )}
         </span>
       ) : null}
@@ -256,11 +256,11 @@ export const FileRow = memo(function FileRow({
           <span className="gf-row-meta min-w-0 flex-1 truncate">
             {formatDate(entry.mtime)}
             {!entry.isDirectory && secondary ? (
-              <span className="text-muted-foreground/60"> · {secondary}</span>
+              <span className="text-muted-foreground/70"> · {secondary}</span>
             ) : null}
           </span>
           {trailing ? (
-            <span className="shrink-0 whitespace-nowrap text-[11.5px] tabular-nums text-muted-foreground/80">
+            <span className="shrink-0 whitespace-nowrap text-[12px] tabular-nums text-muted-foreground">
               {trailing}
             </span>
           ) : null}
@@ -503,9 +503,9 @@ function MoreAction({ onClick }: { onClick: () => void }) {
           onClick();
         }
       }}
-      className="-mr-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted-foreground/70 transition-colors hover:bg-secondary hover:text-foreground active:bg-secondary"
+      className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground active:bg-secondary"
     >
-      <MoreVertical className="h-[18px] w-[18px]" />
+      <MoreVertical className="h-5 w-5" />
     </span>
   );
 }

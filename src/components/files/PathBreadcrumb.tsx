@@ -37,7 +37,7 @@ export function PathBreadcrumb({
       className="scrollbar-none flex items-center gap-0.5 overflow-x-auto px-2 py-1.5"
       aria-label={t("files.breadcrumb.aria")}
     >
-      <Crumb onClick={onHome} icon={<Home className="h-[15px] w-[15px]" strokeWidth={2.1} />}>
+      <Crumb onClick={onHome} icon={<Home className="h-4 w-4" />}>
         {t("files.breadcrumb.home")}
       </Crumb>
       {path ? (
@@ -64,7 +64,7 @@ export function PathBreadcrumb({
 }
 
 function Sep() {
-  return <ChevronRight className="h-[15px] w-[15px] shrink-0 text-muted-foreground/50" />;
+  return <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/45" />;
 }
 
 function Crumb({
@@ -83,9 +83,9 @@ function Crumb({
       type="button"
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      className={`flex max-w-[150px] shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[12.5px] font-medium transition-[background-color,color,transform] duration-150 active:scale-95 ${
+      className={`flex min-h-8 max-w-[160px] shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-[background-color,color,transform] duration-150 active:scale-95 ${
         active
-          ? "bg-primary-softer text-primary"
+          ? "bg-surface-2 text-foreground"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground"
       }`}
     >

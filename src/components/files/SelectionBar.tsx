@@ -46,21 +46,21 @@ export function SelectionActionRow({
         type="button"
         onClick={onClear}
         aria-label={t("ops.selection.exit")}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-foreground transition-colors active:bg-secondary/60"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-foreground transition-colors active:bg-surface-2"
       >
-        <X className="h-[22px] w-[22px]" strokeWidth={2.1} />
+        <X className="h-[22px] w-[22px]" />
       </button>
       <span className="flex min-w-0 flex-col justify-center px-1 leading-tight">
-        <span className="truncate text-[16px] font-semibold text-foreground">
+        <span className="truncate text-[16px] font-semibold tabular-nums text-foreground">
           {t("unit.selected", { count })}
         </span>
         {sizeLabel ? (
-          <span className="truncate text-[11.5px] font-medium text-muted-foreground">
+          <span className="mt-0.5 truncate text-[12px] tabular-nums text-muted-foreground">
             {sizeLabel}
           </span>
         ) : null}
       </span>
-      <div className="flex shrink-0 items-center gap-3 pr-1">
+      <div className="flex shrink-0 items-center gap-1 pr-0.5">
         <TopAction icon={CheckCheck} label={t("action.selectAll")} onClick={onSelectAll} />
         {onSelectRange ? (
           <TopAction
@@ -95,7 +95,7 @@ export function SelectionTopBar({
   children?: React.ReactNode;
 }) {
   return (
-    <header className="sticky top-0 z-30 -mx-4 border-b border-border/60 bg-background/95 pt-safe backdrop-blur">
+    <header className="sticky top-0 z-30 -mx-4 border-b border-border/50 bg-background/95 pt-safe backdrop-blur">
       <div className="pl-safe pr-safe">
         <SelectionActionRow
           count={count}
@@ -125,10 +125,10 @@ function TopAction({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className="flex min-w-[52px] flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1 text-[11px] font-medium leading-none text-muted-foreground transition-colors hover:text-foreground active:bg-secondary/60"
+      className="flex min-h-11 min-w-[56px] flex-col items-center justify-center gap-1 rounded-lg px-1.5 py-1 text-[11px] font-medium leading-none text-muted-foreground transition-colors hover:text-foreground active:bg-surface-2"
     >
-      <Icon className="h-[21px] w-[21px]" strokeWidth={2} />
-      <span className="max-w-full truncate">{label}</span>
+      <Icon className="h-5 w-5" />
+      <span className="max-w-full whitespace-nowrap">{label}</span>
     </button>
   );
 }
@@ -164,6 +164,24 @@ export function SelectionBar({
 }) {
   const t = useT();
   const canRename = count === 1;
+  // La barre s'adapte : « Renommer » n'apparaît que lorsqu'il s'applique
+  // (un seul élément), ce qui laisse plus de place aux autres libellés.
+  const actions: Array<{
+    key: string;
+    icon: AppIcon;
+    label: string;
+    onClick: () => void;
+    danger?: boolean;
+  }> = [
+    { key: "share", icon: Share2, label: t("action.share"), onClick: onShare ?? onMore },
+    ...(canRename
+      ? [{ key: "rename", icon: SquarePen, label: t("action.rename"), onClick: onRename }]
+      : []),
+    { key: "copy", icon: Copy, label: t("action.copy"), onClick: onCopy },
+    { key: "move", icon: FolderInput, label: t("action.move"), onClick: onMove },
+    { key: "delete", icon: Trash2, label: t("action.delete"), onClick: onDelete, danger: true },
+    { key: "more", icon: MoreHorizontal, label: t("action.more"), onClick: onMore },
+  ];
   return (
     <>
       {/* Espaceur : la barre est `fixed`, elle ne doit rien recouvrir. */}
@@ -179,18 +197,19 @@ export function SelectionBar({
             animation: "gf-bar-in-bottom 220ms cubic-bezier(0.2, 0, 0, 1) both",
           }}
         >
-          <div className="grid grid-cols-6 items-stretch gap-0.5 rounded-[22px] border border-border bg-surface px-1 py-1.5 shadow-elevated">
-            <BarAction icon={Share2} label={t("action.share")} onClick={onShare ?? onMore} />
-            <BarAction
-              icon={SquarePen}
-              label={t("action.rename")}
-              onClick={onRename}
-              disabled={!canRename}
-            />
-            <BarAction icon={Copy} label={t("action.copy")} onClick={onCopy} />
-            <BarAction icon={FolderInput} label={t("action.move")} onClick={onMove} />
-            <BarAction icon={Trash2} label={t("action.delete")} onClick={onDelete} danger />
-            <BarAction icon={MoreHorizontal} label={t("action.more")} onClick={onMore} />
+          <div
+            className="@container grid items-stretch gap-0.5 rounded-2xl border border-border/70 bg-popover p-1 shadow-elevated"
+            style={{ gridTemplateColumns: `repeat(${actions.length}, minmax(0, 1fr))` }}
+          >
+            {actions.map((a) => (
+              <BarAction
+                key={a.key}
+                icon={a.icon}
+                label={a.label}
+                onClick={a.onClick}
+                danger={a.danger}
+              />
+            ))}
           </div>
         </nav>
       </Portal>
@@ -217,14 +236,15 @@ function BarAction({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl py-2 text-[11px] font-medium leading-none transition-colors disabled:opacity-40 ${
+      title={label}
+      className={`flex min-h-14 min-w-0 flex-col items-center justify-center gap-1.5 rounded-xl px-0.5 py-2 text-[11px] font-medium leading-none tracking-[-0.01em] transition-colors disabled:opacity-40 ${
         danger
           ? "text-destructive active:bg-destructive/10"
-          : "text-muted-foreground active:bg-secondary/60 hover:text-foreground"
+          : "text-foreground/85 active:bg-surface-2 hover:bg-surface-2/60"
       }`}
     >
-      <Icon className="h-[22px] w-[22px]" strokeWidth={2} />
-      <span className="max-w-full truncate">{label}</span>
+      <Icon className="h-5 w-5 shrink-0" />
+      <span className="hidden max-w-full whitespace-nowrap @[300px]:block">{label}</span>
     </button>
   );
 }

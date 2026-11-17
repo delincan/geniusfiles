@@ -1825,7 +1825,7 @@ function RootView({
       key: "documents",
       label: t("home.category.documents"),
       icon: GfDocument,
-      tint: "bg-blue-500/12 text-blue-600 dark:text-blue-400",
+      tint: "bg-cat-document/12 text-cat-document",
       count: kinds?.documents.count,
       bytes: kinds?.documents.bytes,
       onOpen: () => navigate({ to: "/categorie/$kind", params: { kind: "documents" } }),
@@ -1834,7 +1834,7 @@ function RootView({
       key: "images",
       label: t("home.category.images"),
       icon: GfImage,
-      tint: "bg-emerald-500/12 text-emerald-600 dark:text-emerald-400",
+      tint: "bg-cat-image/12 text-cat-image",
       count: kinds?.images.count,
       bytes: kinds?.images.bytes,
       onOpen: () => navigate({ to: "/categorie/$kind", params: { kind: "images" } }),
@@ -1843,7 +1843,7 @@ function RootView({
       key: "videos",
       label: t("home.category.videos"),
       icon: GfVideo,
-      tint: "bg-rose-500/12 text-rose-600 dark:text-rose-400",
+      tint: "bg-cat-video/12 text-cat-video",
       count: kinds?.videos.count,
       bytes: kinds?.videos.bytes,
       onOpen: () => navigate({ to: "/categorie/$kind", params: { kind: "videos" } }),
@@ -1852,7 +1852,7 @@ function RootView({
       key: "audio",
       label: t("home.category.audio"),
       icon: GfAudio,
-      tint: "bg-violet-500/12 text-violet-600 dark:text-violet-400",
+      tint: "bg-cat-audio/12 text-cat-audio",
       count: kinds?.audio.count,
       bytes: kinds?.audio.bytes,
       onOpen: () => navigate({ to: "/categorie/$kind", params: { kind: "audio" } }),
@@ -1861,7 +1861,7 @@ function RootView({
       key: "downloads",
       label: t("home.category.downloads"),
       icon: GfDownload,
-      tint: "bg-sky-500/12 text-sky-600 dark:text-sky-400",
+      tint: "bg-primary/12 text-primary",
       count: downloadsCount || undefined,
       bytes: downloadsBytes || undefined,
       onOpen: () => navigate({ to: "/categorie/$kind", params: { kind: "downloads" } }),
@@ -1870,7 +1870,7 @@ function RootView({
       key: "apk",
       label: t("home.category.apps"),
       icon: GfApps,
-      tint: "bg-amber-500/12 text-amber-600 dark:text-amber-400",
+      tint: "bg-cat-apk/12 text-cat-apk",
       count: apps?.count,
       bytes: apps?.bytes,
       onOpen: () => navigate({ to: "/applications" }),
@@ -1886,43 +1886,43 @@ function RootView({
     {
       title: t("home.tool.cleaner"),
       icon: GfCleaner,
-      tint: "bg-emerald-500/12 text-emerald-600 dark:text-emerald-400",
+      tint: "bg-surface-2 text-foreground/90",
       onOpen: () => navigate({ to: "/nettoyeur" }),
     },
     {
       title: t("home.tool.pdfTools"),
       icon: GfPdfTools,
-      tint: "bg-primary/12 text-primary",
+      tint: "bg-surface-2 text-foreground/90",
       onOpen: () => navigate({ to: "/pdf-outils" }),
     },
     {
       title: t("home.tool.vault"),
       icon: GfVault,
-      tint: "bg-blue-500/12 text-blue-600 dark:text-blue-400",
+      tint: "bg-surface-2 text-foreground/90",
       onOpen: () => navigate({ to: "/coffre-fort" }),
     },
     {
       title: t("home.tool.imageEditor"),
       icon: GfPhotoEditor,
-      tint: "bg-amber-500/12 text-amber-600 dark:text-amber-400",
+      tint: "bg-surface-2 text-foreground/90",
       onOpen: () => setEditorPick("image"),
     },
     {
       title: t("home.tool.audioEditor"),
       icon: GfAudioEditor,
-      tint: "bg-violet-500/12 text-violet-600 dark:text-violet-400",
+      tint: "bg-surface-2 text-foreground/90",
       onOpen: () => setEditorPick("audio"),
     },
     {
       title: t("home.tool.trash"),
       icon: GfTrash,
-      tint: "bg-rose-500/12 text-rose-600 dark:text-rose-400",
+      tint: "bg-surface-2 text-foreground/90",
       onOpen: () => navigate({ to: "/corbeille" }),
     },
   ];
 
   return (
-    <div className="flex flex-col gap-5 pb-6">
+    <div className="flex flex-col gap-7 pb-6">
       {/* Salutation = titre principal de la page, en en-tête collant. */}
       <PageHeader
         title={pick ? pick.title : greeting}
@@ -1943,10 +1943,10 @@ function RootView({
               setSearchScope(null);
               navigate({ to: "/recherche" });
             }}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface text-primary transition-transform duration-100 ease-out active:scale-95 hover:border-primary/40"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-surface text-foreground transition-transform duration-100 ease-out active:scale-95 hover:bg-surface-2"
             aria-label={t("action.search")}
           >
-            <Search className="h-[19px] w-[19px]" strokeWidth={2.2} />
+            <Search className="h-5 w-5" />
           </button>
         }
       />
@@ -1964,9 +1964,7 @@ function RootView({
 
       {/* Categories grid — compact */}
       <section aria-label={t("cleaner.categories.title")}>
-        <h2 className="mb-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-          {t("cleaner.categories.title")}
-        </h2>
+        <h2 className="mb-2.5 px-0.5 type-overline">{t("cleaner.categories.title")}</h2>
         <div className="grid grid-cols-3 gap-2">
           {categories
             .filter((c) => !c.hidden)
@@ -1991,23 +1989,19 @@ function RootView({
       {/* Tools grid — compact (masqués pendant une sélection) */}
       {pick ? null : (
         <section aria-label={t("home.section.tools")}>
-          <h2 className="mb-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-            {t("home.section.tools")}
-          </h2>
+          <h2 className="mb-2.5 px-0.5 type-overline">{t("home.section.tools")}</h2>
           <div className="grid grid-cols-3 gap-2">
             {tools.map((t) => (
               <button
                 key={t.title}
                 type="button"
                 onClick={t.onOpen}
-                className="group flex flex-col items-center gap-2 rounded-2xl border border-border bg-surface px-1.5 py-3.5 text-center transition-transform duration-100 ease-out active:scale-[0.96] hover:border-primary/30"
+                className="gf-tile group flex flex-col items-center gap-2 px-1.5 py-3.5 text-center"
               >
-                <span
-                  className={`flex h-11 w-11 items-center justify-center rounded-2xl ${t.tint}`}
-                >
-                  <t.icon className="h-[23px] w-[23px]" strokeWidth={1.5} />
+                <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.tint}`}>
+                  <t.icon className="h-5 w-5" />
                 </span>
-                <p className="w-full truncate text-[11.5px] font-semibold leading-tight">
+                <p className="w-full truncate text-[12px] font-medium leading-tight text-foreground/90">
                   {t.title}
                 </p>
               </button>
@@ -2055,13 +2049,8 @@ function RootView({
 function PickHowTo({ multi }: { multi: boolean }) {
   const t = useT();
   return (
-    <section
-      aria-label={t("home.pickHowTo.aria")}
-      className="rounded-2xl border border-border bg-surface p-3.5"
-    >
-      <h2 className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {t("home.pickHowTo.title")}
-      </h2>
+    <section aria-label={t("home.pickHowTo.aria")} className="gf-tile p-4">
+      <h2 className="mb-2 type-overline">{t("home.pickHowTo.title")}</h2>
       <ul className="space-y-1 text-[13px] leading-snug text-foreground/85">
         <li>• {t("home.pickHowTo.step1")}</li>
         <li>• {multi ? t("home.pickHowTo.step2Multi") : t("home.pickHowTo.step2Single")}</li>
@@ -2102,15 +2091,17 @@ function CategoryTile({
     <button
       type="button"
       onClick={onOpen}
-      className="group flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-surface px-1.5 py-3 text-center transition-transform duration-100 ease-out active:scale-[0.96] hover:border-primary/30"
+      className="gf-tile group flex min-w-0 flex-col items-start gap-2.5 p-3 text-left"
     >
-      <span className={`flex h-10 w-10 items-center justify-center rounded-2xl ${tint}`}>
-        <Icon className="h-[21px] w-[21px]" />
+      <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${tint}`}>
+        <Icon className="h-5 w-5" />
       </span>
-      <p className="w-full truncate text-[12px] font-semibold leading-tight">{label}</p>
-      <p className="w-full truncate text-[11px] leading-none text-muted-foreground tabular-nums">
-        {sub}
-      </p>
+      <span className="flex w-full min-w-0 flex-col gap-1">
+        <span className="w-full truncate text-[13px] font-medium leading-tight">{label}</span>
+        <span className="w-full truncate text-[11.5px] leading-none text-muted-foreground tabular-nums">
+          {sub}
+        </span>
+      </span>
     </button>
   );
 }

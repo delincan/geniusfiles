@@ -63,47 +63,45 @@ export function RecentFilesSection() {
 
   return (
     <section aria-label={t("home.recent.aria")}>
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-          {t("home.recent.title")}
-        </h2>
+      <div className="mb-2 flex items-center justify-between px-0.5">
+        <h2 className="type-overline">{t("home.recent.title")}</h2>
         <button
           type="button"
           onClick={() => navigate({ to: "/fichiers-recents" })}
-          className="inline-flex min-h-7 items-center gap-1 rounded-full px-2 text-[12px] font-medium text-primary transition-colors active:bg-primary/10"
+          className="inline-flex min-h-7 items-center gap-1 -mr-2 rounded-lg px-2 text-[12.5px] font-medium text-primary transition-colors active:bg-primary/10"
         >
           {t("home.recent.viewMore")} <ArrowRight className="h-4 w-4" />
         </button>
       </div>
 
       {files.length === 0 ? (
-        <div className="flex items-center gap-3 rounded-2xl border border-dashed border-border bg-surface/60 px-3.5 py-3.5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Clock3 className="h-[18px] w-[18px]" strokeWidth={1.8} />
+        <div className="flex items-center gap-3 gf-tile px-3.5 py-3.5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-muted-foreground">
+            <Clock3 className="h-5 w-5" />
           </span>
-          <p className="min-w-0 text-[12.5px] leading-snug text-muted-foreground">
+          <p className="min-w-0 text-[13px] leading-snug text-muted-foreground">
             {t("home.recent.empty")}
           </p>
         </div>
       ) : (
-        <ul className="overflow-hidden rounded-2xl border border-border bg-surface">
+        <ul className="gf-tile overflow-hidden active:scale-100">
           {files.map((f, i) => (
-            <li key={addedId(f)} className={i > 0 ? "border-t border-border/70" : ""}>
+            <li key={addedId(f)} className={i > 0 ? "border-t border-border/50" : ""}>
               <button
                 type="button"
                 onClick={() => open(f)}
-                className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-transform duration-100 ease-out active:scale-[0.99]"
+                className="flex w-full items-center gap-3 px-3.5 py-3 text-left transition-colors active:bg-surface-2"
               >
                 <FileIcon kind={f.kind} size="sm" path={addedAbsPath(f)} />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13.5px] font-medium leading-tight">
+                  <span className="block truncate text-[14px] font-medium leading-tight">
                     {f.name}
                   </span>
-                  <span className="mt-0.5 block truncate text-[11px] text-muted-foreground">
+                  <span className="mt-1 block truncate text-[12px] text-muted-foreground">
                     {addedLocationLabel(f)}
                   </span>
                 </span>
-                <span className="shrink-0 text-[11px] text-muted-foreground">
+                <span className="shrink-0 self-start pt-0.5 text-[11.5px] tabular-nums text-muted-foreground">
                   {formatRecentTime(f.at)}
                 </span>
               </button>
