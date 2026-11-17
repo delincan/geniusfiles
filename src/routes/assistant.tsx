@@ -392,7 +392,7 @@ function AssistantPage() {
           className="shrink-0 bg-background pt-1.5"
           style={{
             paddingBottom:
-              bottomSpace !== undefined || focused
+              bottomSpace !== undefined
                 ? 12
                 : "calc(env(safe-area-inset-bottom) + 5rem)",
             paddingLeft: "env(safe-area-inset-left, 0px)",
@@ -407,7 +407,7 @@ function AssistantPage() {
             </div>
           ) : null}
 
-          {!focused && !isBusy ? (
+          {keyboardInset === 0 && !isBusy ? (
             <div className="px-4 pb-1">
               <TemplateMarquee onPick={pickTemplate} />
             </div>
