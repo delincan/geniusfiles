@@ -396,9 +396,7 @@ function AssistantPage() {
           className="shrink-0 bg-background pt-1.5"
           style={{
             paddingBottom:
-              bottomSpace !== undefined
-                ? 12
-                : "calc(env(safe-area-inset-bottom) + 5rem)",
+              bottomSpace !== undefined ? 12 : "calc(env(safe-area-inset-bottom) + 5rem)",
             paddingLeft: "env(safe-area-inset-left, 0px)",
             paddingRight: "env(safe-area-inset-right, 0px)",
           }}
