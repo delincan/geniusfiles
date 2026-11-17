@@ -19,10 +19,10 @@ import {
   WifiOff,
   Copy,
   Check,
+  AlertTriangle,
 } from "@/components/icons";
-import { toast } from "sonner";
 import { useT, t as translate } from "@/lib/i18n";
-import { QuotaBadge } from "@/components/quota/QuotaBadge";
+import { QuotaLimitNotice } from "@/components/quota/QuotaLimitNotice";
 import { AppShell } from "@/components/AppShell";
 import { AssistantMarkdown } from "@/components/assistant/AssistantMarkdown";
 import { AssistantDrawer } from "@/components/assistant/AssistantDrawer";
@@ -159,6 +159,7 @@ function AssistantPage() {
   const isOnline = useIsOnline();
   const [offlineBlocked, setOfflineBlocked] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [limitHit, setLimitHit] = useState(false);
   const endRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const atBottomRef = useRef(true);
@@ -232,11 +233,10 @@ function AssistantPage() {
     /* Quota épuisé : le message reste dans la zone de saisie et l'écran
        propose l'annonce récompensée, rien n'est envoyé ni consommé. */
     if (!sendUserMessage(text)) {
-      toast.warning(t("quota.limit.assistant.title"), {
-        description: t("quota.limit.assistant.desc"),
-      });
+      setLimitHit(true);
       return;
     }
+    setLimitHit(false);
     setInput("");
     requestAnimationFrame(scrollToEnd);
   };
@@ -298,7 +298,7 @@ function AssistantPage() {
         }
       >
         <header
-          className="flex shrink-0 items-center gap-2 border-b border-border/40 px-2.5 pb-2.5"
+          className="flex shrink-0 items-center gap-1 border-b border-border/30 px-2 pb-1.5"
           style={{
             paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.5rem)",
             paddingLeft: "calc(env(safe-area-inset-left, 0px) + 0.625rem)",
@@ -310,20 +310,20 @@ function AssistantPage() {
             onClick={() => setMenuOpen(true)}
             aria-label={t("assistant.header.menuLabel")}
             aria-expanded={menuOpen}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-foreground transition-all duration-150 hover:bg-surface-2 active:scale-95"
+            className="gf-press flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-foreground hover:bg-surface-2"
           >
-            <Menu className="h-[21px] w-[21px]" strokeWidth={2.1} />
+            <Menu className="h-5 w-5" />
           </button>
-          <h1 className="font-display min-w-0 flex-1 truncate text-[19px] font-bold leading-tight tracking-tight text-foreground">
+          <h1 className="font-display min-w-0 flex-1 truncate text-center text-[17px] font-semibold leading-tight tracking-tight text-foreground">
             {t("assistant.header.title")}
           </h1>
           <button
             type="button"
             onClick={startNew}
             aria-label={t("assistant.header.newChat")}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-foreground transition-all duration-150 hover:bg-surface-2 active:scale-95"
+            className="gf-press flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-foreground hover:bg-surface-2"
           >
-            <PenSquare className="h-[19px] w-[19px]" strokeWidth={2.1} />
+            <PenSquare className="h-5 w-5" />
           </button>
         </header>
 
@@ -333,7 +333,7 @@ function AssistantPage() {
           className={`gf-chat-safe min-h-0 flex-1 px-4 ${
             isEmpty
               ? "flex flex-col justify-center overflow-hidden pb-2"
-              : "space-y-5 overflow-y-auto overscroll-contain pb-6"
+              : "space-y-4 overflow-y-auto overscroll-contain pb-4 pt-4"
           }`}
           style={{
             paddingLeft: "calc(env(safe-area-inset-left, 0px) + 1rem)",
@@ -353,10 +353,12 @@ function AssistantPage() {
           {tail ? <MessageBubble key={tail.id} message={tail} streaming /> : null}
 
           {error ? (
-            <div className="gf-chat-safe rounded-2xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-[13px] text-destructive">
-              <p className="mb-1">{describeChatError(error)}</p>
+            <div className="gf-appear gf-chat-safe flex gap-3 rounded-2xl border border-destructive/30 bg-surface px-3.5 py-3 text-[13px]">
+              <AlertTriangle className="mt-0.5 h-[18px] w-[18px] shrink-0 text-destructive" />
+              <div className="min-w-0 flex-1">
+              <p className="mb-1 font-medium text-foreground">{describeChatError(error)}</p>
               {describeChatErrorDetail(error) ? (
-                <p className="mb-2 break-words text-[11px] opacity-70">
+                <p className="mb-2 break-words text-[11px] text-muted-foreground">
                   {describeChatErrorDetail(error)}
                 </p>
               ) : (
@@ -365,10 +367,11 @@ function AssistantPage() {
               <button
                 type="button"
                 onClick={() => retryTask()}
-                className="rounded-xl border border-destructive/40 bg-background/40 px-3 py-1.5 text-[12px] font-medium"
+                className="gf-press h-8 rounded-lg bg-surface-2 px-3 text-[12px] font-semibold text-foreground"
               >
                 {t("action.retry")}
               </button>
+              </div>
             </div>
           ) : null}
           <div ref={endRef} />
@@ -378,7 +381,7 @@ function AssistantPage() {
           /* Barre de saisie et bandeau de suggestions : jamais recouverts
              par une annonce. */
           data-gf-ad-blocker
-          className="shrink-0 border-t border-border/40 bg-background/95 pt-2 backdrop-blur-sm"
+          className="shrink-0 bg-background pt-1.5"
           style={{
             paddingBottom:
               bottomSpace !== undefined
@@ -390,9 +393,11 @@ function AssistantPage() {
         >
           {/* Quota du jour : toujours visible au-dessus de la saisie,
               jamais recouvert par une annonce. */}
-          <div className="mb-2 px-3">
-            <QuotaBadge feature="assistant" />
-          </div>
+          {limitHit ? (
+            <div className="mb-2 px-3">
+              <QuotaLimitNotice feature="assistant" onClose={() => setLimitHit(false)} />
+            </div>
+          ) : null}
 
           <div className="px-3">
             <TemplateMarquee onPick={pickTemplate} />
@@ -400,10 +405,8 @@ function AssistantPage() {
 
           <form
             onSubmit={handleSubmit}
-            className={`mx-3 mt-2 flex items-end gap-2 rounded-[26px] border bg-surface-elevated p-1.5 transition-[border-color,box-shadow] duration-200 ${
-              focused
-                ? "border-primary/60 shadow-[0_8px_28px_-14px_rgba(0,0,0,0.75)]"
-                : "border-border/70 shadow-[0_6px_24px_-16px_rgba(0,0,0,0.7)]"
+            className={`mx-3 mt-1.5 flex items-end gap-1.5 rounded-2xl border bg-surface p-1 transition-colors duration-200 ${
+              focused ? "border-primary/50" : "border-border/70"
             }`}
           >
             <textarea
@@ -422,14 +425,14 @@ function AssistantPage() {
               placeholder={t("assistant.input.placeholder")}
               aria-label={t("assistant.input.ariaLabel")}
               {...kbSentence}
-              className="max-h-32 min-h-[46px] w-full min-w-0 flex-1 resize-none self-center bg-transparent px-3.5 py-[12px] text-[15px] leading-[22px] text-foreground placeholder:text-muted-foreground focus:outline-none"
+              className="max-h-32 min-h-[44px] w-full min-w-0 flex-1 resize-none self-center bg-transparent px-3 py-[11px] text-[15px] leading-[22px] text-foreground placeholder:text-muted-foreground focus:outline-none"
             />
             {isBusy ? (
               <button
                 type="button"
                 onClick={() => stopTask()}
                 aria-label={t("assistant.input.stop")}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-secondary text-foreground transition-transform duration-100 active:scale-90"
+                className="gf-press flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-foreground"
               >
                 <Square className="h-4 w-4 fill-current" />
               </button>
@@ -438,13 +441,13 @@ function AssistantPage() {
                 type="submit"
                 disabled={!canSend}
                 aria-label={t("assistant.input.send")}
-                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-[background-color,color,transform,opacity] duration-100 active:scale-90 ${
+                className={`gf-press flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 ${
                   canSend
                     ? "bg-primary text-primary-foreground"
-                    : "cursor-not-allowed bg-secondary text-muted-foreground opacity-70"
+                    : "bg-surface-2 text-muted-foreground"
                 }`}
               >
-                <ArrowUp className="h-[18px] w-[18px]" strokeWidth={2.4} />
+                <ArrowUp className="h-5 w-5" />
               </button>
             )}
           </form>
@@ -468,23 +471,19 @@ function Welcome() {
     <div className="animate-in-up gf-chat-safe flex min-h-0 flex-col items-center py-2 text-center">
       {/* Ecrans tres courts : les ornements se compactent pour liberer de la
           hauteur, sans changer le style sur les autres tailles. */}
-      <div className="relative flex h-16 w-16 items-center justify-center [@media(max-height:620px)]:h-12 [@media(max-height:620px)]:w-12">
-        <span className="absolute inset-0 rounded-full bg-primary/15 blur-xl" />
-        <span className="absolute inset-1.5 rounded-full border border-primary/25 [@media(max-height:620px)]:hidden" />
-        <span className="relative flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/15 text-primary [@media(max-height:620px)]:h-10 [@media(max-height:620px)]:w-10">
-          <MessagesSquare className="h-6 w-6" strokeWidth={1.9} />
-        </span>
-      </div>
-      <h2 className="font-display mt-3 text-[19px] font-bold leading-tight tracking-tight [@media(max-height:620px)]:mt-2 [@media(max-height:620px)]:text-[17px]">
+      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-soft text-primary [@media(max-height:620px)]:h-10 [@media(max-height:620px)]:w-10">
+        <MessagesSquare className="h-6 w-6" />
+      </span>
+      <h2 className="font-display mt-3 text-[19px] font-semibold leading-tight tracking-tight [@media(max-height:620px)]:mt-2 [@media(max-height:620px)]:text-[17px]">
         {t("assistant.welcome.title")}
       </h2>
       <p className="mx-auto mt-1.5 max-w-[19rem] text-[13px] leading-snug text-muted-foreground [@media(max-height:560px)]:hidden">
         {t("assistant.welcome.desc")}
       </p>
 
-      <div className="mt-3.5 w-full rounded-3xl bg-primary/8 px-4 py-3 text-left [@media(max-height:620px)]:mt-2.5 [@media(max-height:620px)]:py-2.5">
+      <div className="mt-4 w-full rounded-2xl border border-border/60 bg-surface px-4 py-3 text-left [@media(max-height:620px)]:mt-2.5 [@media(max-height:620px)]:py-2.5">
         <p className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
-          <ShieldCheck className="h-[18px] w-[18px] shrink-0 text-primary" strokeWidth={2.2} />
+          <ShieldCheck className="h-[18px] w-[18px] shrink-0 text-primary" />
           {t("assistant.welcome.privacyTitle")}
         </p>
         {/* Detail de confidentialite replie sur les ecrans courts : quota,
@@ -527,12 +526,12 @@ function CopyButton({ text, align }: { text: string; align: "start" | "end" }) {
         type="button"
         onClick={() => void copy()}
         aria-label={copied ? t("assistant.message.copiedAria") : t("assistant.message.copyAria")}
-        className="flex h-8 items-center gap-1.5 rounded-full px-2 text-[11.5px] font-medium text-muted-foreground transition-colors duration-150 hover:bg-surface-2 hover:text-foreground active:scale-95"
+        className="gf-press flex h-8 items-center gap-1.5 rounded-lg px-2 text-[11.5px] font-medium text-muted-foreground hover:bg-surface-2 hover:text-foreground"
       >
         {copied ? (
-          <Check className="h-4 w-4 text-primary" strokeWidth={2.6} />
+          <Check className="h-4 w-4 text-primary" />
         ) : (
-          <Copy className="h-4 w-4" strokeWidth={2.1} />
+          <Copy className="h-4 w-4" />
         )}
         <span>{copied ? t("assistant.message.copied") : t("assistant.message.copy")}</span>
       </button>
@@ -549,7 +548,7 @@ function MessageBubble({ message, streaming }: { message: UIMessage; streaming?:
     return (
       <div className="animate-in-up">
         <div className="flex justify-end">
-          <div className="gf-chat-safe max-w-[85%] rounded-[24px] rounded-br-lg bg-primary px-4 py-3 text-[14.5px] leading-relaxed text-primary-foreground">
+          <div className="gf-chat-safe max-w-[82%] rounded-2xl rounded-br-md bg-primary px-3.5 py-2.5 text-[14.5px] leading-relaxed text-primary-foreground">
             <p className="whitespace-pre-wrap">{text}</p>
           </div>
         </div>
@@ -564,7 +563,7 @@ function MessageBubble({ message, streaming }: { message: UIMessage; streaming?:
 
   return (
     <div className="animate-in-up gf-chat-safe">
-      <div className="gf-chat-safe rounded-[24px] rounded-bl-lg bg-surface px-4 py-4">
+      <div className="gf-chat-safe px-0.5 py-1">
         <SmoothText text={text} />
       </div>
       {streaming ? null : <CopyButton text={text} align="start" />}
