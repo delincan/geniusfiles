@@ -52,7 +52,7 @@ export function OrganizerPreview({ preview }: { preview: OrgPreview }) {
             ))}
             {n.removals.map((name) => (
               <div key={"r" + name} className="flex items-center gap-2 text-muted-foreground">
-                <MinusCircle className="h-4 w-4 text-red-400" />
+                <MinusCircle className="h-4 w-4 text-destructive" />
                 <span className="truncate">{name}</span>
               </div>
             ))}

@@ -87,13 +87,13 @@ export function IllustratedEmptyState({
     >
       <span
         aria-hidden="true"
-        className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-[28px] ${
+        className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl ${
           tone === "inverted"
             ? "bg-reader-backdrop-foreground/10 text-reader-backdrop-foreground/80"
             : "bg-secondary/50 text-muted-foreground"
         }`}
       >
-        <Icon size={44} strokeWidth={1.5} />
+        <Icon size={44} />
       </span>
       <div className="gf-empty-copy mt-4 flex max-w-[320px] shrink-0 flex-col items-center gap-1.5">
         <p

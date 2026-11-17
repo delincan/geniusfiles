@@ -33,7 +33,7 @@ export function ReaderHeader({
     <header className="relative z-30 shrink-0 select-none border-b border-border bg-reader-header pt-[env(safe-area-inset-top,0px)] pl-safe pr-safe shadow-soft">
       <div className="flex h-14 items-center gap-1 px-1">
         <HeaderButton label={t("action.back")} onClick={onBack}>
-          <ArrowLeft className="h-[22px] w-[22px]" strokeWidth={2} />
+          <ArrowLeft className="h-[22px] w-[22px]" />
         </HeaderButton>
         <div className="min-w-0 flex-1 px-2">
           <p className="truncate text-[16px] font-semibold leading-tight text-reader-header-foreground">
@@ -48,12 +48,12 @@ export function ReaderHeader({
         {extra}
         {onShare ? (
           <HeaderButton label={t("action.share")} onClick={onShare}>
-            <Share2 className="h-[21px] w-[21px]" strokeWidth={2} />
+            <Share2 className="h-[21px] w-[21px]" />
           </HeaderButton>
         ) : null}
         {onMenu ? (
           <HeaderButton label={t("cleaner.trash.moreActions.aria")} onClick={onMenu}>
-            <MoreVertical className="h-[22px] w-[22px]" strokeWidth={2} />
+            <MoreVertical className="h-[22px] w-[22px]" />
           </HeaderButton>
         ) : null}
       </div>

@@ -327,7 +327,7 @@ function AutomationsPage() {
             <button
               type="button"
               onClick={openCreate}
-              className="gf-press mt-3 flex h-10 items-center gap-1.5 rounded-xl bg-primary px-3.5 text-[13px] font-semibold text-primary-foreground"
+              className="gf-press mt-3 flex h-10 w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-primary px-3.5 text-[13px] font-semibold text-primary-foreground"
             >
               <Plus className="h-[18px] w-[18px]" />
               {tr("automations.empty.cta")}
@@ -720,7 +720,7 @@ function StepIndicator({ step, onGo }: { step: Step; onGo: (s: Step) => void }) 
                 active
                   ? "bg-primary/15 text-primary"
                   : done
-                    ? "text-emerald-500"
+                    ? "text-success"
                     : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -729,7 +729,7 @@ function StepIndicator({ step, onGo }: { step: Step; onGo: (s: Step) => void }) 
                   active
                     ? "bg-primary text-primary-foreground"
                     : done
-                      ? "bg-emerald-500/20 text-emerald-500"
+                      ? "bg-success/20 text-success"
                       : "bg-accent text-muted-foreground"
                 }`}
               >
@@ -780,7 +780,7 @@ function TriggerStep({
         <ChevronRight className="h-[18px] w-[18px] text-muted-foreground" />
       </button>
       <TriggerParams trigger={trigger} onChange={onChange} />
-      {error ? <p className="text-[11px] text-red-500">{error}</p> : null}
+      {error ? <p className="text-[11px] text-destructive">{error}</p> : null}
 
       <BottomSheet
         open={pickerOpen}
@@ -1071,7 +1071,7 @@ function ActionsStep({
                   <button
                     type="button"
                     onClick={() => onChange(actions.filter((_, j) => j !== i))}
-                    className="text-[11px] text-red-500 hover:brightness-110"
+                    className="text-[11px] text-destructive hover:brightness-110"
                   >
                     {tr("automations.actions.remove")}
                   </button>
@@ -1085,7 +1085,7 @@ function ActionsStep({
           ))}
         </ul>
       )}
-      {error ? <p className="text-[11px] text-red-500">{error}</p> : null}
+      {error ? <p className="text-[11px] text-destructive">{error}</p> : null}
       <BottomSheet
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}
@@ -1568,7 +1568,7 @@ function ConditionsStep({
                 <button
                   type="button"
                   onClick={() => onChange(conditions.filter((_, j) => j !== i))}
-                  className="text-[11px] text-red-500 hover:brightness-110"
+                  className="text-[11px] text-destructive hover:brightness-110"
                 >
                   {tr("automations.conditions.remove")}
                 </button>

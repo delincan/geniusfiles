@@ -46,7 +46,7 @@ export function CategoryTabs({
         })}
         <span
           aria-hidden
-          className="absolute bottom-0 h-[2.5px] rounded-full bg-primary transition-transform duration-300 ease-out"
+          className="absolute bottom-0 h-[2.5px] rounded-full bg-primary transition-transform duration-200 ease-out"
           style={{
             width: `${width}%`,
             left: 0,

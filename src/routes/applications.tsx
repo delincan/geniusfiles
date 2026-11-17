@@ -355,7 +355,7 @@ function AppsPage() {
         {loading && apps.length === 0 ? (
           <div className="grid gap-2">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-16 animate-pulse rounded-2xl bg-surface-2" />
+              <div key={i} className="h-16 gf-skeleton rounded-2xl" />
             ))}
           </div>
         ) : showPluginError && apps.length === 0 ? (

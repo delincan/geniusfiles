@@ -464,7 +464,7 @@ function CleanerPage() {
                 className="gf-row hover:bg-secondary/40 disabled:cursor-default"
               >
                 <span className="gf-icon-tile bg-primary-softer text-primary">
-                  <Icon className="h-[22px] w-[22px]" strokeWidth={2} />
+                  <Icon className="h-[22px] w-[22px]" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
@@ -476,7 +476,7 @@ function CleanerPage() {
                     ) : null}
                   </div>
                   {pending ? (
-                    <span className="mt-1.5 block h-3 w-24 animate-pulse rounded-full bg-surface-3" />
+                    <span className="mt-1.5 block h-3 w-24 gf-skeleton rounded-full" />
                   ) : (
                     <p className="gf-row-meta truncate">
                       {t("cleaner.category.count", { count })}
@@ -489,7 +489,7 @@ function CleanerPage() {
                 </div>
                 <span className="shrink-0 text-right">
                   {pending ? (
-                    <span className="block h-4 w-14 animate-pulse rounded-full bg-surface-3" />
+                    <span className="block h-4 w-14 gf-skeleton rounded-full" />
                   ) : (
                     <>
                       <span className="block text-[14px] font-semibold text-primary">
@@ -530,7 +530,7 @@ function CleanerPage() {
           ne peuvent plus déborder sur les écrans étroits. */}
       {selectedItems.length > 0 && !cleaning ? (
         <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+72px)] z-40 mx-auto flex max-w-[520px] justify-center px-3">
-          <div className="glass-panel animate-in-up pointer-events-auto w-full rounded-3xl border border-border-strong p-2.5 shadow-soft">
+          <div className="glass-panel animate-in-up pointer-events-auto w-full rounded-2xl border border-border-strong p-2.5 shadow-soft">
             <div className="mb-2 min-w-0 px-1">
               <p className="truncate text-[13.5px] font-semibold leading-tight">
                 {t("cleaner.selection.count", { count: selectedItems.length })}

@@ -24,7 +24,7 @@ export function SettingsCard({
   const panelId = useId();
 
   return (
-    <section className="overflow-hidden rounded-3xl border border-border/70 bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border/70 bg-surface shadow-sm">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -44,7 +44,7 @@ export function SettingsCard({
           ) : null}
         </span>
         <ChevronDown
-          className={`h-[18px] w-[18px] shrink-0 text-muted-foreground transition-transform duration-300 ${
+          className={`h-[18px] w-[18px] shrink-0 text-muted-foreground transition-transform duration-200 ${
             open ? "" : "-rotate-90"
           }`}
         />
@@ -52,7 +52,7 @@ export function SettingsCard({
 
       <div
         id={panelId}
-        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+        className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out ${
           open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
         }`}
       >

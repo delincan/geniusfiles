@@ -109,7 +109,7 @@ function HistoryPage() {
                 () => clearExecutionHistory(),
               )
             }
-            className="flex items-center gap-1 rounded-lg border border-red-500/30 px-2 py-1.5 text-[11px] font-medium text-red-500 hover:bg-red-500/10"
+            className="flex items-center gap-1 rounded-lg border border-destructive/30 px-2 py-1.5 text-[11px] font-medium text-destructive hover:bg-destructive/10"
           >
             <Trash2 className="h-4 w-4" />
             {tr("automations.history.page.clear")}
@@ -172,21 +172,21 @@ function StatusIcon({ status, tr }: { status: ExecutionStatus; tr: TFunction }) 
   if (status === "ok")
     return (
       <CheckCircle2
-        className="h-[18px] w-[18px] text-emerald-500"
+        className="h-[18px] w-[18px] text-success"
         aria-label={tr("automations.history.page.status.okAria")}
       />
     );
   if (status === "partial")
     return (
       <AlertTriangle
-        className="h-[18px] w-[18px] text-amber-500"
+        className="h-[18px] w-[18px] text-warning"
         aria-label={tr("automations.history.page.status.partialAria")}
       />
     );
   if (status === "failed")
     return (
       <XCircle
-        className="h-[18px] w-[18px] text-red-500"
+        className="h-[18px] w-[18px] text-destructive"
         aria-label={tr("automations.history.page.status.failedAria")}
       />
     );
@@ -254,10 +254,10 @@ function HistoryRow({ record, tr }: { record: ExecutionRecord; tr: TFunction }) 
               <span
                 className={
                   a.status === "failed"
-                    ? "text-red-500"
+                    ? "text-destructive"
                     : a.status === "skipped"
                       ? "text-muted-foreground"
-                      : "text-emerald-500"
+                      : "text-success"
                 }
               >
                 {a.status === "failed"
@@ -269,7 +269,7 @@ function HistoryRow({ record, tr }: { record: ExecutionRecord; tr: TFunction }) 
             </div>
           ))}
           {record.errors.length ? (
-            <ul className="mt-1 rounded-lg border border-red-500/20 bg-red-500/5 p-2 text-[11px] text-red-500">
+            <ul className="mt-1 rounded-lg border border-destructive/20 bg-destructive/5 p-2 text-[11px] text-destructive">
               {record.errors.map((e, i) => (
                 <li key={i}>· {e}</li>
               ))}

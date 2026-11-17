@@ -887,7 +887,7 @@ export function SearchPage() {
                       : t("search.input.placeholderGlobal")
                   }
                   aria-label={t("search.input.aria")}
-                  className="h-13 w-full rounded-3xl border border-border bg-surface-elevated pl-11 pr-20 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/30 focus-visible:shadow-none"
+                  className="h-13 w-full rounded-2xl border border-border bg-surface-elevated pl-11 pr-20 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/30 focus-visible:shadow-none"
                 />
                 <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
                   {query ? (

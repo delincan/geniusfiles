@@ -58,7 +58,7 @@ export function ConfirmDialog({
               danger ? "bg-destructive/10 text-destructive" : "bg-primary-softer text-primary"
             }`}
           >
-            <Icon className="h-5 w-5" strokeWidth={1.8} />
+            <Icon className="h-5 w-5" />
           </span>
           <div className="min-w-0 space-y-1.5">
             <p className="text-[17px] font-semibold leading-snug text-foreground">{copy.title}</p>

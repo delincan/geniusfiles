@@ -561,9 +561,9 @@ function RecommendationCard({
     rec.severity === "danger" ? AlertTriangle : rec.severity === "warn" ? AlertTriangle : Sparkles;
   const tone =
     rec.severity === "danger"
-      ? "bg-red-500/12 text-red-400"
+      ? "bg-destructive/12 text-destructive"
       : rec.severity === "warn"
-        ? "bg-amber-500/12 text-amber-400"
+        ? "bg-warning/12 text-warning"
         : "bg-primary/12 text-primary";
   return (
     <button

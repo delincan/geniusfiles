@@ -124,7 +124,7 @@ export function AppsPickScreen({ request }: { request: PickRequest }) {
             aria-label={t("action.back")}
             className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors active:bg-secondary/60"
           >
-            <ChevronLeft className="h-6 w-6" strokeWidth={2.2} />
+            <ChevronLeft className="h-6 w-6" />
           </button>
         }
       />
