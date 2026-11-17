@@ -87,7 +87,7 @@ export function IllustratedEmptyState({
     >
       <span
         aria-hidden="true"
-        className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-[28px] ${
+        className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl ${
           tone === "inverted"
             ? "bg-reader-backdrop-foreground/10 text-reader-backdrop-foreground/80"
             : "bg-secondary/50 text-muted-foreground"

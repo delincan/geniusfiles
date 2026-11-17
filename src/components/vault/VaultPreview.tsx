@@ -69,7 +69,7 @@ export function VaultPreview({
           aria-label={t("vault.item.favoriteAria")}
           onClick={() => onToggleFavorite(item)}
           className={`rounded-full border border-border bg-surface p-1.5 ${
-            item.favorite ? "text-amber-400" : "text-muted-foreground hover:text-foreground"
+            item.favorite ? "text-warning" : "text-muted-foreground hover:text-foreground"
           }`}
         >
           <Star className="h-[18px] w-[18px]" fill={item.favorite ? "currentColor" : "none"} />

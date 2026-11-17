@@ -61,7 +61,7 @@ export function PickBar({ request }: { request: PickRequest }) {
               animation: "gf-bar-in-bottom 220ms cubic-bezier(0.2, 0, 0, 1) both",
             }}
           >
-            <div className="flex items-center gap-2 rounded-[22px] border border-border bg-surface px-3 py-2.5 shadow-elevated">
+            <div className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-3 py-2.5 shadow-elevated">
               <button
                 type="button"
                 onClick={cancelPick}
@@ -129,7 +129,7 @@ function DestinationBar({ request, hidden }: { request: PickRequest; hidden: boo
               animation: "gf-bar-in-bottom 220ms cubic-bezier(0.2, 0, 0, 1) both",
             }}
           >
-            <div className="flex items-center gap-2 rounded-[22px] border border-border bg-surface px-3 py-2.5 shadow-elevated">
+            <div className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-3 py-2.5 shadow-elevated">
               <button
                 type="button"
                 onClick={cancelPick}

@@ -39,7 +39,7 @@ export function InlineSearchField({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           aria-label={placeholder}
-          className="h-11 w-full rounded-3xl border border-border bg-surface-elevated pl-10 pr-11 text-[13.5px] text-foreground outline-none transition-[border-color,box-shadow] placeholder:text-muted-foreground focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+          className="h-11 w-full rounded-2xl border border-border bg-surface-elevated pl-10 pr-11 text-[13.5px] text-foreground outline-none transition-[border-color,box-shadow] placeholder:text-muted-foreground focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
         />
         <button
           type="button"

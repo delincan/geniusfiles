@@ -181,7 +181,7 @@ function StorageTile({ card, onOpen }: { card: StorageCard; onOpen: () => void }
           aria-hidden="true"
         >
           <span
-            className="block h-full rounded-full bg-primary transition-[width] duration-300 ease-out"
+            className="block h-full rounded-full bg-primary transition-[width] duration-200 ease-out"
             style={{ width: `${known ? Math.max(pct, 2) : 0}%` }}
           />
         </span>

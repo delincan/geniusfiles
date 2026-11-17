@@ -605,12 +605,12 @@ function MenuRow({
       onClick={onClick}
       disabled={disabled}
       className={`flex min-h-11 items-center gap-3 rounded-lg px-2 py-2 text-left text-[13.5px] transition-colors active:bg-secondary/60 hover:bg-secondary/60 disabled:opacity-40 ${
-        danger ? "text-red-400" : "text-foreground"
+        danger ? "text-destructive" : "text-foreground"
       }`}
     >
       <span
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-          danger ? "bg-red-500/12 text-red-400" : "bg-secondary/60 text-muted-foreground"
+          danger ? "bg-destructive/12 text-destructive" : "bg-secondary/60 text-muted-foreground"
         }`}
       >
         <Icon className="h-[18px] w-[18px]" strokeWidth={2} />

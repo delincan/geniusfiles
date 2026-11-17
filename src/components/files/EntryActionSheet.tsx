@@ -190,12 +190,12 @@ function ActionRow({
       type="button"
       onClick={onClick}
       className={`flex min-h-11 items-center gap-3 rounded-lg px-2 py-2 text-left text-[13.5px] transition-colors active:bg-secondary/60 hover:bg-secondary/60 ${
-        danger ? "text-red-400" : "text-foreground"
+        danger ? "text-destructive" : "text-foreground"
       }`}
     >
       <span
         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-          danger ? "bg-red-500/12 text-red-400" : "bg-secondary/70 text-foreground/80"
+          danger ? "bg-destructive/12 text-destructive" : "bg-secondary/70 text-foreground/80"
         }`}
       >
         <Icon className="h-5 w-5" />

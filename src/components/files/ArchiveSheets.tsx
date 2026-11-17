@@ -372,7 +372,7 @@ export function ArchiveViewerSheet({
           <button
             type="button"
             onClick={onDelete}
-            className="rounded border border-border px-1.5 py-0.5 text-red-400 hover:brightness-110"
+            className="rounded border border-border px-1.5 py-0.5 text-destructive hover:brightness-110"
           >
             {t("action.delete")}
           </button>

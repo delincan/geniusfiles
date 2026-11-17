@@ -549,7 +549,7 @@ function TrashPage() {
                         <div className="flex items-center gap-1.5">
                           <p className="gf-row-title truncate">{it.name}</p>
                           {orphan ? (
-                            <span className="shrink-0 rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wide text-amber-400">
+                            <span className="shrink-0 rounded-full bg-warning/15 px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wide text-warning">
                               {t("cleaner.trash.orphanBadge")}
                             </span>
                           ) : null}
@@ -608,7 +608,7 @@ function TrashPage() {
       {/* Barre de sélection — grille : jamais de débordement horizontal. */}
       {anySelected ? (
         <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+72px)] z-40 flex justify-center px-3">
-          <div className="glass-panel animate-in-up pointer-events-auto w-full max-w-md rounded-3xl p-2 shadow-soft">
+          <div className="glass-panel animate-in-up pointer-events-auto w-full max-w-md rounded-2xl p-2 shadow-soft">
             <div className="grid grid-cols-3 gap-1.5">
               <button
                 type="button"

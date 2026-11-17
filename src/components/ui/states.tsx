@@ -138,7 +138,7 @@ export function TaskProgress({
         {detail ? <p className="gf-row-meta truncate">{detail}</p> : null}
         <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
           <div
-            className={`h-full rounded-full bg-primary transition-[width] duration-300 ease-out ${
+            className={`h-full rounded-full bg-primary transition-[width] duration-200 ease-out ${
               indeterminate ? "w-1/3 animate-pulse" : ""
             }`}
             style={indeterminate ? undefined : { width: `${Math.min(100, Math.max(0, value))}%` }}

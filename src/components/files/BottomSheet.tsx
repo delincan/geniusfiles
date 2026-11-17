@@ -169,7 +169,7 @@ export function BottomSheet({
           } ${
             isFullScreen
               ? "h-full max-h-none max-w-none rounded-none border-0 bg-background shadow-none"
-              : "max-h-full max-w-[440px] rounded-[28px] border border-border shadow-elevated"
+              : "max-h-full max-w-[440px] rounded-2xl border border-border shadow-elevated"
           }`}
         >
           {hasHeader ? (

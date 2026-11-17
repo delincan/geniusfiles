@@ -530,7 +530,7 @@ function CleanerPage() {
           ne peuvent plus déborder sur les écrans étroits. */}
       {selectedItems.length > 0 && !cleaning ? (
         <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+72px)] z-40 mx-auto flex max-w-[520px] justify-center px-3">
-          <div className="glass-panel animate-in-up pointer-events-auto w-full rounded-3xl border border-border-strong p-2.5 shadow-soft">
+          <div className="glass-panel animate-in-up pointer-events-auto w-full rounded-2xl border border-border-strong p-2.5 shadow-soft">
             <div className="mb-2 min-w-0 px-1">
               <p className="truncate text-[13.5px] font-semibold leading-tight">
                 {t("cleaner.selection.count", { count: selectedItems.length })}

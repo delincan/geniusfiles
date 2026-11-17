@@ -306,7 +306,7 @@ function SetupWizard({ onDone }: { onDone: () => void }) {
     <VaultFullScreen>
       <div className="flex flex-col gap-4 pt-3">
         <div className="flex flex-col items-center gap-3 pb-1 text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary text-primary-foreground shadow-xs">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-xs">
             <ShieldCheck className="h-6 w-6" />
           </span>
           <div>
@@ -667,7 +667,7 @@ function LockScreen({ onUnlocked, onReset }: { onUnlocked: () => void; onReset: 
   return (
     <VaultFullScreen>
       <div className="flex min-h-full flex-col items-center justify-center gap-5 py-6 text-center">
-        <span className="flex h-16 w-16 items-center justify-center rounded-3xl bg-primary/12 text-primary shadow-xs">
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/12 text-primary shadow-xs">
           <Lock className="h-6 w-6" />
         </span>
         <div>
@@ -1595,7 +1595,7 @@ function ItemRow({
           <p className="truncate text-[14px] font-medium">
             {item.name}
             {item.favorite ? (
-              <Star className="ml-1 inline h-4 w-4 text-amber-400" fill="currentColor" />
+              <Star className="ml-1 inline h-4 w-4 text-warning" fill="currentColor" />
             ) : null}
           </p>
           <p className="mt-0.5 text-[12px] text-muted-foreground">
@@ -1628,7 +1628,7 @@ function SelectionBar({
 }) {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 mx-auto max-w-[520px] px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2">
-      <div className="glass-panel pointer-events-auto flex items-center gap-2 rounded-3xl border border-border-strong px-2.5 py-2 shadow-soft animate-in-up">
+      <div className="glass-panel pointer-events-auto flex items-center gap-2 rounded-2xl border border-border-strong px-2.5 py-2 shadow-soft animate-in-up">
         <button
           type="button"
           onClick={onClear}
@@ -1731,12 +1731,12 @@ function ActionRow({
       type="button"
       onClick={onClick}
       className={`flex items-center gap-3 rounded-lg px-2 py-2.5 text-left text-[13px] transition-colors hover:bg-secondary/60 ${
-        danger ? "text-red-400" : "text-foreground"
+        danger ? "text-destructive" : "text-foreground"
       }`}
     >
       <span
         className={`flex h-8 w-8 items-center justify-center rounded-lg ${
-          danger ? "bg-red-500/12 text-red-400" : "bg-primary/12 text-primary"
+          danger ? "bg-destructive/12 text-destructive" : "bg-primary/12 text-primary"
         }`}
       >
         <Icon className="h-[18px] w-[18px]" />
@@ -1890,7 +1890,7 @@ function VaultSettings({
           <button
             type="button"
             onClick={() => setAskWipe(true)}
-            className="mt-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-[12px] font-medium text-red-400 hover:bg-red-500/20"
+            className="mt-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-[12px] font-medium text-destructive hover:bg-destructive/20"
           >
             {t("vault.reset.title")}
           </button>

@@ -747,7 +747,7 @@ function ImagesToPdfSheet({ onClose }: { onClose: () => void }) {
                   <button
                     type="button"
                     onClick={() => remove(i)}
-                    className="rounded p-1 text-muted-foreground hover:text-red-500"
+                    className="rounded p-1 text-muted-foreground hover:text-destructive"
                     aria-label={t("pdf.aria.remove")}
                   >
                     ✕
@@ -1060,7 +1060,7 @@ function ScanSheet({ onClose }: { onClose: () => void }) {
                       URL.revokeObjectURL(p.url);
                       setPages((prev) => prev.filter((x) => x.id !== p.id));
                     }}
-                    className="rounded p-1 text-muted-foreground hover:text-red-500"
+                    className="rounded p-1 text-muted-foreground hover:text-destructive"
                     aria-label={t("pdf.aria.remove")}
                   >
                     ✕
