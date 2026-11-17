@@ -16,9 +16,9 @@ export default {
   "assistant.error.desc":
     "Une conversation enregistrée semble illisible. Vous pouvez réessayer ou repartir d'une nouvelle conversation.",
 
-  "assistant.welcome.title": "Bienvenue dans Genius AI",
+  "assistant.welcome.title": "Que souhaitez-vous faire ?",
   "assistant.welcome.desc":
-    "Discutez naturellement avec votre assistant et gérez vos fichiers par simple conversation.",
+    "Rechercher, organiser, déplacer, renommer ou copier vos fichiers. Dites-moi ce dont vous avez besoin.",
   "assistant.welcome.privacyTitle": "Confidentialité garantie",
   "assistant.welcome.privacy1": "Vos fichiers restent exclusivement sur votre appareil.",
   "assistant.welcome.privacy2":
