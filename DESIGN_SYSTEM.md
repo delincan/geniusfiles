@@ -44,3 +44,9 @@ Source unique : `@/components/icons`. Trait 1,75 forcé partout (1,5 pour les gr
 ## Accueil — première étape
 
 En-tête compact avec logo officiel, nom et salutation. Sections titrées à 15/600, séparées par 24 px. Stockage sur une carte unique avec barre pleine largeur ; catégories en deux colonnes sous 480 px, trois au-delà ; libellés sur plusieurs lignes plutôt que tronqués. Fichiers récents et outils en listes ouvertes, sans cartes imbriquées. Métadonnées à 12 px. Navigation neutre, seule la destination active porte le bleu signature.
+
+## Genius AI — deuxième étape
+
+Accueil avec la mascotte officielle, titre 24/600, introduction 14 px et confidentialité dépliable. Conversation ouverte : réponses sans carte à 15 px/1,75, titres 16/600, listes numérotées conservées ; messages utilisateur sur `surface-2`, texte `foreground`. Copier reste une icône avec nom accessible et infobulle. Saisie sur `surface-2`, envoi en `primary`, arrêt neutre. Suggestions défilables au doigt, jamais animées automatiquement. Menu de conversations sur `surface`, sélection neutre avec icône bleue.
+
+Progression : pourcentage des jalons terminés, non une estimation du temps restant. Aucun compteur temporel artificiel ; la barre reste au dernier jalon connu pendant un travail sans total mesurable. 100 % uniquement à la fin réussie du traitement ; échec et annulation ne valent jamais 100 %. La réponse en cours reste masquée jusqu'à la fin réelle. Les quotas et annonces restent contextuels.
