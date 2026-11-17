@@ -33,3 +33,9 @@
 
 - [x] Explain where to find a web Measurement ID and distinguish browser tracking from access to Android Firebase reports.
 - [ ] Connect for reading Analytics reports — no connection completed; requires the Read analytics insights option.
+
+# Genius AI and Automations UI
+
+- [ ] Redesign Genius AI conversation; quota shown only when limit is reached.
+- [ ] Redesign Automations hierarchy; quota notice only when limit is reached.
+- [ ] Suggest next steps after the remix.
