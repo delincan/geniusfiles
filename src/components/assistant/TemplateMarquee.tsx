@@ -74,7 +74,7 @@ export function TemplateMarquee({ onPick }: { onPick: (text: string) => void }) 
   return (
     <div
       ref={scrollerRef}
-      className="gf-no-scrollbar -mx-1 flex max-w-full gap-2 overflow-x-auto px-1 py-1"
+      className="gf-no-scrollbar -mx-1 flex snap-x max-w-full gap-2 overflow-x-auto px-1 py-1"
       style={{ scrollbarWidth: "none", scrollBehavior: "auto", touchAction: "pan-x" }}
       aria-label={t("assistant.templates.ariaLabel")}
     >
@@ -86,7 +86,7 @@ export function TemplateMarquee({ onPick }: { onPick: (text: string) => void }) 
             pausedUntilRef.current = performance.now() + PAUSE_MS;
             onPick(text);
           }}
-          className="h-9 shrink-0 whitespace-nowrap rounded-full border border-border/70 bg-surface px-3.5 text-[12.5px] leading-none text-muted-foreground transition-colors duration-150 hover:border-primary/40 hover:text-foreground active:scale-[0.98]"
+          className="gf-press h-9 shrink-0 whitespace-nowrap rounded-xl border border-border/60 bg-surface px-3 text-[12.5px] leading-none text-muted-foreground hover:text-foreground"
         >
           {text}
         </button>

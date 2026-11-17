@@ -60,7 +60,8 @@ import {
 import { formatDateValue, t as translateNow, useT } from "@/lib/i18n";
 import { buildPreview, runAutomation, type ActionPreview } from "@/lib/automations/engine";
 import { isQuotaExceeded } from "@/lib/quota/errors";
-import { QuotaBadge } from "@/components/quota/QuotaBadge";
+import { QuotaLimitNotice } from "@/components/quota/QuotaLimitNotice";
+import { useQuota } from "@/lib/quota/useQuota";
 import { loadExecutionHistory, subscribeExecutionHistory } from "@/lib/automations/history";
 import { displayStatus, isRunning, subscribeRunning } from "@/lib/automations/status";
 import {
@@ -154,6 +155,8 @@ function AutomationsPage() {
   const [editing, setEditing] = useState<Draft | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<Automation | null>(null);
   const [, forceTick] = useState(0);
+  const [limitHit, setLimitHit] = useState(false);
+  const quota = useQuota("automations");
 
   const refresh = useCallback(() => {
     setItems(listAutomations());
@@ -210,7 +213,7 @@ function AutomationsPage() {
           <button
             type="button"
             onClick={openCreate}
-            className="flex items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-[12.5px] font-semibold text-primary-foreground shadow-soft transition-transform active:scale-95"
+            className="gf-press flex h-10 items-center gap-1.5 rounded-xl bg-primary pl-3 pr-3.5 text-[13px] font-semibold text-primary-foreground"
           >
             <Plus className="h-[18px] w-[18px]" />
             {tr("automations.new")}
@@ -219,14 +222,25 @@ function AutomationsPage() {
       />
 
       {/* Quota d'exécutions du jour, avant la liste et l'état vide. */}
-      <div className="mt-4">
-        <QuotaBadge feature="automations" />
-      </div>
+      {/* Quota : simple mention discrète ; l'avis complet n'apparaît qu'à la limite. */}
+      {limitHit ? (
+        <QuotaLimitNotice
+          feature="automations"
+          onClose={() => setLimitHit(false)}
+          className="mt-4"
+        />
+      ) : (
+        <p className="mt-2 text-[11.5px] text-muted-foreground">
+          {quota.remaining > 0
+            ? tr("quota.remaining", { count: quota.remaining })
+            : tr("quota.none")}
+        </p>
+      )}
 
       {items.length ? (
         <>
           {/* Compteurs : une seule et unique présentation du volume. */}
-          <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="mt-3 grid grid-cols-2 gap-2">
             <StatTile
               icon={Zap}
               value={String(items.length)}
@@ -285,9 +299,7 @@ function AutomationsPage() {
                     }
                   } catch (err) {
                     if (isQuotaExceeded(err)) {
-                      toast.warning(tr("quota.limit.automations.title"), {
-                        description: tr("quota.limit.automations.desc"),
-                      });
+                      setLimitHit(true);
                       return;
                     }
                     toast.error(tr("automations.toast.failed.title"), {
@@ -301,26 +313,26 @@ function AutomationsPage() {
         </>
       ) : (
         /* État vide : un seul message, une seule action. */
-        <div className="card-surface mt-4 flex flex-col items-center gap-3 px-5 py-8 text-center">
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/12 text-primary">
-            <Wand2 className="h-6 w-6" />
+        <div className="gf-card mt-4 flex items-start gap-3 p-4">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
+            <Wand2 className="h-5 w-5" />
           </span>
-          <div>
+          <div className="min-w-0 flex-1">
             <p className="text-[15px] font-semibold text-foreground">
               {tr("automations.empty.title")}
             </p>
-            <p className="mx-auto mt-1 max-w-[38ch] text-[12.5px] leading-relaxed text-muted-foreground">
+            <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
               {tr("automations.empty.desc")}
             </p>
+            <button
+              type="button"
+              onClick={openCreate}
+              className="gf-press mt-3 flex h-10 items-center gap-1.5 rounded-xl bg-primary px-3.5 text-[13px] font-semibold text-primary-foreground"
+            >
+              <Plus className="h-[18px] w-[18px]" />
+              {tr("automations.empty.cta")}
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={openCreate}
-            className="mt-1 flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-[13px] font-semibold text-primary-foreground shadow-soft transition-transform active:scale-95"
-          >
-            <Plus className="h-[18px] w-[18px]" />
-            {tr("automations.empty.cta")}
-          </button>
         </div>
       )}
 
@@ -334,9 +346,9 @@ function AutomationsPage() {
       <SectionHeader title={tr("automations.history.section")} />
       <Link
         to="/automatisations/historique"
-        className="card-surface flex w-full items-center gap-3 p-3.5"
+        className="gf-card gf-press flex w-full items-center gap-3 p-3.5"
       >
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent text-primary">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-muted-foreground">
           <History className="h-[18px] w-[18px]" />
         </span>
         <div className="min-w-0 flex-1">
@@ -410,10 +422,10 @@ function StatTile({
   muted?: boolean;
 }) {
   return (
-    <div className="card-surface flex items-center gap-3 p-3.5">
+    <div className="gf-card flex items-center gap-3 px-3.5 py-3">
       <span
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
-          muted ? "bg-secondary text-muted-foreground" : "bg-primary/12 text-primary"
+          muted ? "bg-surface-2 text-muted-foreground" : "bg-primary-soft text-primary"
         }`}
       >
         <Icon className="h-[18px] w-[18px]" />
@@ -452,7 +464,7 @@ function AutomationCard({
   const [busy, setBusy] = useState(false);
   const lastReal = history.find((r) => r.automationId === automation.id && !r.simulated);
   return (
-    <li className="card-surface flex flex-col gap-2 p-3.5">
+    <li className="gf-card flex flex-col gap-3 p-3.5">
       <div className="flex items-start gap-3">
         <button
           type="button"
@@ -462,29 +474,29 @@ function AutomationCard({
           }
           className={`mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${
             automation.enabled
-              ? "bg-primary text-primary-foreground shadow-xs"
-              : "bg-accent text-muted-foreground"
+              ? "bg-primary-soft text-primary"
+              : "bg-surface-2 text-muted-foreground"
           }`}
         >
           <Power className="h-[18px] w-[18px]" />
         </button>
-        <button type="button" onClick={onEdit} className="flex-1 text-left">
+        <button type="button" onClick={onEdit} className="min-w-0 flex-1 text-left">
           <div className="flex items-center gap-2">
-            <p className="text-[13px] font-medium text-foreground">{automation.name}</p>
+            <p className="truncate text-[14.5px] font-medium text-foreground">{automation.name}</p>
             <span
-              className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wide ${st.tone}`}
+              className={`shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-medium ${st.tone}`}
             >
               {st.label}
             </span>
           </div>
-          <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+          <p className="mt-1 text-[12px] leading-snug text-muted-foreground">
             {summary} · {tr("automations.card.actionsCount", { count: automation.actions.length })}
             {automation.conditions.length
               ? ` · ${tr("automations.card.conditionsCount", { count: automation.conditions.length })}`
               : ""}
           </p>
           {lastReal ? (
-            <p className="mt-0.5 text-[11px] text-muted-foreground">
+            <p className="mt-0.5 text-[12px] text-muted-foreground">
               {tr("automations.card.lastRun", {
                 when: formatDateValue(lastReal.finishedAt, {
                   dateStyle: "short",
@@ -534,15 +546,15 @@ function RowChip({
   spinning?: boolean;
 }) {
   const cls = primary
-    ? "bg-primary text-primary-foreground shadow-soft"
+    ? "bg-primary text-primary-foreground"
     : danger
-      ? "border border-red-500/30 text-red-500 hover:bg-red-500/10"
-      : "border border-border bg-surface text-muted-foreground hover:text-foreground";
+      ? "text-destructive hover:bg-destructive/10"
+      : "bg-surface-2 text-muted-foreground hover:text-foreground";
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-medium transition-colors ${cls}`}
+      className={`gf-press flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium ${cls}`}
     >
       <Icon className={`h-4 w-4 ${spinning ? "animate-spin" : ""}`} />
       {label}
