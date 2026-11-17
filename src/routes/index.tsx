@@ -1927,7 +1927,11 @@ function RootView({
       {/* Salutation = titre principal de la page, en en-tête collant. */}
       <PageHeader
         title={pick ? pick.title : "GeniusFiles"}
-        leading={pick ? undefined : <img src="/brand/geniusfiles-logo-128.png" alt="" className="size-10 object-contain" />}
+        leading={
+          pick ? undefined : (
+            <img src="/brand/geniusfiles-logo-128.png" alt="" className="size-10 object-contain" />
+          )
+        }
         subtitle={
           pick
             ? pick.purpose === "destination"
@@ -2003,12 +2007,12 @@ function RootView({
                 onClick={t.onOpen}
                 className="group grid h-auto min-h-14 min-w-0 grid-cols-[32px_minmax(0,1fr)] justify-start gap-2 whitespace-normal rounded-xl px-1 py-2.5 text-left"
               >
-                <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${t.tint}`}>
+                <span
+                  className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${t.tint}`}
+                >
                   <t.icon className="h-5 w-5" />
                 </span>
-                <span className="min-w-0 type-label text-foreground">
-                  {t.title}
-                </span>
+                <span className="min-w-0 type-label text-foreground">{t.title}</span>
               </Button>
             ))}
           </div>
@@ -2104,9 +2108,7 @@ function CategoryTile({
       </span>
       <span className="flex w-full min-w-0 flex-col gap-1">
         <span className="w-full break-words type-label">{label}</span>
-        <span className="w-full truncate type-meta tabular-nums">
-          {sub}
-        </span>
+        <span className="w-full truncate type-meta tabular-nums">{sub}</span>
       </span>
     </Button>
   );

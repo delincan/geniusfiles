@@ -97,16 +97,10 @@ export function RecentFilesSection() {
               >
                 <FileIcon kind={f.kind} size="sm" path={addedAbsPath(f)} />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate type-body font-medium">
-                    {f.name}
-                  </span>
-                  <span className="mt-1 block truncate type-meta">
-                    {addedLocationLabel(f)}
-                  </span>
+                  <span className="block truncate type-body font-medium">{f.name}</span>
+                  <span className="mt-1 block truncate type-meta">{addedLocationLabel(f)}</span>
                 </span>
-                <span className="col-start-2 type-meta tabular-nums">
-                  {formatRecentTime(f.at)}
-                </span>
+                <span className="col-start-2 type-meta tabular-nums">{formatRecentTime(f.at)}</span>
               </Button>
             </li>
           ))}

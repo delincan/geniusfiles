@@ -4,16 +4,16 @@ Toutes les valeurs vivent dans `src/styles.css` (jetons). Aucun composant ne cod
 
 ## Couleurs (thème sombre)
 
-| Rôle                                          | Jeton                           | Valeur  |
-| --------------------------------------------- | ------------------------------- | ------- |
-| Fond principal                                | `background`                    | #090B0F |
-| Cartes principales et champs                   | `surface`, `card`, `input`       | #141820 |
-| Surfaces secondaires et survol                 | `surface-2`, `secondary`, `muted` | #1C222C |
-| Menus et fenêtres                             | `surface-elevated`, `popover`    | #262D38 |
-| Bordures                                      | `border`                        | #252B35 |
-| Texte principal                               | `foreground`                    | #F3F5F7 |
-| Texte secondaire                              | `muted-foreground`              | #A6AFBA |
-| Bleu signature (actions, focus, sélection)     | `primary`                       | #0068F8 |
+| Rôle                                       | Jeton                             | Valeur  |
+| ------------------------------------------ | --------------------------------- | ------- |
+| Fond principal                             | `background`                      | #090B0F |
+| Cartes principales et champs               | `surface`, `card`, `input`        | #141820 |
+| Surfaces secondaires et survol             | `surface-2`, `secondary`, `muted` | #1C222C |
+| Menus et fenêtres                          | `surface-elevated`, `popover`     | #262D38 |
+| Bordures                                   | `border`                          | #252B35 |
+| Texte principal                            | `foreground`                      | #F3F5F7 |
+| Texte secondaire                           | `muted-foreground`                | #A6AFBA |
+| Bleu signature (actions, focus, sélection) | `primary`                         | #0068F8 |
 
 Le bleu #0068F8 provient du groupe de pixels bleus saturés dominant de la mascotte fournie (quantification RGB par pas de 8). Les couleurs principales sont définies en OKLCH dans les jetons. Le noir donne la profondeur ; les cartes et menus se distinguent par leur niveau de surface, sans halo ni dégradé décoratif. Le bleu signale, il ne colore pas de grandes surfaces.
 
