@@ -75,6 +75,8 @@ export const Route = createFileRoute("/corbeille")({
         property: "og:description",
         content: translate("meta.trash.ogDescription"),
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: TrashPage,
