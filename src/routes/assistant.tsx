@@ -152,6 +152,8 @@ function ChatOfflineState({ onRetry }: { onRetry?: () => void }) {
 }
 
 function AssistantPage() {
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
   const t = useT();
   const [input, setInput] = useState("");
   const isOnline = useIsOnline();
@@ -191,7 +193,9 @@ function AssistantPage() {
   const chatInstance = useSyncExternalStore(subscribeChat, getChat, getChat);
   const conversationId = useSyncExternalStore(subscribeConversationId, getConversationId, () => "");
   const chat = useChat({ chat: chatInstance });
-  const { messages, status, error } = chat;
+  const { status, error } = chat;
+  // Stored messages are browser-only; first paint must match the empty SSR transcript.
+  const messages = hydrated ? chat.messages : [];
 
   const task = useSyncExternalStore(subscribeTask, getTask, getServerTask);
   const isBusy = status === "submitted" || status === "streaming";
