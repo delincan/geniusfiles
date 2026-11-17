@@ -26,6 +26,7 @@ import {
 } from "@/lib/recents/added";
 import { formatRecentTime } from "@/lib/recents/store";
 import { useT } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
 
 const MAX_ITEMS = 2;
 
@@ -63,19 +64,20 @@ export function RecentFilesSection() {
 
   return (
     <section aria-label={t("home.recent.aria")}>
-      <div className="mb-2 flex items-center justify-between px-0.5">
-        <h2 className="type-overline">{t("home.recent.title")}</h2>
-        <button
+      <div className="mb-2 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+        <h2 className="min-w-0 type-subtitle">{t("home.recent.title")}</h2>
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => navigate({ to: "/fichiers-recents" })}
-          className="inline-flex min-h-7 items-center gap-1 -mr-2 rounded-lg px-2 text-[12.5px] font-medium text-primary transition-colors active:bg-primary/10"
+          className="-mr-2 h-11 shrink-0 gap-1 px-2 type-label text-primary"
         >
           {t("home.recent.viewMore")} <ArrowRight className="h-4 w-4" />
-        </button>
+        </Button>
       </div>
 
       {files.length === 0 ? (
-        <div className="flex items-center gap-3 gf-tile px-3.5 py-3.5">
+        <div className="flex items-center gap-3 py-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-muted-foreground">
             <Clock3 className="h-5 w-5" />
           </span>
@@ -84,27 +86,22 @@ export function RecentFilesSection() {
           </p>
         </div>
       ) : (
-        <ul className="gf-tile overflow-hidden active:scale-100">
+        <ul className="overflow-hidden">
           {files.map((f, i) => (
             <li key={addedId(f)} className={i > 0 ? "border-t border-border/50" : ""}>
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => open(f)}
-                className="flex w-full items-center gap-3 px-3.5 py-3 text-left transition-colors active:bg-surface-2"
+                className="grid h-auto w-full grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-0 whitespace-normal rounded-xl px-1 py-3 text-left active:bg-surface-2"
               >
                 <FileIcon kind={f.kind} size="sm" path={addedAbsPath(f)} />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[14px] font-medium leading-tight">
-                    {f.name}
-                  </span>
-                  <span className="mt-1 block truncate text-[12px] text-muted-foreground">
-                    {addedLocationLabel(f)}
-                  </span>
+                  <span className="block truncate type-body font-medium">{f.name}</span>
+                  <span className="mt-1 block truncate type-meta">{addedLocationLabel(f)}</span>
                 </span>
-                <span className="shrink-0 self-start pt-0.5 text-[11.5px] tabular-nums text-muted-foreground">
-                  {formatRecentTime(f.at)}
-                </span>
-              </button>
+                <span className="col-start-2 type-meta tabular-nums">{formatRecentTime(f.at)}</span>
+              </Button>
             </li>
           ))}
         </ul>

@@ -1,3 +1,10 @@
+# Visual direction — first stage
+
+- [x] Inspect supplied references, mascot colors and existing shared styles.
+- [x] Harmonize global visual tokens and refine the home screen only.
+- [x] Verify small-screen rendering and existing home navigation; run regression tests (36 passed).
+- [ ] Validate native system bars and touch feel on a physical Android device — requires a rebuilt APK and a device.
+
 # Search refresh loop and assistant
 
 - [x] Stop the search screen's background refresh loop and verify it settles.

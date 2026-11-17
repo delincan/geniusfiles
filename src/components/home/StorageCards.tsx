@@ -23,6 +23,7 @@ import {
 } from "@/lib/native/geniusfiles-native";
 import { indexCountsByRoot, isIndexReady, restoreIndexFromDisk } from "@/lib/search/index-store";
 import { useT } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
 
 type StorageCard = {
   id: StorageRootId;
@@ -137,7 +138,7 @@ export function StorageCards({
 
   return (
     <section aria-label={t("home.storage.aria")}>
-      <h2 className="mb-2.5 px-0.5 type-overline">{t("home.storage.title")}</h2>
+      <h2 className="mb-3 type-subtitle">{t("home.storage.title")}</h2>
       {/* Toujours vertical : chaque stockage occupe une ligne pleine largeur,
           quel que soit leur nombre — aucun débordement horizontal. */}
       <div className="flex w-full flex-col gap-2">
@@ -156,36 +157,31 @@ function StorageTile({ card, onOpen }: { card: StorageCard; onOpen: () => void }
   const pct = known ? Math.round((card.used / card.total) * 100) : 0;
 
   return (
-    <button
+    <Button
+      variant="ghost"
       type="button"
       onClick={onOpen}
       aria-label={t("home.storage.open", { label: card.label })}
-      className="gf-tile group flex w-full items-center gap-3 px-3.5 py-3 text-left"
+      className="home-storage group grid h-auto w-full grid-cols-[40px_minmax(0,1fr)_18px] items-center gap-x-3 gap-y-3 whitespace-normal px-4 py-4 text-left"
     >
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/12 text-primary">
-        <Icon className="h-5 w-5" />
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-foreground">
+        <Icon className="size-5" />
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-baseline gap-2">
-          <span className="min-w-0 flex-1 truncate text-[14px] font-medium leading-tight">
-            {card.label}
-          </span>
-          {known && (
-            <span className="shrink-0 text-[12px] font-medium tabular-nums text-foreground/80">
-              {pct} %
-            </span>
-          )}
+          <span className="min-w-0 flex-1 type-body font-semibold">{card.label}</span>
+          {known && <span className="shrink-0 type-label tabular-nums text-primary">{pct} %</span>}
         </span>
-        <span
-          className="mt-2 block h-1 overflow-hidden rounded-full bg-surface-3"
-          aria-hidden="true"
-        >
+      </span>
+      <ChevronRight className="size-[18px] shrink-0 text-muted-foreground" />
+      <span className="col-span-3 min-w-0">
+        <span className="block h-1.5 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
           <span
             className="block h-full rounded-full bg-primary transition-[width] duration-200 ease-out"
             style={{ width: `${known ? Math.max(pct, 2) : 0}%` }}
           />
         </span>
-        <span className="mt-2 block truncate text-[11.5px] leading-none text-muted-foreground tabular-nums">
+        <span className="mt-2 block type-meta tabular-nums">
           {known
             ? t("home.storage.usage", {
                 used: formatSize(card.used),
@@ -195,7 +191,6 @@ function StorageTile({ card, onOpen }: { card: StorageCard; onOpen: () => void }
             : t("home.storage.readingSpace")}
         </span>
       </span>
-      <ChevronRight className="h-[18px] w-[18px] shrink-0 text-muted-foreground/60" />
-    </button>
+    </Button>
   );
 }

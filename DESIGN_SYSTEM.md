@@ -4,17 +4,18 @@ Toutes les valeurs vivent dans `src/styles.css` (jetons). Aucun composant ne cod
 
 ## Couleurs (thème sombre)
 
-| Rôle                                          | Jeton                           | Valeur  |
-| --------------------------------------------- | ------------------------------- | ------- |
-| Fond principal                                | `background`                    | #090B0F |
-| Surface secondaire (cartes, champs)           | `surface`, `card`, `input`      | #12161D |
-| Surface tertiaire (menus, fenêtres, survol)   | `surface-2`, `popover`, `muted` | #171C24 |
-| Bordures                                      | `border`                        | #252B35 |
-| Texte principal                               | `foreground`                    | #F3F5F7 |
-| Texte secondaire                              | `muted-foreground`              | #A6AFBA |
-| Accent (actions, focus, sélection uniquement) | `primary`                       | #4F82D9 |
+| Rôle                                       | Jeton                             | Valeur  |
+| ------------------------------------------ | --------------------------------- | ------- |
+| Fond principal                             | `background`                      | #090B0F |
+| Cartes principales et champs               | `surface`, `card`, `input`        | #141820 |
+| Surfaces secondaires et survol             | `surface-2`, `secondary`, `muted` | #1C222C |
+| Menus et fenêtres                          | `surface-elevated`, `popover`     | #262D38 |
+| Bordures                                   | `border`                          | #252B35 |
+| Texte principal                            | `foreground`                      | #F3F5F7 |
+| Texte secondaire                           | `muted-foreground`                | #A6AFBA |
+| Bleu signature (actions, focus, sélection) | `primary`                         | #0068F8 |
 
-Le noir domine ; l'accent signale, il ne colore pas de grandes surfaces.
+Le bleu #0068F8 provient du groupe de pixels bleus saturés dominant de la mascotte fournie (quantification RGB par pas de 8). Les couleurs principales sont définies en OKLCH dans les jetons. Le noir donne la profondeur ; les cartes et menus se distinguent par leur niveau de surface, sans halo ni dégradé décoratif. Le bleu signale, il ne colore pas de grandes surfaces.
 
 ## Rayons (8–16 px)
 
@@ -31,6 +32,7 @@ Grille de 4 px : `--space-1` 4 → `--space-12` 48. Marges d'écran 16 px, écar
 ## Composants
 
 - Boutons / champs : hauteur `--control-height` (52 px), rayon 12 px, bordure 1 px `border`.
+- Boutons secondaires : surface neutre `secondary`, texte `secondary-foreground`. Boutons sans fond : texte neutre, sauf liens et actions explicitement accentuées.
 - Cartes : `surface-card` (fond `card`, bordure `border`, rayon 14 px), pas d'ombre.
 - Menus et fenêtres : fond `popover`, bordure `border`, rayon 16 px.
 - Zone tactile minimale : 48 px (`touch-target`).
@@ -38,3 +40,7 @@ Grille de 4 px : `--space-1` 4 → `--space-12` 48. Marges d'écran 16 px, écar
 ## Icônes
 
 Source unique : `@/components/icons`. Trait 1,75 forcé partout (1,5 pour les grandes illustrations), terminaisons arrondies, `currentColor`. Une action = une icône exportée, jamais redessinée localement. Tailles : 20 px (barres, menus), 24 px (navigation), 40+ px (états vides).
+
+## Accueil — première étape
+
+En-tête compact avec logo officiel, nom et salutation. Sections titrées à 15/600, séparées par 24 px. Stockage sur une carte unique avec barre pleine largeur ; catégories en deux colonnes sous 480 px, trois au-delà ; libellés sur plusieurs lignes plutôt que tronqués. Fichiers récents et outils en listes ouvertes, sans cartes imbriquées. Métadonnées à 12 px. Navigation neutre, seule la destination active porte le bleu signature.

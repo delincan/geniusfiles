@@ -152,7 +152,7 @@ function BottomNav({ pathname, keyboardInset = 0 }: { pathname: string; keyboard
   return (
     <nav
       data-gf-bottom-nav
-      className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-[560px] border-t border-border/70 bg-nav-bar pb-[env(safe-area-inset-bottom)] pl-safe pr-safe shadow-[0_-8px_28px_-18px_rgb(0_0_0/0.55)]"
+      className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-[560px] border-t border-border/70 bg-nav-bar pb-[env(safe-area-inset-bottom)] pl-safe pr-safe"
       aria-label={t("home.nav.aria")}
       /* Clavier ouvert : la barre est redescendue derrière le clavier pour
          ne jamais recouvrir le formulaire de saisie. */
@@ -178,18 +178,10 @@ function BottomNav({ pathname, keyboardInset = 0 }: { pathname: string; keyboard
               aria-current={active ? "page" : undefined}
               className="relative flex flex-1 basis-0 flex-col items-center justify-center gap-1 pb-2 pt-2.5 transition-transform duration-150 ease-out active:scale-95"
             >
-              {/* Repère supérieur (« lampadaire ») : segment court ancré au
-                  bord haut de la barre, exactement au-dessus de la
-                  destination active. */}
+              {/* Un seul repère actif : la pastille discrète derrière l'icône. */}
               <span
                 aria-hidden
-                className={`absolute -top-px left-1/2 h-[3px] w-10 -translate-x-1/2 rounded-full bg-nav-pill-foreground transition-opacity duration-200 ease-out ${
-                  active ? "opacity-100" : "opacity-0"
-                }`}
-              />
-              <span
-                aria-hidden
-                className={`flex h-9 w-14 items-center justify-center rounded-2xl transition-colors duration-200 ease-out ${
+                className={`flex h-9 w-12 items-center justify-center rounded-xl transition-colors duration-200 ease-out ${
                   active ? "bg-nav-pill" : "bg-transparent"
                 }`}
               >

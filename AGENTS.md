@@ -63,3 +63,4 @@ le job `validate` échoue et bloque la génération de l'APK/AAB si `verify` éc
 - Event names, parameter keys and every text value are allowlisted in both `analytics.ts` and `GeniusFilesAnalyticsPlugin.kt`; unknown free text is dropped rather than normalized, and `analytics.test.ts` enforces parity.
 - Native Firebase initializes in `GeniusFilesApplication` before the WebView; the JS bridge queues real events during startup and marks a screen delivered only after the native call succeeds.
 - Visual values (colors, radii, type roles, icon stroke) are tokens in `src/styles.css`, documented in `DESIGN_SYSTEM.md`; components never hardcode them so the whole app stays consistent.
+- Keep home-specific composition in scoped home utilities and reuse the shared Button variants for its actions; this allows staged visual refinement without changing other screens or file-operation behavior.

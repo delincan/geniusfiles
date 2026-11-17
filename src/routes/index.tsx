@@ -61,6 +61,7 @@ import { ResumeBanner } from "@/components/jobs/ResumeBanner";
 import { AppShell } from "@/components/AppShell";
 import { usePullToRefresh } from "@/lib/gestures/pull-refresh";
 import { PageHeader } from "@/components/common/PageHeader";
+import { Button } from "@/components/ui/button";
 
 import { markStartupSignal } from "@/lib/startup/boot";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -1922,10 +1923,15 @@ function RootView({
   ];
 
   return (
-    <div className="flex flex-col gap-7 pb-6">
+    <div className="home-dashboard flex flex-col gap-6 pb-6">
       {/* Salutation = titre principal de la page, en en-tête collant. */}
       <PageHeader
-        title={pick ? pick.title : greeting}
+        title={pick ? pick.title : "GeniusFiles"}
+        leading={
+          pick ? undefined : (
+            <img src="/brand/geniusfiles-logo-128.png" alt="" className="size-10 object-contain" />
+          )
+        }
         subtitle={
           pick
             ? pick.purpose === "destination"
@@ -1933,21 +1939,23 @@ function RootView({
                 ? t("files.pickDest.subtitleMove")
                 : t("files.pickDest.subtitleCopy")
               : t("home.subtitle.pick")
-            : t("home.subtitle.default")
+            : greeting
         }
         action={
-          <button
+          <Button
+            variant="secondary"
+            size="icon"
             type="button"
             onClick={() => {
               // Accueil : recherche globale (tous les stockages).
               setSearchScope(null);
               navigate({ to: "/recherche" });
             }}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-surface text-foreground transition-transform duration-100 ease-out active:scale-95 hover:bg-surface-2"
+            className="shrink-0 rounded-xl"
             aria-label={t("action.search")}
           >
             <Search className="h-5 w-5" />
-          </button>
+          </Button>
         }
       />
 
@@ -1964,8 +1972,8 @@ function RootView({
 
       {/* Categories grid — compact */}
       <section aria-label={t("cleaner.categories.title")}>
-        <h2 className="mb-2.5 px-0.5 type-overline">{t("cleaner.categories.title")}</h2>
-        <div className="grid grid-cols-3 gap-2">
+        <h2 className="mb-3 type-subtitle">{t("cleaner.categories.title")}</h2>
+        <div className="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3">
           {categories
             .filter((c) => !c.hidden)
             .map((c) => (
@@ -1989,22 +1997,23 @@ function RootView({
       {/* Tools grid — compact (masqués pendant une sélection) */}
       {pick ? null : (
         <section aria-label={t("home.section.tools")}>
-          <h2 className="mb-2.5 px-0.5 type-overline">{t("home.section.tools")}</h2>
-          <div className="grid grid-cols-3 gap-2">
+          <h2 className="mb-3 type-subtitle">{t("home.section.tools")}</h2>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1">
             {tools.map((t) => (
-              <button
+              <Button
+                variant="ghost"
                 key={t.title}
                 type="button"
                 onClick={t.onOpen}
-                className="gf-tile group flex flex-col items-center gap-2 px-1.5 py-3.5 text-center"
+                className="group grid h-auto min-h-14 min-w-0 grid-cols-[32px_minmax(0,1fr)] justify-start gap-2 whitespace-normal rounded-xl px-1 py-2.5 text-left"
               >
-                <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.tint}`}>
+                <span
+                  className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${t.tint}`}
+                >
                   <t.icon className="h-5 w-5" />
                 </span>
-                <p className="w-full truncate text-[12px] font-medium leading-tight text-foreground/90">
-                  {t.title}
-                </p>
-              </button>
+                <span className="min-w-0 type-label text-foreground">{t.title}</span>
+              </Button>
             ))}
           </div>
         </section>
@@ -2088,20 +2097,19 @@ function CategoryTile({
           ? formatSize(bytes)
           : t("count.files", { count });
   return (
-    <button
+    <Button
+      variant="ghost"
       type="button"
       onClick={onOpen}
-      className="gf-tile group flex min-w-0 flex-col items-start gap-2.5 p-3 text-left"
+      className="home-category group grid h-auto min-h-24 min-w-0 grid-cols-1 items-start gap-2 whitespace-normal p-3 text-left"
     >
-      <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${tint}`}>
+      <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${tint}`}>
         <Icon className="h-5 w-5" />
       </span>
       <span className="flex w-full min-w-0 flex-col gap-1">
-        <span className="w-full truncate text-[13px] font-medium leading-tight">{label}</span>
-        <span className="w-full truncate text-[11.5px] leading-none text-muted-foreground tabular-nums">
-          {sub}
-        </span>
+        <span className="w-full break-words type-label">{label}</span>
+        <span className="w-full truncate type-meta tabular-nums">{sub}</span>
       </span>
-    </button>
+    </Button>
   );
 }
