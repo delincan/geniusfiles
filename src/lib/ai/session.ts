@@ -45,6 +45,7 @@ export type TaskSnapshot = {
   phase: "idle" | "running" | "closing";
   steps: TaskStep[];
   failed: boolean;
+  cancelled: boolean;
 };
 
 const ORDER: StepId[] = ["understand", "plan", "execute", "verify", "respond"];
@@ -62,11 +63,12 @@ function stepLabel(id: StepId): string {
   return t(LABEL_KEYS[id]);
 }
 
-const IDLE: TaskSnapshot = { phase: "idle", steps: [], failed: false };
+const IDLE: TaskSnapshot = { phase: "idle", steps: [], failed: false, cancelled: false };
 
 let phase: TaskSnapshot["phase"] = "idle";
 let currentId: StepId = "understand";
 let failed = false;
+let cancelled = false;
 let detail: string | null = null;
 let snapshot: TaskSnapshot = IDLE;
 /** Commandes moteur en cours : tant qu'il en reste, la tâche n'est pas finie. */
@@ -94,7 +96,7 @@ function build(): TaskSnapshot {
     else state = "pending";
     return { id, label: stepLabel(id), state, detail: r === cur && detail ? detail : undefined };
   });
-  return { phase, steps, failed };
+  return { phase, steps, failed, cancelled };
 }
 
 function emit() {
@@ -135,15 +137,11 @@ function startTask() {
   phase = "running";
   currentId = "understand";
   failed = false;
+  cancelled = false;
   detail = null;
   pendingTools = 0;
   lastActivity = Date.now();
   emit();
-  // La compréhension est immédiate : on bascule tout de suite sur l'analyse
-  // dès que la requête part réellement vers le modèle.
-  setTimeout(() => {
-    if (phase === "running") advance("plan");
-  }, 160);
   startPolling();
 }
 
@@ -176,6 +174,7 @@ function endTask(withFailure = false) {
       duration_ms: elapsedMs(taskStartedAt),
     });
   }
+  cancelled = taskCancelled;
   taskCancelled = false;
   failed = withFailure;
   if (!withFailure) currentId = "respond";
@@ -393,6 +392,8 @@ export function sendUserMessage(text: string): boolean {
   startTask();
   try {
     void c.sendMessage({ text }).finally(persist);
+    // Display milestone follows dispatch, never a presentation timer.
+    if (phase === "running") advance("plan");
     commitQuota(hold);
   } catch (err) {
     taskError = err;
@@ -417,6 +418,7 @@ export function retryTask() {
   taskOrigin = "retry";
   startTask();
   void c.regenerate();
+  if (phase === "running") advance("plan");
 }
 
 /** Bascule vers une autre instance de conversation, proprement. */
@@ -430,6 +432,7 @@ function swapChat(id: string, messages: UIMessage[]) {
   }
   phase = "idle";
   failed = false;
+  cancelled = false;
   detail = null;
   pendingTools = 0;
   currentId = "understand";
