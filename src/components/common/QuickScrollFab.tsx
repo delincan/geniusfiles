@@ -97,6 +97,12 @@ export function QuickScrollFab({ targetRef, topInset = 12, bottomInset = 12, cla
     const { top, length } = track();
     const ratio = m.maxScroll > 0 ? Math.min(1, Math.max(0, m.scrollTop / m.maxScroll)) : 0;
     node.style.transform = `translate3d(0, ${Math.round(top + ratio * length)}px, 0)`;
+    node.setAttribute("aria-valuemin", "0");
+    node.setAttribute("aria-valuemax", String(Math.round(m.maxScroll)));
+    node.setAttribute(
+      "aria-valuenow",
+      String(Math.round(Math.min(m.maxScroll, Math.max(0, m.scrollTop)))),
+    );
   }, [track]);
 
   /** Révèle la pastille et programme son effacement complet. */
@@ -158,6 +164,7 @@ export function QuickScrollFab({ targetRef, topInset = 12, bottomInset = 12, cla
 
     return () => {
       cancelAnimationFrame(frameRef.current);
+      frameRef.current = 0;
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
       scrollSource.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", scheduleSync);
@@ -233,6 +240,30 @@ export function QuickScrollFab({ targetRef, topInset = 12, bottomInset = 12, cla
       aria-orientation="vertical"
       aria-hidden={!shown}
       aria-label={t("common.quickScroll.aria")}
+      tabIndex={shown ? 0 : -1}
+      onKeyDown={(e) => {
+        const m = metricsRef.current;
+        const page = Math.max(1, m.rectBottom - m.rectTop);
+        const next =
+          e.key === "Home"
+            ? 0
+            : e.key === "End"
+              ? m.maxScroll
+              : e.key === "PageDown"
+                ? m.scrollTop + page
+                : e.key === "PageUp"
+                  ? m.scrollTop - page
+                  : e.key === "ArrowDown"
+                    ? m.scrollTop + 72
+                    : e.key === "ArrowUp"
+                      ? m.scrollTop - 72
+                      : null;
+        if (next === null) return;
+        e.preventDefault();
+        scrollTo(Math.max(0, Math.min(m.maxScroll, next)));
+        sync();
+        wake();
+      }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}

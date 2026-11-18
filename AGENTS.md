@@ -78,3 +78,5 @@ le job `validate` échoue et bloque la génération de l'APK/AAB si `verify` éc
 - File list motion after real updates goes through `useListMotion` (`src/lib/motion/list-motion.ts`): WAAPI transform/opacity only, positions from indexes (fixed row heights), skipped for bulk/sort changes and reduced motion; animations never delay or precede the operation result.
 - Keyboard detection uses window-height baseline (`src/lib/native/keyboard.ts`) because Capacitor edge-to-edge resizes the WebView rather than the visual viewport.
 - Native window background colors in `MainActivity` must equal the web `--background` of each theme, otherwise resizes and transitions flash a different shade.
+- Grouped galleries use one virtualizer with the complete row extent; progressively mounting groups changes scroll height and gives the shared fast scroller a false end.
+- Notification permission requests share one pending decision and resolve through Capacitor's permission callback; posting before the result loses the first Android notification.

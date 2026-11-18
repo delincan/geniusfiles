@@ -75,6 +75,10 @@ private const val EVENT_STORAGE_VOLUMES_CHANGED = "storageVolumesChanged"
         Permission(
             strings = [Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE],
             alias = LEGACY_STORAGE
+        ),
+        Permission(
+            strings = ["android.permission.POST_NOTIFICATIONS"],
+            alias = "notifications"
         )
     ]
 )
@@ -2025,18 +2029,17 @@ class GeniusFilesNativePlugin : Plugin() {
 
     @PluginMethod
     fun requestNotificationPermission(call: PluginCall) {
-        val res = JSObject()
-        if (Build.VERSION.SDK_INT >= 33) {
-            val perm = "android.permission.POST_NOTIFICATIONS"
-            val granted = ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_GRANTED
-            if (!granted) {
-                try { activity?.requestPermissions(arrayOf(perm), 4321) } catch (_: Throwable) {}
-            }
-            res.put("granted", granted)
-        } else {
-            res.put("granted", true)
+        if (Build.VERSION.SDK_INT >= 33 &&
+            getPermissionState("notifications") != PermissionState.GRANTED) {
+            requestPermissionForAlias("notifications", call, "notificationPermissionCallback")
+            return
         }
-        call.resolve(res)
+        checkNotificationPermission(call)
+    }
+
+    @PermissionCallback
+    private fun notificationPermissionCallback(call: PluginCall) {
+        checkNotificationPermission(call)
     }
 
     @PluginMethod

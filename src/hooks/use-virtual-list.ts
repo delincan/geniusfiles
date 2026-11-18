@@ -27,7 +27,8 @@ export const SCROLL_ROOT_ATTR = "data-scroll-root";
 
 export type WindowVirtualOptions = {
   count: number;
-  estimateSize: number;
+  estimateSize: number | ((index: number) => number);
+  getItemKey?: (index: number) => string | number;
   overscan?: number;
   gap?: number;
   /** Below this item count, virtualization is skipped. */
@@ -45,7 +46,9 @@ export function useWindowVirtualList(opts: WindowVirtualOptions) {
 
   const common = {
     count: enabled ? opts.count : 0,
-    estimateSize: () => opts.estimateSize,
+    estimateSize: (index: number) =>
+      typeof opts.estimateSize === "number" ? opts.estimateSize : opts.estimateSize(index),
+    ...(opts.getItemKey ? { getItemKey: opts.getItemKey } : {}),
     overscan: opts.overscan ?? 8,
     gap: opts.gap ?? 0,
     scrollMargin,
@@ -56,10 +59,12 @@ export function useWindowVirtualList(opts: WindowVirtualOptions) {
     // Une couche avec sa propre piste ne doit pas conserver en parallèle
     // un second virtualiseur abonné au défilement de la fenêtre.
     count: enabled && !scrollEl ? opts.count : 0,
+    enabled: enabled && !scrollEl,
   });
   const elementVirtualizer = useVirtualizer({
     ...common,
     count: enabled && scrollEl ? opts.count : 0,
+    enabled: enabled && !!scrollEl,
     getScrollElement: () => scrollElRef.current,
   });
   const virtualizer = scrollEl ? elementVirtualizer : windowVirtualizer;

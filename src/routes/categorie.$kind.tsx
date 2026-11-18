@@ -26,12 +26,11 @@ import { FolderSearch } from "@/components/icons";
 import { InlineSearchField } from "@/components/files/InlineSearchField";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
-import { GroupHeading } from "@/components/ui/SectionHeader";
 import { usePullToRefresh } from "@/lib/gestures/pull-refresh";
 import { useAppBack } from "@/lib/navigation/use-app-back";
 import { BACK_PRIORITY, useBackHandler } from "@/lib/navigation/back-stack";
 import { FilesTopBar } from "@/components/files/FilesTopBar";
-import { FileGridView, FileListView } from "@/components/files/FileList";
+import { FileGridView, FileListView, GroupedFileView } from "@/components/files/FileList";
 import { SelectionBar } from "@/components/files/SelectionBar";
 
 import { MoreActionsSheet } from "@/components/files/MoreActionsSheet";
@@ -431,30 +430,6 @@ export function CategoryPage({ kind }: { kind: CategoryKind }) {
     () => (grouped ? groupBySort(sorted, sortKey) : []),
     [grouped, sorted, sortKey],
   );
-
-  /* Chargement progressif des groupes (galerie) : seuls les premiers
-     groupes sont montés, les suivants arrivent au défilement. */
-  const GROUP_PAGE = 8;
-  const [groupLimit, setGroupLimit] = useState(GROUP_PAGE);
-  useEffect(() => {
-    setGroupLimit(GROUP_PAGE);
-  }, [kind, tab, openFolder, sortKey, sortOrder, deferredQuery]);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (!grouped) return;
-    const el = sentinelRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setGroupLimit((n) => (n >= groups.length ? n : n + GROUP_PAGE));
-        }
-      },
-      { rootMargin: "600px 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [grouped, groups.length]);
 
   const idOf = (f: CategoryFile) => `${f.rootId}/${f.folderSegments.join("/")}/${f.name}`;
   /* Index identifiant → fichier, construit une seule fois par liste : chaque
@@ -941,10 +916,25 @@ export function CategoryPage({ kind }: { kind: CategoryKind }) {
            FileListView/FileGridView portent déjà leur propre px-4.
            Sans cela les marges étaient doublées (32 px au lieu de 16). */
         <div className="-mx-4 pt-1">
-          {(grouped ? groups.slice(0, groupLimit) : [{ key: "all", label: "", items: sorted }]).map(
-            (g) => (
+          {grouped ? (
+            <GroupedFileView
+              groups={groups}
+              view={view}
+              entries={sorted}
+              entryKey={(entry) => idOf(entry as CategoryFile)}
+              onOpen={openEntry}
+              onQuickOpen={quickOpenEntry}
+              onLongPress={beginSelection}
+              onMore={(entry) => {
+                if (!pick) setDialog({ kind: "actions", entry });
+              }}
+              selectionMode={selectionMode || pick !== null}
+              isSelected={isSelected}
+              onToggleSelect={toggleSelect}
+            />
+          ) : (
+            [{ key: "all", label: "", items: sorted }].map((g) => (
               <section key={g.key}>
-                {grouped && g.label ? <GroupHeading label={g.label} /> : null}
                 {view === "list" ? (
                   <FileListView
                     entries={g.items}
@@ -973,11 +963,8 @@ export function CategoryPage({ kind }: { kind: CategoryKind }) {
                   />
                 )}
               </section>
-            ),
+            ))
           )}
-          {grouped && groupLimit < groups.length ? (
-            <div ref={sentinelRef} className="h-10" aria-hidden />
-          ) : null}
         </div>
       )}
 

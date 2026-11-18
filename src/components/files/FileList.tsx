@@ -1,5 +1,5 @@
 import { Check, ChevronRight, Eye, MoreVertical } from "@/components/icons";
-import { memo, useMemo, useRef } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 import { countLabel } from "@/lib/copy";
 import { useT } from "@/lib/i18n";
 import { formatDate, formatSize, kindLabel } from "@/lib/files/format";
@@ -10,6 +10,8 @@ import { useWindowVirtualList } from "@/hooks/use-virtual-list";
 import { haptic } from "@/lib/feedback/haptics";
 import { useListMotion } from "@/lib/motion/list-motion";
 import { acceptOpenTap } from "@/lib/feedback/tap-guard";
+import type { FileGroup } from "@/lib/files/image-groups";
+import { buildGroupedRows } from "./grouped-rows";
 
 // Hauteurs FIXES : aucune re-mesure pendant le défilement, donc aucune
 // « danse » des éléments, même en défilement rapide sur 100 000 fichiers.
@@ -49,6 +51,83 @@ type Props = {
 const LONG_PRESS_MS = 380;
 const pathKey = (entry: FileEntry) => entry.path;
 
+/** One virtualizer owns the full grouped gallery: scroll height never paginates. */
+export function GroupedFileView({
+  groups,
+  view,
+  ...props
+}: Props & {
+  groups: FileGroup<FileEntry>[];
+  view: "list" | "grid";
+}) {
+  const columns = view === "grid" ? 3 : 1;
+  const rows = useMemo(
+    () => buildGroupedRows(groups, columns, view === "grid" ? GRID_ROW_HEIGHT : ROW_HEIGHT),
+    [groups, columns, view],
+  );
+  const { parentRef, virtualizer, scrollMargin } = useWindowVirtualList({
+    count: rows.length,
+    estimateSize: (index) => rows[index]?.height ?? ROW_HEIGHT,
+    getItemKey: (index) => rows[index]?.key ?? index,
+    threshold: 0,
+    overscan: 8,
+  });
+  const entryKey = props.entryKey ?? pathKey;
+  return (
+    <div
+      ref={parentRef}
+      style={{ position: "relative", height: virtualizer.getTotalSize(), overflowAnchor: "none" }}
+    >
+      {virtualizer.getVirtualItems().map((virtualRow) => {
+        const row = rows[virtualRow.index];
+        if (!row) return null;
+        return (
+          <div
+            key={virtualRow.key}
+            data-index={virtualRow.index}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: row.height,
+              transform: `translateY(${virtualRow.start - scrollMargin}px)`,
+              contain: "layout paint style",
+            }}
+          >
+            {row.items === null ? (
+              <h2 className="flex h-full items-center bg-background px-4 text-[12.5px] font-semibold text-muted-foreground">
+                {row.label}
+              </h2>
+            ) : view === "list" ? (
+              row.items.map((entry) => (
+                <FileRow
+                  key={entryKey(entry)}
+                  {...props}
+                  entry={entry}
+                  isSelected={props.isSelected(entry)}
+                />
+              ))
+            ) : (
+              <div className="grid grid-cols-3 gap-x-2 px-3 pb-2.5">
+                {row.items.map((entry) => (
+                  <GridCell
+                    key={entryKey(entry)}
+                    {...props}
+                    parent={props.parent ?? null}
+                    entry={entry}
+                    isSelected={props.isSelected(entry)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function usePressBinder(entry: FileEntry, onLongPress: (e: FileEntry) => void) {
   const timer = useRef<number | null>(null);
   const fired = useRef(false);
@@ -60,6 +139,13 @@ function usePressBinder(entry: FileEntry, onLongPress: (e: FileEntry) => void) {
       timer.current = null;
     }
   };
+  // Virtualized rows can unmount while a finger is down; never select a stale entry.
+  useEffect(
+    () => () => {
+      if (timer.current != null) window.clearTimeout(timer.current);
+    },
+    [],
+  );
   return {
     fired,
     handlers: {

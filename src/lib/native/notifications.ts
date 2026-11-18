@@ -31,6 +31,7 @@ export function isNotificationsAvailable(): boolean {
 }
 
 let requested = false;
+let pendingPermission: Promise<boolean> | null = null;
 
 /**
  * Demande la permission une seule fois, au moment où une fonctionnalité en
@@ -39,17 +40,22 @@ let requested = false;
 export async function ensureNotificationPermission(): Promise<boolean> {
   const p = plugin();
   if (!p?.requestNotificationPermission) return false;
+  if (pendingPermission) return pendingPermission;
   try {
     if (p.checkNotificationPermission) {
       const { granted } = await p.checkNotificationPermission();
       if (granted) return true;
     }
+    // Another caller may have opened the dialog while the check was awaiting.
+    if (pendingPermission) return await pendingPermission;
     if (requested) return false;
     requested = true;
-    const res = await p.requestNotificationPermission();
-    return Boolean(res?.granted);
+    pendingPermission = p.requestNotificationPermission().then((res) => Boolean(res?.granted));
+    return await pendingPermission;
   } catch {
     return false;
+  } finally {
+    pendingPermission = null;
   }
 }
 
@@ -64,7 +70,7 @@ export async function showNotification(opts: {
   try {
     // Demande contextuelle : c'est ici, et seulement ici, qu'une
     // notification est réellement nécessaire.
-    await ensureNotificationPermission();
+    if (!(await ensureNotificationPermission())) return;
     await p.showLocalNotification({
       id: opts.id,
       title: opts.title,

@@ -133,3 +133,14 @@
 - [x] Lifecycle: pause/resume state, no double ops, listener cleanup
 - [x] Answer: suggest next steps after remix
 - [ ] Real-phone check of Back, keyboard, system bars, haptics, resume — needs a new APK.
+
+## Step 6.5 — Validation and long-list correction
+
+- [x] Correct image-group scroll extent without changing file operations or visual identity; one full-height virtualizer prevents false ends.
+- [x] Regression tests and browser check with 3,000 images: stable extent in list/grid, last entry reachable, drag and keyboard indicator, long press, multiple selection and action-sheet dismissal; 16 pages opened without browser errors (synthetic data, not native operations).
+- [x] 81 automated tests passed; `bun run verify` passed. Android/CI source audit: SDK 36 alignment, safer signing environment, PR signing skipped, notification permission awaits real callback, idle service restart stops.
+- [x] Record limits: no Android SDK/Java/device here, so Kotlin compilation and signed APK/AAB workflow are not executed; native sharing, permissions, keyboard, rotation, audio/resume and actual storage throughput remain device-only.
+- [ ] Validate native gestures, sharing, permissions, media background playback and resource use on Android — requires a rebuilt APK and physical device.
+- [ ] Validate signed APK/AAB in GitHub Actions — requires an actual CI run with signing credentials; workflow edits are source-reviewed only.
+- [ ] Assess Android 15/16 dataSync foreground-service timeout and audio process-restart behavior — requires Android runtime reproduction; current code has no explicit dataSync onTimeout handler.
+- [ ] Review broad file/package/exact-alarm permissions against intended Play distribution — requires a distribution/policy decision; declared permissions do not prove Play eligibility.

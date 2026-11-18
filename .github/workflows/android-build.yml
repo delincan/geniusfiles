@@ -82,6 +82,10 @@ jobs:
 
   android:
     name: Build & sign release APK + AAB
+    # Fork pull requests have no signing secrets; validation still runs above.
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: write
     needs: validate
     runs-on: ubuntu-latest
     steps:
@@ -101,7 +105,7 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           cmdline-tools-version: 11076708
-          packages: "platforms;android-35 build-tools;35.0.0 platform-tools"
+          packages: "platforms;android-36 build-tools;36.0.0 platform-tools"
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -168,6 +172,8 @@ jobs:
         id: keystore
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
           set -e
           KEYSTORE_PATH="$RUNNER_TEMP/geniusfiles-release.keystore"
@@ -178,10 +184,9 @@ jobs:
           fi
           # Sanity-check the keystore + credentials without printing anything sensitive.
           if ! keytool -list -keystore "$KEYSTORE_PATH" \
-                 -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
-                 -alias "${{ secrets.ANDROID_KEY_ALIAS }}" >/dev/null 2>keytool.err; then
+                 -storepass:env ANDROID_KEYSTORE_PASSWORD \
+                 -alias "$ANDROID_KEY_ALIAS" >/dev/null 2>keytool.err; then
             echo "::error::Keystore validation failed. Check ANDROID_KEYSTORE_PASSWORD and ANDROID_KEY_ALIAS."
-            sed -E 's/(pass(word)?[^ ]*)/[REDACTED]/gi' keytool.err || true
             exit 1
           fi
           echo "keystore_path=$KEYSTORE_PATH" >> "$GITHUB_OUTPUT"
@@ -222,10 +227,9 @@ jobs:
           fi
           # Confirm the APK is actually signed (apksigner ships with build-tools).
           APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner 2>/dev/null | tail -n1)
-          if [ -n "$APKSIGNER" ]; then
-            "$APKSIGNER" verify --print-certs "$SRC_APK" >/dev/null
-            echo "✓ APK signature verified."
-          fi
+          test -n "$APKSIGNER" || { echo "::error::apksigner unavailable"; exit 1; }
+          "$APKSIGNER" verify --print-certs "$SRC_APK" >/dev/null
+          echo "✓ APK signature verified."
           mkdir -p artifacts
           cp "$SRC_APK" "artifacts/GeniusFiles-release.apk"
           cp "$SRC_AAB" "artifacts/GeniusFiles-release.aab"
@@ -259,8 +263,8 @@ jobs:
       - name: Scrub release keystore
         if: always()
         run: |
-          if [ -n "${{ steps.keystore.outputs.keystore_path }}" ]; then
-            shred -u "${{ steps.keystore.outputs.keystore_path }}" 2>/dev/null || \
-              rm -f "${{ steps.keystore.outputs.keystore_path }}"
+          if [ -f "$RUNNER_TEMP/geniusfiles-release.keystore" ]; then
+            shred -u "$RUNNER_TEMP/geniusfiles-release.keystore" 2>/dev/null || \
+              rm -f "$RUNNER_TEMP/geniusfiles-release.keystore"
             echo "✓ Release keystore scrubbed from runner."
           fi

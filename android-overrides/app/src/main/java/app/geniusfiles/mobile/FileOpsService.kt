@@ -54,11 +54,9 @@ class FileOpsService : Service() {
         } catch (_: Throwable) {
         }
         if (intent?.action == ACTION_STOP || tasks.values.none { it.status == "running" }) {
-            if (intent?.action == ACTION_STOP) {
-                stopForeground(STOP_FOREGROUND_REMOVE)
-                stopSelf(startId)
-                return START_NOT_STICKY
-            }
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf(startId)
+            return START_NOT_STICKY
         }
         return START_STICKY
     }
