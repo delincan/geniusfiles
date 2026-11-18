@@ -17,7 +17,7 @@
   --radius-md: 10px;
   --radius-lg: 12px; /* champ de texte */
   --radius-xl: 12px; /* bouton principal */
-  --radius-2xl: 14px; /* carte / image */
+  --radius-2xl: 12px; /* carte / image */
   --radius-3xl: 16px; /* fenêtre / illustration */
   --radius-4xl: 16px; /* dialogue */
 
@@ -53,6 +53,8 @@
   --color-error: var(--destructive);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
+  --color-handle: var(--handle);
+  --color-disabled: var(--disabled);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
@@ -116,23 +118,27 @@
 }
 
 :root {
-  /* Base geometric unit — cards default to 20 dp */
+  /* Base geometric unit — rayon modéré par défaut */
   --radius: 12px;
 
   /* ============================================================
      GeniusFiles Design System — identité sombre unique
-     Gris neutres Material 3 + bleu de marque en accent.
+     Noir dominant, gris charbon par niveaux, bleu en accent seul.
+     Hiérarchie des surfaces (du plus profond au plus proche) :
+       L0 #000000 fond · L1 #16171A sections · L2 #20201E panneaux
+       L3 #282826 menus et surfaces interactives · bordures #353639
      ============================================================ */
 
   color-scheme: dark;
 
-  --background: oklch(0.14923 0.0093 263.967);
-  --foreground: oklch(0.9692 0.00343 247.858);
+  --background: #000000;
+  --foreground: #ececec;
 
-  --surface: oklch(0.20865 0.0171 264.101);
-  --surface-elevated: oklch(0.29523 0.02239 259.366);
-  --surface-2: oklch(0.25058 0.02099 260.572);
-  --surface-3: var(--surface-elevated);
+  --surface: #16171a;
+  --surface-2: #20201e;
+  --surface-elevated: #282826;
+  /* Appui sur une surface L3 (menus, feuilles). */
+  --surface-3: #323232;
 
   --card: var(--surface);
   --card-foreground: var(--foreground);
@@ -140,13 +146,12 @@
   --popover: var(--surface-elevated);
   --popover-foreground: var(--foreground);
 
-  /* Brand — GeniusFiles blue (actions, focus, indicateurs uniquement).
-     Les aplats teintés restent volontairement discrets : le bleu signale,
-     il ne colore pas l'interface. */
-  /* Dominant saturated mascot cluster: RGB (0,104,248), #0068F8. */
-  --primary: oklch(0.56128 0.22999 260.084);
+  /* Accent GeniusFiles — actions, onglet actif, liens, progression,
+     états actifs. Jamais en aplat décoratif. Texte sombre sur l'accent :
+     un bleu clair porte mal le blanc (contraste insuffisant). */
+  --primary: #4ea2fe;
   --primary-2: var(--primary);
-  --primary-foreground: var(--foreground);
+  --primary-foreground: #050608;
   --primary-soft: color-mix(in oklab, var(--primary) 12%, transparent);
   --primary-softer: color-mix(in oklab, var(--primary) 6%, transparent);
   --primary-glow: var(--primary-soft);
@@ -156,45 +161,51 @@
   --secondary-foreground: var(--foreground);
 
   --muted: var(--surface-2);
-  --muted-foreground: oklch(0.75034 0.01877 253.377);
-  --muted-foreground-2: #8a939f;
+  --muted-foreground: #ababab;
+  /* Texte tertiaire et indications de champ. */
+  --muted-foreground-2: #858585;
 
   --accent: var(--surface-2);
   --accent-foreground: var(--foreground);
 
-  /* States */
-  --success: #32d583;
-  --success-foreground: #10151c;
-  --warning: #fdb022;
-  --destructive: #f97066;
-  --destructive-foreground: #10151c;
+  /* Éléments neutres : contours de contrôle, poignées, pistes inactives
+     (#484848) et pictogrammes désactivés (#585857). */
+  --handle: #484848;
+  --disabled: #585857;
+
+  /* States — teintes adoucies, réservées à leur sens */
+  --success: #4cc38a;
+  --success-foreground: #050608;
+  --warning: #e5b454;
+  --destructive: #f07068;
+  --destructive-foreground: #050608;
   --info: var(--primary);
 
   /* Borders & inputs */
-  --border: oklch(0.28758 0.02026 260.617);
-  --border-strong: #303744;
+  --border: #353639;
+  --border-strong: var(--handle);
   --input: var(--surface);
-  --ring: color-mix(in oklab, var(--primary) 50%, transparent);
+  --ring: color-mix(in oklab, var(--primary) 45%, transparent);
 
-  /* Navigation inférieure ancrée — sélection en bleu GeniusFiles */
-  --nav-bar: var(--surface);
-  --nav-pill: var(--primary-soft);
+  /* Navigation inférieure — fond noir, onglet actif seul en bleu */
+  --nav-bar: var(--background);
+  --nav-pill: var(--surface-2);
   --nav-pill-foreground: var(--primary);
   --nav-inactive: var(--muted-foreground);
 
   /* Lecteur de documents — en-tête opaque + surface de lecture */
-  --reader-header: var(--surface);
-  --reader-header-foreground: #f5f5f6;
+  --reader-header: var(--background);
+  --reader-header-foreground: var(--foreground);
   --reader-surface: #fbfbf9;
   --reader-ink: #16181c;
   --reader-muted: #5c6068;
   /* Fond derrière une page de document (PDF) et son texte */
-  --reader-backdrop: #0d1015;
-  --reader-backdrop-foreground: #f3f5f7;
+  --reader-backdrop: #151617;
+  --reader-backdrop-foreground: var(--foreground);
 
   /* Voile modal + calques sur média — invariants entre thèmes */
   --scrim: #000000;
-  --media: #090b0f;
+  --media: #000000;
   --media-foreground: #ffffff;
   --media-muted: rgb(255 255 255 / 0.62);
   /* Feuille d'un document (PDF, signature) et son encre */
@@ -204,34 +215,36 @@
   /* Éditeur audio — palette sombre, contrastée mais non fatigante */
   --wave-bg: var(--surface);
   --wave-lane: var(--surface-2);
-  --wave-body: #6fd3b8;
-  --wave-body-dim: #4b6b6a;
-  --wave-body-sel: #8fe3ff;
+  --wave-body: #9a9a9a;
+  --wave-body-dim: #484848;
+  --wave-body-sel: var(--primary);
   --wave-axis: rgb(255 255 255 / 0.14);
   --wave-sel-fill: var(--primary-soft);
   --wave-sel-edge: var(--primary);
-  --wave-playhead: #ffc861;
+  --wave-playhead: #ececec;
   --wave-grid: rgb(255 255 255 / 0.08);
   --wave-grid-strong: rgb(255 255 255 / 0.2);
-  --wave-label: #9aa2ad;
+  --wave-label: #8a8a8a;
 
-  /* Catégories — teintes discrètes */
-  --cat-image: var(--primary);
-  --cat-video: #9b86ff;
-  --cat-audio: #32d583;
-  --cat-document: #7ea4e6;
-  --cat-archive: #fdb022;
-  --cat-apk: #f97066;
-  --cat-other: #8a939f;
-  --cat-pdf: #f38b7d;
-  --cat-code: #5cc8e0;
+  /* Catégories — teintes désaturées, uniquement sur le pictogramme du
+     type de fichier (information utile), jamais en fond de carte. */
+  --cat-image: #7cc3a6;
+  --cat-video: #a898e8;
+  --cat-audio: #e0a06a;
+  --cat-document: #8fa9d6;
+  --cat-archive: #d4b26a;
+  --cat-apk: #86c98e;
+  --cat-other: #8e8e8e;
+  --cat-pdf: #e8877a;
+  --cat-code: #7fbfcc;
 
-  /* Ombres — neutres et très discrètes */
-  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.3);
-  --shadow-soft: 0 1px 3px rgb(0 0 0 / 0.35);
-  --shadow-card: 0 2px 8px rgb(0 0 0 / 0.38);
-  --shadow-elevated: 0 8px 24px rgb(0 0 0 / 0.5);
-  --shadow-glow: 0 8px 24px rgb(0 0 0 / 0.55);
+  /* Ombres — le noir ne porte pas d'ombre ; seules les couches
+     superposées (menus, feuilles) gardent une ombre de séparation. */
+  --shadow-xs: none;
+  --shadow-soft: none;
+  --shadow-card: none;
+  --shadow-elevated: 0 12px 32px rgb(0 0 0 / 0.6);
+  --shadow-glow: none;
 
   /* ---------- Espacement (grille GeniusFiles) ---------- */
   --space-1: 4px;
@@ -292,7 +305,7 @@ html[data-theme="light"] {
   --popover-foreground: #15171c;
 
   /* Brand — bleu plus dense : lisible sur fond clair, présent avec parcimonie */
-  --primary: oklch(0.56128 0.22999 260.084);
+  --primary: #1672e0;
   --primary-2: var(--primary);
   --primary-foreground: #ffffff;
   --primary-soft: color-mix(in oklab, var(--primary) 8%, transparent);
@@ -321,12 +334,14 @@ html[data-theme="light"] {
   /* Borders & inputs */
   --border: #e3e6ec;
   --border-strong: #ccd2db;
+  --handle: #b9bec7;
+  --disabled: #a3a8b0;
   --input: #ffffff;
   --ring: rgb(19 114 240 / 0.35);
 
   /* Navigation inférieure ancrée — sélection en bleu GeniusFiles */
   --nav-bar: #ffffff;
-  --nav-pill: rgb(19 114 240 / 0.1);
+  --nav-pill: #eef0f4;
   --nav-pill-foreground: var(--primary);
   --nav-inactive: rgb(21 23 28 / 0.55);
 
@@ -342,7 +357,7 @@ html[data-theme="light"] {
   /* Éditeur audio — palette claire, contraste doux */
   --wave-bg: #f2f4f7;
   --wave-lane: #e9edf2;
-  --wave-body: #1f7a68;
+  --wave-body: #5a616b;
   --wave-body-dim: #9fb7b2;
   --wave-body-sel: #0f5f8f;
   --wave-axis: rgb(21 23 28 / 0.16);
@@ -354,7 +369,7 @@ html[data-theme="light"] {
   --wave-label: #5a616b;
 
   /* Catégories */
-  --cat-image: #1372f0;
+  --cat-image: #12866a;
   --cat-video: #7452f0;
   --cat-audio: #12894f;
   --cat-document: #0b74d1;
@@ -505,9 +520,8 @@ html {
 
 @utility card-surface {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   border-radius: var(--radius);
-  box-shadow: var(--shadow-xs);
 }
 
 @utility list-row {
@@ -543,7 +557,6 @@ html {
   color: var(--primary-foreground);
   font-weight: 600;
   font-size: 15px;
-  box-shadow: var(--shadow-soft);
   transition:
     transform var(--duration-fast) var(--ease-standard),
     background-color var(--duration-fast) var(--ease-standard),
@@ -588,8 +601,11 @@ html {
   transition: background-color var(--duration-fast) var(--ease-standard);
   &:hover {
     @media (hover: hover) and (pointer: fine) {
-      background: var(--primary-softer);
+      background: var(--surface-2);
     }
+  }
+  &:active {
+    background: var(--surface-2);
   }
 }
 
@@ -614,9 +630,8 @@ html {
   }
   &:focus-within,
   &:focus {
-    border-color: var(--primary);
+    border-color: color-mix(in oklab, var(--primary) 70%, transparent);
     background: var(--surface);
-    box-shadow: 0 0 0 3px var(--primary-glow);
     outline: none;
   }
 }
@@ -740,7 +755,7 @@ html {
 /* Carte standard — même rayon, même ombre, même bordure partout. */
 @utility gf-card {
   background: var(--surface);
-  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  border: 1px solid transparent;
   border-radius: var(--radius-2xl);
   overflow: hidden;
 }
@@ -758,13 +773,13 @@ html {
     background-color var(--duration-fast) var(--ease-standard),
     transform var(--duration-fast) var(--ease-standard);
   &:active {
-    background: color-mix(in oklab, var(--primary) 7%, transparent);
+    background: var(--surface-2);
   }
 }
 
 /* Titre d'une ligne / information principale. */
 @utility gf-row-title {
-  font-size: 14.5px;
+  font-size: 15px;
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: 0;
@@ -829,9 +844,9 @@ html {
   }
 }
 @utility gf-chip-active {
-  background: var(--primary-soft);
+  background: var(--surface-elevated);
   color: var(--primary);
-  border-color: color-mix(in oklab, var(--primary) 35%, transparent);
+  border-color: color-mix(in oklab, var(--primary) 45%, transparent);
 }
 
 /* Chargement élégant — squelette animé, sans clignotement. */
@@ -873,7 +888,7 @@ html {
 /* Séparateur de liste homogène. */
 @utility gf-divide {
   & > * + * {
-    border-top: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+    border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
   }
 }
 
@@ -963,7 +978,7 @@ html {
 }
 
 .textLayer ::selection {
-  background: rgb(0 100 255 / 0.28);
+  background: rgb(78 162 254 / 0.3);
 }
 
 .textLayer br::selection {
@@ -1019,7 +1034,7 @@ canvas + .textLayer ~ canvas,
 /* Surbrillance cohérente dans toutes les zones de lecture. */
 [data-gf-reader="true"] ::selection,
 [data-gf-selectable="true"] ::selection {
-  background: rgb(0 100 255 / 0.28);
+  background: rgb(78 162 254 / 0.3);
 }
 
 /* ============================================================
@@ -1068,9 +1083,9 @@ canvas + .textLayer ~ canvas,
   /* Anneau de focus unique dans toute l'application (clavier / accessibilité). */
   html:not([data-gf-input="touch"])
     :where(button, a, [role="button"], input, textarea, select, [tabindex]):focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--primary-glow);
-    border-radius: inherit;
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    box-shadow: none;
   }
 
   /* Défilement fluide et sans rebond parasite dans les zones scrollables. */
@@ -1274,8 +1289,8 @@ html.gf-immersive .gf-thumb-bar {
   top: 0.62em;
   height: 5px;
   width: 5px;
-  border-radius: 999px /* la puce reprend la couleur d'accent pour guider l'œil */;
-  background: color-mix(in oklab, var(--primary) 70%, transparent);
+  border-radius: 999px;
+  background: var(--muted-foreground);
 }
 ol.gf-answer-list {
   padding-left: 1.4rem;
@@ -1316,7 +1331,7 @@ ol.gf-answer-list > .gf-answer-item::before {
 .gf-answer-quote {
   margin: 0 0 0.9rem;
   padding: 0.1rem 0 0.1rem 0.75rem;
-  border-left: 2px solid color-mix(in oklab, var(--primary) 45%, transparent);
+  border-left: 2px solid var(--border);
   color: var(--muted-foreground);
 }
 .gf-answer-code {
@@ -1328,8 +1343,8 @@ ol.gf-answer-list > .gf-answer-item::before {
 .gf-answer-pre {
   margin: 0 0 0.9rem;
   overflow-x: auto;
-  border-radius: 14px;
-  background: var(--secondary);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
   padding: 0.75rem;
   font-size: 0.85em;
 }
@@ -1381,9 +1396,8 @@ ol.gf-answer-list > .gf-answer-item::before {
   height: 20px;
   width: 20px;
   border-radius: 999px;
-  background: var(--primary);
-  border: 2px solid var(--background);
-  box-shadow: 0 4px 12px -4px rgb(0 0 0 / 0.6);
+  background: var(--foreground);
+  border: 0;
   transition: transform 120ms ease;
 }
 .gf-photo-range:active::-webkit-slider-thumb {
@@ -1397,9 +1411,9 @@ ol.gf-answer-list > .gf-answer-item::before {
 .gf-photo-range::-moz-range-thumb {
   height: 18px;
   width: 18px;
-  border: 2px solid var(--background);
+  border: 0;
   border-radius: 999px;
-  background: var(--primary);
+  background: var(--foreground);
 }
 
 @keyframes gf-sheet-up {
@@ -1582,19 +1596,15 @@ body {
   gap: 0.625rem;
   width: 100%;
   padding: 0.6875rem 1rem;
-  border-radius: 1.5rem;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--surface-elevated) 92%, transparent);
+  background: var(--surface-elevated);
   color: var(--foreground);
   font-size: 13.5px;
   line-height: 1.35;
   font-weight: 500;
   letter-spacing: 0;
-  box-shadow:
-    0 10px 30px -12px rgb(0 0 0 / 0.55),
-    0 1px 0 0 rgb(255 255 255 / 0.04) inset;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-elevated);
 }
 
 /* Un toast avec description reprend des coins largement arrondis
@@ -1624,11 +1634,11 @@ body {
 }
 
 .gf-toast[data-type="warning"] [data-icon] {
-  color: #e2b04a;
+  color: var(--warning);
 }
 
 .gf-toast[data-type="error"] [data-icon] {
-  color: #e97a72;
+  color: var(--destructive);
 }
 
 .gf-toast [data-button] {
@@ -1852,8 +1862,8 @@ svg.gf-icon.h-16 {
    ouvertes. Ces règles ne changent pas la composition des autres écrans. */
 @utility home-storage {
   background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-3xl);
+  border: 1px solid transparent;
+  border-radius: var(--radius-2xl);
   &:hover {
     background-color: var(--surface-2);
   }
@@ -1869,7 +1879,7 @@ svg.gf-icon.h-16 {
   border-bottom: 0;
 }
 .home-dashboard > header h1 {
-  font-size: 22px;
+  font-size: 20px;
   line-height: 28px;
   font-weight: 600;
   letter-spacing: 0;
@@ -1898,12 +1908,12 @@ svg.gf-icon.h-16 {
   overflow: hidden;
   border-radius: var(--radius-sm);
   color: var(--tone);
-  background-color: color-mix(in oklab, var(--tone) 12%, var(--surface));
+  background-color: var(--surface);
 }
 .gf-file-tile[data-kind="folder"] {
   --tone: var(--foreground);
-  color: color-mix(in oklab, var(--foreground) 82%, transparent);
-  background-color: var(--surface-2);
+  color: color-mix(in oklab, var(--foreground) 78%, transparent);
+  background-color: var(--surface);
 }
 .gf-file-tile[data-kind="image"] {
   --tone: var(--cat-image);
@@ -1927,7 +1937,7 @@ svg.gf-icon.h-16 {
   --tone: var(--cat-code);
 }
 .gf-file-tile[data-kind="apk"] {
-  --tone: var(--cat-audio);
+  --tone: var(--cat-apk);
 }
 .gf-file-tile[data-kind="text"],
 .gf-file-tile[data-kind="font"] {
@@ -1971,7 +1981,7 @@ svg.gf-icon.h-16 {
   height: 22px;
   flex-shrink: 0;
   border-radius: 9999px;
-  border: 1.75px solid color-mix(in oklab, var(--muted-foreground) 65%, transparent);
+  border: 1.75px solid var(--handle);
   color: var(--primary-foreground);
   transition:
     background-color var(--duration-fast) var(--ease-standard),
@@ -2014,7 +2024,7 @@ svg.gf-icon.h-16 {
 }
 .gf-sheet-action:hover,
 .gf-sheet-action:active {
-  background-color: var(--surface-2);
+  background-color: var(--surface-3);
 }
 .gf-sheet-action-icon {
   width: 20px;
@@ -2078,8 +2088,7 @@ svg.gf-icon.h-16 {
   color: var(--muted-foreground-2);
 }
 .gf-input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-soft);
+  border-color: color-mix(in oklab, var(--primary) 70%, transparent);
 }
 select.gf-input {
   appearance: none;
@@ -2095,7 +2104,7 @@ select.gf-input {
   min-height: 64px;
   padding: 12px 14px;
   border-radius: var(--radius-2xl);
-  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  border: 1px solid transparent;
   background-color: var(--surface);
   text-align: left;
   transition:
@@ -2107,8 +2116,8 @@ select.gf-input {
 }
 .gf-option[aria-checked="true"],
 .gf-option[aria-pressed="true"] {
-  border-color: color-mix(in oklab, var(--primary) 70%, transparent);
-  background-color: var(--primary-softer);
+  border-color: color-mix(in oklab, var(--primary) 60%, transparent);
+  background-color: var(--surface);
 }
 
 /* Pastille d'icône neutre (bleue lorsque l'option est active). */
@@ -2126,7 +2135,7 @@ select.gf-input {
 [aria-checked="true"] > .gf-option-icon,
 [aria-pressed="true"] > .gf-option-icon,
 .gf-option-icon[data-active="true"] {
-  background-color: var(--primary-soft);
+  background-color: var(--surface-elevated);
   color: var(--primary);
 }
 .gf-settings-row[data-divider="text"] + .gf-settings-row[data-divider="text"]::before,

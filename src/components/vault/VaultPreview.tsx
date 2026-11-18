@@ -168,7 +168,7 @@ function PreviewBody({ item }: { item: VaultItem }) {
     case "audio":
       return (
         <div className="flex w-full max-w-md flex-col items-center gap-3 px-6">
-          <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+          <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-surface-2 text-foreground/85">
             <FileText className="h-10 w-10" />
           </div>
           <audio src={url} controls className="w-full" preload="metadata" />
@@ -187,7 +187,7 @@ function PreviewBody({ item }: { item: VaultItem }) {
 function Placeholder({ label }: { label: string }) {
   return (
     <div className="max-w-sm px-6 text-center">
-      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-2 text-foreground/85">
         <FileText className="h-6 w-6" />
       </div>
       <p className="text-[13px] text-muted-foreground">{label}</p>

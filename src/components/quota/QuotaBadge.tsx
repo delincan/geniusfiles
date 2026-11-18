@@ -50,7 +50,7 @@ export function QuotaBadge({
           empty ? "text-muted-foreground" : "text-foreground"
         }`}
       >
-        <Sparkles className="h-4 w-4 shrink-0 text-primary" />
+        <Sparkles className="h-4 w-4 shrink-0 text-muted-foreground" />
         {empty ? t("quota.none") : t("quota.remaining", { count: quota.remaining })}
       </span>
 

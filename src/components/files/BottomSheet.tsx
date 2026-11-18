@@ -156,7 +156,7 @@ export function BottomSheet({
         <button
           aria-label={tr("action.close")}
           onClick={onClose}
-          className="absolute inset-0 h-full w-full cursor-default bg-background/60 backdrop-blur-[6px]"
+          className="absolute inset-0 h-full w-full cursor-default bg-scrim/70"
           tabIndex={-1}
         />
         <div
@@ -169,7 +169,7 @@ export function BottomSheet({
           } ${
             isFullScreen
               ? "h-full max-h-none max-w-none rounded-none border-0 bg-background shadow-none"
-              : "max-h-full max-w-[440px] rounded-2xl border border-border shadow-elevated"
+              : "max-h-full max-w-[440px] rounded-2xl border border-border/70 shadow-elevated"
           }`}
         >
           {hasHeader ? (
@@ -181,7 +181,7 @@ export function BottomSheet({
                   : undefined
               }
             >
-              <h3 className="min-w-0 truncate text-[18px] font-semibold text-foreground">
+              <h3 className="min-w-0 truncate text-[17px] font-semibold text-foreground">
                 {title}
               </h3>
               <button
@@ -239,9 +239,9 @@ export function PrimaryButton({
 }) {
   const cls =
     variant === "primary"
-      ? "bg-primary text-primary-foreground shadow-soft hover:brightness-105"
+      ? "bg-primary text-primary-foreground hover:brightness-105"
       : variant === "danger"
-        ? "bg-destructive text-destructive-foreground shadow-soft hover:brightness-105"
+        ? "bg-destructive text-destructive-foreground hover:brightness-105"
         : "text-foreground hover:bg-surface-2 active:bg-surface-2";
   return (
     <button
@@ -288,7 +288,7 @@ export function TextField({
           onSubmit();
         }
       }}
-      className="w-full rounded-xl border border-transparent bg-input px-4 h-[52px] text-[15px] text-foreground outline-none transition-all duration-150 focus:border-primary focus:bg-surface focus-visible:ring-4 focus-visible:ring-primary/20 placeholder:text-muted-foreground-2"
+      className="w-full rounded-xl border border-transparent bg-input px-4 h-[52px] text-[15px] text-foreground outline-none transition-all duration-150 focus:border-primary/70 focus:bg-surface placeholder:text-muted-foreground-2"
     />
   );
 }

@@ -19,7 +19,7 @@ export function EmptyState({
   return (
     <div className="gf-appear flex flex-col items-center gap-4 px-6 py-10 text-center">
       <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-2">
-        <Icon className="h-8 w-8 text-primary" />
+        <Icon className="h-8 w-8 text-muted-foreground" />
       </span>
       <div className="max-w-[320px] space-y-1.5">
         <p className="text-[16px] font-semibold text-foreground">{title}</p>

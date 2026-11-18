@@ -1043,7 +1043,7 @@ export function VideoPlayer({
                 />
               </div>
               <div
-                className="pointer-events-none absolute h-[18px] w-[18px] rounded-full bg-primary shadow-lg"
+                className="pointer-events-none absolute h-[18px] w-[18px] rounded-full bg-[var(--pl-fg)]"
                 style={{
                   left: `${progress * 100}%`,
                   transform: `translateX(-50%) scale(${scrub != null ? 1.35 : 1})`,

@@ -315,12 +315,11 @@ function OrganizationPage() {
         }
       />
 
-      <section className="gf-card mt-4 p-4">
-        <div className="grid grid-cols-3 gap-2">
+      <section className="gf-card mt-4 px-4 pb-4 pt-1">
+        <div className="divide-y divide-border/60">
           <Stat
             label={t("organize.stat.reorganizable")}
             value={formatSize(report?.reorganizableBytes ?? 0)}
-            highlight
           />
           <Stat label={t("organize.stat.recommendations")} value={String(recs?.length ?? 0)} />
           <Stat
@@ -346,7 +345,7 @@ function OrganizationPage() {
         hint={t("organize.section.recommendationsHint")}
       />
       {scanning && !recs ? (
-        <div className="flex items-center gap-2 rounded-xl border border-border bg-surface p-3 text-[12px] text-muted-foreground">
+        <div className="flex items-center gap-2 rounded-xl bg-surface p-3 text-[12px] text-muted-foreground">
           <Loader2 className="h-[18px] w-[18px] animate-spin" /> {t("organize.scanning")}
         </div>
       ) : recs && recs.length > 0 ? (
@@ -378,7 +377,7 @@ function OrganizationPage() {
           <div className="grid grid-cols-2 gap-2">
             {distribution.map((d) => (
               <div key={d.id} className="card-surface flex items-center gap-2 p-3">
-                <Layers className="h-[18px] w-[18px] text-primary" />
+                <Layers className="h-[18px] w-[18px] text-muted-foreground" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[12px] font-medium">{d.label}</p>
                   <p className="text-[11px] text-muted-foreground">
@@ -404,7 +403,7 @@ function OrganizationPage() {
             onClick={() => openCollectionSheet(c)}
             className="card-surface flex items-center gap-2 p-3 text-left transition-transform active:scale-[0.97]"
           >
-            <ListTree className="h-[18px] w-[18px] text-primary" />
+            <ListTree className="h-[18px] w-[18px] text-muted-foreground" />
             <span className="flex-1 text-[12px] font-medium">{c.label}</span>
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </button>
@@ -431,8 +430,8 @@ function OrganizationPage() {
       >
         {previewFor ? (
           <>
-            <div className="mb-3 flex items-start gap-2 rounded-xl border border-border bg-secondary/40 p-3 text-[12px]">
-              <Info className="h-[18px] w-[18px] shrink-0 text-primary" />
+            <div className="mb-3 flex items-start gap-2 rounded-xl bg-surface-3 p-3 text-[12px]">
+              <Info className="h-[18px] w-[18px] shrink-0 text-muted-foreground" />
               <span>{previewFor.reason}</span>
             </div>
             <PlanSummary plan={previewFor.plan} />
@@ -566,7 +565,7 @@ function RecommendationCard({
       ? "bg-destructive/12 text-destructive"
       : rec.severity === "warn"
         ? "bg-warning/12 text-warning"
-        : "bg-primary/12 text-primary";
+        : "bg-surface-2 text-foreground/85";
   return (
     <button
       type="button"
@@ -590,19 +589,11 @@ function RecommendationCard({
   );
 }
 
-function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 rounded-xl bg-surface-2 p-2.5">
-      <p
-        className={`truncate text-[17px] font-semibold tabular-nums leading-tight ${
-          highlight ? "text-primary" : "text-foreground"
-        }`}
-      >
-        {value}
-      </p>
-      <p className="mt-1 hyphens-auto break-words text-[12px] leading-snug text-muted-foreground">
-        {label}
-      </p>
+    <div className="flex min-h-11 items-center justify-between gap-3 py-2">
+      <p className="min-w-0 text-[13px] leading-snug text-muted-foreground">{label}</p>
+      <p className="shrink-0 text-[15px] font-semibold tabular-nums text-foreground">{value}</p>
     </div>
   );
 }

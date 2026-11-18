@@ -162,7 +162,7 @@ function OrderButton({
       onClick={onClick}
       className={`flex min-h-9 flex-1 items-center justify-center gap-1 rounded-lg text-[12.5px] transition-colors ${
         active
-          ? "bg-primary-soft font-medium text-primary"
+          ? "bg-surface-3 font-medium text-primary"
           : "bg-secondary text-muted-foreground hover:text-foreground"
       }`}
     >

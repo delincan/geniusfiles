@@ -80,7 +80,7 @@ export function RenameProposalSheet({
                   {p.entryName}
                 </p>
                 <div className="mt-1 flex items-center gap-1.5">
-                  <PencilLine className="h-4 w-4 shrink-0 text-primary" />
+                  <PencilLine className="h-4 w-4 shrink-0 text-muted-foreground" />
                   <input
                     type="text"
                     value={p.edited ?? p.proposed}

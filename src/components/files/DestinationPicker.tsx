@@ -123,7 +123,7 @@ export function DestinationPicker({
                     onClick={() => setPath({ rootId: r.id, segments: [] })}
                     className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-secondary/40"
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/12 text-primary">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2 text-foreground/85">
                       <HardDrive className="h-[18px] w-[18px]" />
                     </span>
                     <span className="flex-1 truncate text-[13px] font-medium">{r.label}</span>

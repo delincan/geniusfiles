@@ -124,7 +124,7 @@ function readPalette(): Palette {
     bodySel: cssVar("--wave-body-sel", "#8fe3ff"),
     axis: cssVar("--wave-axis", "rgba(255,255,255,0.14)"),
     selFill: cssVar("--wave-sel-fill", "rgba(77,163,255,0.14)"),
-    selEdge: cssVar("--wave-sel-edge", "#4f82d9"),
+    selEdge: cssVar("--wave-sel-edge", "#4ea2fe"),
     playhead: cssVar("--wave-playhead", "#ffc861"),
     grid: cssVar("--wave-grid", "rgba(255,255,255,0.08)"),
     gridStrong: cssVar("--wave-grid-strong", "rgba(255,255,255,0.2)"),

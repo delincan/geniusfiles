@@ -1044,7 +1044,7 @@ function AudioStage({
           type="button"
           onClick={toggle}
           aria-label={playing ? t("viewer.media.pause") : t("viewer.media.play")}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-media-foreground text-media transition-transform active:scale-95"
         >
           {playing ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
         </button>

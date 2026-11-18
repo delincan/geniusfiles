@@ -100,7 +100,7 @@ export function SelectionTopBar({
   children?: React.ReactNode;
 }) {
   return (
-    <header className="sticky top-0 z-30 -mx-4 border-b border-border/50 bg-background/95 pt-safe backdrop-blur">
+    <header className="sticky top-0 z-30 -mx-4 border-b border-border/40 bg-background pt-safe">
       <div className="pl-safe pr-safe">
         <SelectionActionRow
           count={count}

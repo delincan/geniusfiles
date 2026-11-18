@@ -159,7 +159,7 @@ function BottomNav({ pathname, keyboardInset = 0 }: { pathname: string; keyboard
   return (
     <nav
       data-gf-bottom-nav
-      className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-[560px] border-t border-border/70 bg-nav-bar pb-[env(safe-area-inset-bottom)] pl-safe pr-safe"
+      className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-[560px] border-t border-border/50 bg-nav-bar pb-[env(safe-area-inset-bottom)] pl-safe pr-safe"
       aria-label={t("home.nav.aria")}
       /* Clavier ouvert : la barre est redescendue derrière le clavier pour
          ne jamais recouvrir le formulaire de saisie. */
@@ -188,12 +188,12 @@ function BottomNav({ pathname, keyboardInset = 0 }: { pathname: string; keyboard
               {/* Un seul repère actif : la pastille discrète derrière l'icône. */}
               <span
                 aria-hidden
-                className={`flex h-9 w-12 items-center justify-center rounded-xl transition-colors duration-200 ease-out ${
+                className={`flex h-8 w-14 items-center justify-center rounded-full transition-colors duration-200 ease-out ${
                   active ? "bg-nav-pill" : "bg-transparent"
                 }`}
               >
                 <Icon
-                  className={`h-[26px] w-[26px] shrink-0 transition-colors duration-200 ease-out ${
+                  className={`h-6 w-6 shrink-0 transition-colors duration-200 ease-out ${
                     active ? "text-nav-pill-foreground" : "text-nav-inactive"
                   }`}
                 />

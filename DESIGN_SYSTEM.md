@@ -4,22 +4,25 @@ Toutes les valeurs vivent dans `src/styles.css` (jetons). Aucun composant ne cod
 
 ## Couleurs (thème sombre)
 
-| Rôle                                       | Jeton                             | Valeur  |
-| ------------------------------------------ | --------------------------------- | ------- |
-| Fond principal                             | `background`                      | #090B0F |
-| Cartes principales et champs               | `surface`, `card`, `input`        | #141820 |
-| Surfaces secondaires et survol             | `surface-2`, `secondary`, `muted` | #1C222C |
-| Menus et fenêtres                          | `surface-elevated`, `popover`     | #262D38 |
-| Bordures                                   | `border`                          | #252B35 |
-| Texte principal                            | `foreground`                      | #F3F5F7 |
-| Texte secondaire                           | `muted-foreground`                | #A6AFBA |
-| Bleu signature (actions, focus, sélection) | `primary`                         | #0068F8 |
+| Rôle                                               | Jeton                             | Valeur            |
+| -------------------------------------------------- | --------------------------------- | ----------------- |
+| Fond principal (L0)                                | `background`, `nav-bar`, `media`  | #000000           |
+| Sections, cartes, champs (L1)                      | `surface`, `card`, `input`        | #16171A           |
+| Panneaux, boutons secondaires, survol (L2)         | `surface-2`, `secondary`, `muted` | #20201E           |
+| Menus, feuilles, surfaces interactives (L3)        | `surface-elevated`, `popover`     | #282826           |
+| Appui sur une surface L3                           | `surface-3`                       | #323232           |
+| Bordures et séparateurs                            | `border`                          | #353639           |
+| Contours de contrôle, pistes inactives, poignées   | `handle`                          | #484848           |
+| Pictogrammes désactivés                            | `disabled`                        | #585857           |
+| Texte principal                                    | `foreground`                      | #ECECEC           |
+| Texte secondaire / tertiaire                       | `muted-foreground` / `-2`         | #ABABAB / #858585 |
+| Accent (actions, onglet actif, liens, progression) | `primary`                         | #4EA2FE           |
 
-Le bleu #0068F8 provient du groupe de pixels bleus saturés dominant de la mascotte fournie (quantification RGB par pas de 8). Les couleurs principales sont définies en OKLCH dans les jetons. Le noir donne la profondeur ; les cartes et menus se distinguent par leur niveau de surface, sans halo ni dégradé décoratif. Le bleu signale, il ne colore pas de grandes surfaces.
+Le noir domine ; la profondeur vient des niveaux L0 → L3, jamais d'un halo, d'un dégradé ou d'une ombre décorative. Les cartes n'ont pas de bordure ; les bordures sont réservées aux menus, champs et contrôles. Le bleu signale une action ou un état actif, il ne remplit jamais une surface décorative : pictogrammes ordinaires en gris clair ou blanc, pastilles d'icône neutres (`surface-2`). Texte sombre sur le bleu (contraste suffisant). Les couleurs de catégorie (désaturées) colorent uniquement le pictogramme du type de fichier.
 
 ## Rayons (8–16 px)
 
-`rounded-sm` 8 · `rounded-md` 10 · `rounded-lg`/`rounded-xl` 12 (champs, boutons) · `rounded-2xl` 14 (cartes) · `rounded-3xl`/`rounded-4xl` 16 (fenêtres, feuilles). `rounded-xs` 6 réservé aux badges.
+`rounded-sm` 8 · `rounded-md` 10 · `rounded-lg`/`rounded-xl` 12 (champs, boutons) · `rounded-2xl` 12 (cartes) · `rounded-3xl`/`rounded-4xl` 16 (fenêtres, feuilles). `rounded-xs` 6 réservé aux badges.
 
 ## Typographie
 
@@ -75,3 +78,12 @@ Progression : pourcentage des jalons terminés, non une estimation du temps rest
 - Lecteurs : chargement et erreur centrés (`ReaderState`), jamais de texte rouge brut.
 - Cases à cocher natives : 20 px, bleu `primary`.
 - États : « aucun résultat » distinct de « aucun stockage accessible », chacun avec une action utile.
+
+## Raffinement noir et charbon
+
+- Titres de page 22 px semi-gras (19 px en sous-écran), sans bordure sous l'en-tête ; titres de section 15/600.
+- Navigation basse sur fond noir, pictogrammes neutres, onglet actif : pastille `surface-2` et bleu.
+- Puces et segments actifs : surface `surface-elevated` et texte bleu, jamais d'aplat bleu.
+- Interrupteurs : piste `handle` éteinte, bleue allumée. Curseurs : piste `border`, pouce blanc.
+- Voiles modaux opaques (`scrim` 70 %) et en-têtes collants opaques, sans flou (fluidité sur appareils modestes).
+- Lecteurs : bouton Lecture blanc sur fond média, progression bleue.

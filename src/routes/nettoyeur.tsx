@@ -355,11 +355,11 @@ function CleanerPage() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
               {t("cleaner.stats.reclaimable")}
             </p>
-            <p className="mt-1.5 truncate font-display text-[36px] font-bold leading-none text-primary">
+            <p className="mt-1.5 truncate font-display text-[30px] font-semibold leading-none text-foreground">
               {formatSize(totalReclaimable)}
             </p>
           </div>
-          <span className="shrink-0 rounded-full bg-primary-softer px-2.5 py-1 text-[11px] font-semibold text-primary">
+          <span className="shrink-0 rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
             {scanning ? t("cleaner.stats.scanning") : t("cleaner.stats.ready")}
           </span>
         </div>
@@ -463,7 +463,7 @@ function CleanerPage() {
                 onClick={() => setOpenCategory(key)}
                 className="gf-row hover:bg-secondary/40 disabled:cursor-default"
               >
-                <span className="gf-icon-tile bg-primary-softer text-primary">
+                <span className="gf-icon-tile bg-surface-2 text-foreground/85">
                   <Icon className="h-[22px] w-[22px]" />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -492,7 +492,7 @@ function CleanerPage() {
                     <span className="block h-4 w-14 gf-skeleton rounded-full" />
                   ) : (
                     <>
-                      <span className="block text-[14px] font-semibold text-primary">
+                      <span className="block text-[14px] font-semibold text-foreground">
                         {formatSize(cat?.bytes ?? 0)}
                       </span>
                       <span className="block text-[11px] text-muted-foreground">
@@ -530,7 +530,7 @@ function CleanerPage() {
           ne peuvent plus déborder sur les écrans étroits. */}
       {selectedItems.length > 0 && !cleaning ? (
         <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+72px)] z-40 mx-auto flex max-w-[520px] justify-center px-3">
-          <div className="glass-panel animate-in-up pointer-events-auto w-full rounded-2xl border border-border-strong p-2.5 shadow-soft">
+          <div className="animate-in-up pointer-events-auto w-full rounded-2xl border border-border bg-surface-elevated p-2.5 shadow-elevated">
             <div className="mb-2 min-w-0 px-1">
               <p className="truncate text-[13.5px] font-semibold leading-tight">
                 {t("cleaner.selection.count", { count: selectedItems.length })}
@@ -550,7 +550,7 @@ function CleanerPage() {
               <button
                 type="button"
                 onClick={() => setConfirming(true)}
-                className="gf-press flex h-11 min-w-0 items-center justify-center gap-1.5 rounded-2xl bg-primary px-4 text-[13.5px] font-semibold text-primary-foreground shadow-soft"
+                className="gf-press flex h-11 min-w-0 items-center justify-center gap-1.5 rounded-2xl bg-primary px-4 text-[13.5px] font-semibold text-primary-foreground"
               >
                 <Play className="h-[18px] w-[18px] shrink-0" />
                 <span className="truncate">

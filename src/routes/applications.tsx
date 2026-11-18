@@ -432,7 +432,7 @@ function Chip({
       type="button"
       onClick={onClick}
       className={`gf-press flex h-10 shrink-0 items-center gap-1.5 rounded-2xl px-3.5 text-[12.5px] font-medium transition-colors ${
-        active ? "bg-primary-softer text-primary" : "bg-surface-2 text-muted-foreground"
+        active ? "bg-surface-elevated text-primary" : "bg-surface-2 text-muted-foreground"
       }`}
     >
       {children}
@@ -455,7 +455,7 @@ function UsageAccessGate({
   return (
     <div className="gf-card mt-3 p-4">
       <div className="flex items-start gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary-softer text-primary">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-surface-2 text-foreground/85">
           <Shield className="h-[18px] w-[18px]" />
         </span>
         <div className="min-w-0 flex-1">
@@ -471,7 +471,7 @@ function UsageAccessGate({
         type="button"
         onClick={onGrant}
         disabled={requesting}
-        className="gf-press mt-3 h-12 w-full rounded-2xl bg-primary text-[14px] font-semibold text-primary-foreground shadow-elevated disabled:opacity-60"
+        className="gf-press mt-3 h-12 w-full rounded-2xl bg-primary text-[14px] font-semibold text-primary-foreground disabled:opacity-60"
       >
         {requesting ? t("organize.apps.usage.opening") : t("organize.apps.usage.openSettings")}
       </button>
@@ -501,7 +501,7 @@ function AppIconEl({ app, size = 40 }: { app: InstalledApp; size?: number }) {
   }
   return (
     <span
-      className="flex items-center justify-center rounded-xl bg-accent text-primary"
+      className="flex items-center justify-center rounded-xl bg-surface-2 text-muted-foreground"
       style={{ width: size, height: size }}
     >
       <AppWindow className="h-5 w-5" />
@@ -586,11 +586,11 @@ function StatsBlock({
           <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
             {t("organize.apps.stats.totalLabel")}
           </p>
-          <p className="mt-1.5 truncate font-display text-[32px] font-bold leading-none text-primary">
+          <p className="mt-1.5 truncate font-display text-[28px] font-semibold leading-none text-foreground">
             {formatSize(stats.totalBytes)}
           </p>
         </div>
-        <span className="shrink-0 rounded-full bg-primary-softer px-2.5 py-1 text-[11px] font-semibold text-primary">
+        <span className="shrink-0 rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
           {t("organize.apps.stats.totalCount", { count: stats.total })}
         </span>
       </div>
@@ -609,7 +609,7 @@ function StatsBlock({
           </span>
         </span>
         <span className="inline-flex min-w-0 items-center gap-1.5">
-          <span className="h-2 w-2 shrink-0 rounded-full bg-surface-3" />
+          <span className="h-2 w-2 shrink-0 rounded-full bg-handle" />
           <span className="truncate">
             {t("organize.apps.stats.systemCount", { count: stats.system })}
           </span>
@@ -621,7 +621,7 @@ function StatsBlock({
 
       <div className="mt-3.5 flex items-center gap-2 rounded-2xl bg-surface-2 px-3 py-2.5 text-[12px] leading-snug text-muted-foreground">
         <Shield
-          className={`h-[18px] w-[18px] shrink-0 ${usageAvailable ? "text-primary" : "text-muted-foreground"}`}
+          className={`h-[18px] w-[18px] shrink-0 ${usageAvailable ? "text-success" : "text-muted-foreground"}`}
         />
         <span className="min-w-0">
           {usageAvailable
@@ -648,7 +648,7 @@ function RecommendationsBlock({
     <div className="space-y-4">
       {stats.reclaimableBytes > 0 ? (
         <div className="card-surface flex items-start gap-2 p-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 text-foreground/85">
             <Sparkles className="h-[18px] w-[18px]" />
           </span>
           <div>
@@ -964,7 +964,7 @@ function AppDetailsSheet({
             <ul className="space-y-0.5 text-[11px]">
               {permissions.granted.map((p) => (
                 <li key={p} className="truncate">
-                  <Eye className="mr-1 inline h-3.5 w-3.5 text-primary" />
+                  <Eye className="mr-1 inline h-3.5 w-3.5 text-muted-foreground" />
                   {p.replace("android.permission.", "")}
                 </li>
               ))}
@@ -1056,9 +1056,9 @@ function ActionBtn({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="flex items-center gap-2 rounded-xl border border-border bg-secondary/60 px-3 py-2 text-[12px] font-medium disabled:opacity-50"
+      className="flex items-center gap-2 rounded-xl bg-surface-2 px-3 py-2 text-[12px] font-medium disabled:opacity-50"
     >
-      <Icon className="h-[18px] w-[18px] text-primary" />
+      <Icon className="h-[18px] w-[18px] text-muted-foreground" />
       {label}
     </button>
   );

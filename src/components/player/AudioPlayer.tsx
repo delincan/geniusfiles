@@ -166,7 +166,7 @@ export function AudioPlayer({ onClose }: { onClose: () => void }) {
         style={{
           background: bgUrl
             ? "linear-gradient(180deg, color-mix(in oklab, var(--media) 55%, transparent) 0%, color-mix(in oklab, var(--media) 72%, transparent) 42%, color-mix(in oklab, var(--media) 94%, transparent) 100%)"
-            : "radial-gradient(120% 70% at 50% -10%, color-mix(in oklab, var(--primary) 18%, transparent) 0%, transparent 62%)",
+            : "transparent",
           backdropFilter: bgUrl ? "blur(2px)" : undefined,
         }}
       />
@@ -280,7 +280,7 @@ export function AudioPlayer({ onClose }: { onClose: () => void }) {
             }}
           />
           <div
-            className="absolute h-4 w-4 -translate-x-1/2 rounded-full bg-primary shadow-[0_2px_10px_-1px_color-mix(in_oklab,var(--primary)_65%,transparent)]"
+            className="absolute h-4 w-4 -translate-x-1/2 rounded-full bg-media-foreground"
             style={{
               left: `${progress * 100}%`,
               transform: `translateX(-50%) scale(${scrub != null ? 1.3 : 1})`,
@@ -315,7 +315,7 @@ export function AudioPlayer({ onClose }: { onClose: () => void }) {
           type="button"
           onClick={() => audioStore.toggle()}
           aria-label={playing ? t("media.player.aria.pause") : t("media.player.aria.play")}
-          className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_16px_34px_-12px_color-mix(in_oklab,var(--primary)_80%,transparent)] transition-transform duration-150 active:scale-95"
+          className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-media-foreground text-media transition-transform duration-150 active:scale-95"
         >
           {playing ? <Pause className="h-8 w-8" /> : <Play className="ml-1 h-8 w-8" />}
         </button>
@@ -431,7 +431,7 @@ function IconButton({
       aria-pressed={active}
       className={`flex items-center justify-center rounded-full transition-all duration-150 active:scale-90 ${
         size === "lg" ? "h-14 w-14" : "h-11 w-11"
-      } ${active ? "bg-primary/20 text-primary" : "text-media-foreground/85 hover:bg-media-foreground/10"}`}
+      } ${active ? "bg-media-foreground/12 text-primary" : "text-media-foreground/85 hover:bg-media-foreground/10"}`}
     >
       {children}
     </button>

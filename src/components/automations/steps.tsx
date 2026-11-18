@@ -180,7 +180,7 @@ export function ConditionsStep({
               return (
                 <li key={i} className="gf-card flex flex-col gap-3 px-4 pb-4 pt-2">
                   <div className="-mr-2 flex items-center gap-3">
-                    <Icon className="h-5 w-5 shrink-0 text-primary" />
+                    <Icon className="h-5 w-5 shrink-0 text-muted-foreground" />
                     <span className="min-w-0 flex-1 truncate text-[14px] font-medium text-foreground">
                       {catalog.find((e) => e.kind === c.kind)?.label}
                     </span>
@@ -275,7 +275,7 @@ export function ActionsStep({
                   key={i}
                   className="gf-settings-row flex min-h-[60px] items-center gap-3 py-2 pl-4 pr-1.5"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-soft text-[12px] font-semibold text-primary">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-2 text-[12px] font-semibold text-foreground">
                     {i + 1}
                   </span>
                   <Icon className="h-5 w-5 shrink-0 text-muted-foreground" />
@@ -371,7 +371,7 @@ export function SettingsStep({
           return (
             <li key={i} className="gf-card flex flex-col gap-4 p-4">
               <div className="flex items-center gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-soft text-[12px] font-semibold text-primary">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-2 text-[12px] font-semibold text-foreground">
                   {i + 1}
                 </span>
                 <Icon className="h-5 w-5 shrink-0 text-muted-foreground" />
@@ -460,7 +460,7 @@ export function ReviewStep({
       <div className="gf-card">
         <ReviewBlock title={tr("automations.summaryStep.trigger")} onEdit={() => onGoTo(1)}>
           <p className="flex items-center gap-2 text-[14px] font-medium text-foreground">
-            <TriggerIcon className="h-[18px] w-[18px] shrink-0 text-primary" />
+            <TriggerIcon className="h-[18px] w-[18px] shrink-0 text-muted-foreground" />
             {triggerSummary(draft.trigger)}
           </p>
         </ReviewBlock>
@@ -484,7 +484,7 @@ export function ReviewStep({
           <ol className="flex flex-col gap-2.5">
             {preview.map((step, i) => (
               <li key={i} className="flex items-start gap-2.5">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-soft text-[11px] font-semibold text-primary">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-surface-2 text-[11px] font-semibold text-foreground">
                   {i + 1}
                 </span>
                 <div className="min-w-0">

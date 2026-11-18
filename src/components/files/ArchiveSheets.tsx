@@ -217,7 +217,7 @@ export function ArchiveCreateSheet({
             onClick={() => setPickerOpen(true)}
             className="card-surface gf-press flex w-full items-center gap-2 px-2.5 py-2 text-left transition-colors duration-150 hover:border-primary/40"
           >
-            <FolderOutput className="h-[18px] w-[18px] text-primary" />
+            <FolderOutput className="h-[18px] w-[18px] text-muted-foreground" />
             <span className="flex-1 truncate text-[12px] text-foreground">
               {destination ? pathToString(destination, roots) : t("files.destination.choose")}
             </span>
@@ -459,7 +459,7 @@ function ArchiveTree({
             onChange={(e) => applyFolderSelect(n, e.target.checked)}
             className="h-3.5 w-3.5 accent-primary"
           />
-          <Folder className="h-4 w-4 text-primary" />
+          <Folder className="h-4 w-4 text-muted-foreground" />
           <span className="flex-1 truncate">{n.name}</span>
         </div>,
       );
@@ -561,7 +561,7 @@ export function ArchiveExtractSheet({
     >
       <div className="space-y-3">
         <div className="card-surface flex items-center gap-2 px-2.5 py-2">
-          <Package className="h-[18px] w-[18px] text-primary" />
+          <Package className="h-[18px] w-[18px] text-muted-foreground" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-[12px] font-medium">{entry?.name}</p>
             <p className="text-[11px] text-muted-foreground">
@@ -581,7 +581,7 @@ export function ArchiveExtractSheet({
             onClick={() => setPickerOpen(true)}
             className="card-surface gf-press flex w-full items-center gap-2 px-2.5 py-2 text-left transition-colors duration-150 hover:border-primary/40"
           >
-            <FolderOutput className="h-[18px] w-[18px] text-primary" />
+            <FolderOutput className="h-[18px] w-[18px] text-muted-foreground" />
             <span className="flex-1 truncate text-[12px]">
               {destination ? pathToString(destination, roots) : t("files.destination.choose")}
             </span>

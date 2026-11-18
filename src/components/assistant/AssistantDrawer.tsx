@@ -120,7 +120,7 @@ export function AssistantDrawer({
           type="button"
           aria-label={t("assistant.drawer.closeAria")}
           onClick={onClose}
-          className="absolute inset-0 bg-background/60 backdrop-blur-[6px] transition-opacity duration-200"
+          className="absolute inset-0 bg-scrim/70 transition-opacity duration-200"
           style={{ opacity: visible ? 1 : 0 }}
         />
         <aside
@@ -215,7 +215,7 @@ export function AssistantDrawer({
                                   setEditingId(null);
                                   setTick((t) => t + 1);
                                 }}
-                                className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 text-primary active:scale-95"
+                                className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface-3 text-primary active:scale-95"
                               >
                                 <Check className="h-[18px] w-[18px]" />
                               </Button>

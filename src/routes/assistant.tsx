@@ -418,8 +418,8 @@ function AssistantPage() {
 
           <form
             onSubmit={handleSubmit}
-            className={`mx-4 flex items-end gap-2 rounded-2xl border bg-surface-2 p-2 transition-colors duration-200 ${
-              focused ? "border-primary/40" : "border-transparent"
+            className={`mx-4 flex items-end gap-2 rounded-[26px] border bg-surface-2 p-1.5 transition-colors duration-200 ${
+              focused ? "border-handle" : "border-border/60"
             }`}
           >
             <textarea
@@ -448,7 +448,7 @@ function AssistantPage() {
                 variant="secondary"
                 size="icon"
                 title={t("assistant.input.stop")}
-                className="shrink-0 rounded-xl bg-surface-elevated"
+                className="shrink-0 rounded-full bg-surface-elevated"
               >
                 <Square className="h-4 w-4 fill-current" />
               </Button>
@@ -459,7 +459,7 @@ function AssistantPage() {
                 aria-label={t("assistant.input.send")}
                 size="icon"
                 title={t("assistant.input.send")}
-                className={`shrink-0 rounded-xl transition-colors duration-150 ${
+                className={`shrink-0 rounded-full transition-colors duration-150 ${
                   canSend
                     ? "bg-primary text-primary-foreground"
                     : "bg-surface-elevated text-muted-foreground"
@@ -492,10 +492,10 @@ function Welcome({ privacyOpen, onPrivacy }: { privacyOpen: boolean; onPrivacy: 
         alt="GeniusFiles"
         className="mb-5 h-16 w-16 object-contain"
       />
-      <h2 className="font-display text-[24px] font-semibold leading-tight text-foreground">
+      <h2 className="font-display text-[22px] font-semibold leading-tight text-foreground">
         {t("assistant.header.title")}
       </h2>
-      <p className="mt-3 text-[17px] font-medium leading-snug text-foreground">
+      <p className="mt-2 text-[16px] font-medium leading-snug text-foreground">
         {t("assistant.welcome.title")}
       </p>
       <p className="mt-2 max-w-[20rem] text-[14px] leading-relaxed text-muted-foreground">
@@ -509,7 +509,7 @@ function Welcome({ privacyOpen, onPrivacy }: { privacyOpen: boolean; onPrivacy: 
         aria-expanded={privacyOpen}
         className="mt-4 h-auto min-h-11 max-w-[20rem] gap-2 whitespace-normal text-left text-[12.5px] font-normal text-muted-foreground"
       >
-        <ShieldCheck className="shrink-0 text-primary" />
+        <ShieldCheck className="shrink-0 text-muted-foreground" />
         {t("assistant.welcome.privacy1")}
       </Button>
       {privacyOpen ? (

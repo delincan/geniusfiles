@@ -45,13 +45,9 @@ export function ResumeBanner() {
   };
 
   return (
-    <section
-      className="card-surface mb-3 flex flex-col gap-2 border-primary/30 bg-primary/5 p-3"
-      role="status"
-      aria-live="polite"
-    >
+    <section className="card-surface mb-3 flex flex-col gap-2 p-3" role="status" aria-live="polite">
       <div className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
-        <AlertTriangle className="h-[18px] w-[18px] text-primary" />
+        <AlertTriangle className="h-[18px] w-[18px] text-warning" />
         {t("home.resume.title")}
       </div>
       <ul className="space-y-2">

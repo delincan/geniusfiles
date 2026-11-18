@@ -170,7 +170,9 @@ function StorageTile({ card, onOpen }: { card: StorageCard; onOpen: () => void }
       <span className="min-w-0 flex-1">
         <span className="flex items-baseline gap-2">
           <span className="min-w-0 flex-1 type-body font-semibold">{card.label}</span>
-          {known && <span className="shrink-0 type-label tabular-nums text-primary">{pct} %</span>}
+          {known && (
+            <span className="shrink-0 type-label tabular-nums text-muted-foreground">{pct} %</span>
+          )}
         </span>
       </span>
       <ChevronRight className="size-[18px] shrink-0 text-muted-foreground" />

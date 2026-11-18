@@ -407,9 +407,7 @@ function ToolSection({
 }) {
   return (
     <section className="mt-6">
-      <h2 className="mb-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {title}
-      </h2>
+      <h2 className="mb-2 type-overline">{title}</h2>
       <ToolGrid tools={tools} onOpen={onOpen} />
     </section>
   );
@@ -427,7 +425,7 @@ function ToolGrid({ tools, onOpen }: { tools: Tool[]; onOpen: (id: ToolId) => vo
           onClick={() => onOpen(t.id)}
           className="card-surface group flex min-w-0 items-center gap-2.5 p-2.5 text-left transition-transform active:scale-[0.97]"
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-foreground/85">
             <t.icon className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
@@ -1024,7 +1022,7 @@ function ScanSheet({ onClose }: { onClose: () => void }) {
             onClick={() => inputRef.current?.click()}
             className="w-full rounded-xl border border-dashed border-border p-4 text-center text-[13px] hover:text-foreground"
           >
-            <ScanLine className="mx-auto mb-1 h-5 w-5 text-primary" />
+            <ScanLine className="mx-auto mb-1 h-5 w-5 text-muted-foreground" />
             {pages.length === 0 ? t("pdf.scan.capturePage") : t("pdf.scan.addPage")}
           </button>
           <p className="text-[11px] text-muted-foreground">{t("pdf.scan.hint")}</p>

@@ -537,13 +537,10 @@ function TrashPage() {
                     key={it.id}
                     className="relative flex items-center gap-2 pr-2 [contain-intrinsic-size:auto_88px] [content-visibility:auto]"
                   >
-                    {isSel ? (
-                      <span className="absolute inset-y-2 left-0 w-1 rounded-r-full bg-primary" />
-                    ) : null}
                     <button
                       type="button"
                       onClick={() => (anySelected ? toggle(it.id) : openPreview(it))}
-                      className={`gf-row min-w-0 flex-1 ${isSel ? "bg-primary-softer" : ""}`}
+                      className={`gf-row min-w-0 flex-1 ${isSel ? "bg-primary-soft" : ""}`}
                     >
                       {isSel ? (
                         <span className="gf-icon-tile bg-primary text-primary-foreground">
@@ -630,7 +627,7 @@ function TrashPage() {
                 type="button"
                 onClick={onRestoreClick}
                 disabled={busy}
-                className="gf-press flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-2xl bg-primary text-[11px] font-semibold text-primary-foreground shadow-soft disabled:opacity-50"
+                className="gf-press flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-2xl bg-primary text-[11px] font-semibold text-primary-foreground disabled:opacity-50"
               >
                 <Undo2 className="h-[18px] w-[18px]" />
                 Restaurer
@@ -733,7 +730,7 @@ function TrashPage() {
         {outcome ? (
           <div>
             <div className="mb-2 flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-primary">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-2 text-foreground/85">
                 <Undo2 className="h-[18px] w-[18px]" />
               </span>
               <div>

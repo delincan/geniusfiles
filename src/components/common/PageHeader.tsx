@@ -32,27 +32,27 @@ export function PageHeader({
   compact?: boolean;
 }) {
   return (
-    <header className="sticky top-0 z-30 -mx-4 border-b border-border/60 bg-background pt-safe">
+    <header className="sticky top-0 z-30 -mx-4 bg-background pt-safe">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 pb-3 pl-[calc(1rem+env(safe-area-inset-left,0px))] pr-[calc(1rem+env(safe-area-inset-right,0px))] pt-3">
         <div className="flex min-w-0 items-center gap-2">
           {leading ? <div className="shrink-0">{leading}</div> : null}
           <div className="min-w-0">
             {eyebrow ? (
-              <p className="mb-1 truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+              <p className="mb-1 truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                 {eyebrow}
               </p>
             ) : null}
             <h1
-              className={`line-clamp-2 break-words font-display font-bold tracking-tight text-foreground ${
+              className={`line-clamp-2 break-words font-display font-semibold tracking-tight text-foreground ${
                 compact
-                  ? "text-[20px] leading-[1.2]"
-                  : "text-[24px] leading-[1.15] min-[400px]:text-[26px]"
+                  ? "text-[19px] leading-[1.25]"
+                  : "text-[22px] leading-[1.2] min-[400px]:text-[24px]"
               }`}
             >
               {title}
             </h1>
             {subtitle ? (
-              <p className="mt-0.5 line-clamp-2 text-[12.5px] leading-snug text-muted-foreground">
+              <p className="mt-0.5 line-clamp-2 text-[13px] leading-snug text-muted-foreground">
                 {subtitle}
               </p>
             ) : null}

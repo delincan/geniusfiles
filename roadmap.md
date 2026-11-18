@@ -82,3 +82,13 @@
 - [x] Mascot use checked (welcome, empty states), not multiplied.
 - [x] Quality pass: navigation, search, folders, multi-select, file ops, Genius AI, automations, settings; tests + `bun run verify`.
 - [ ] Validate step 5 on a real Android phone (system bars, keyboard, real search and file operations) — needs a new APK build.
+
+# Step 6 — Black and charcoal refinement
+
+- [x] New palette in tokens: black #000000, sections #16171A, panels #20201E, menus #282826, borders #353639, neutrals #484848/#585857, accent #4EA2FE.
+- [x] Blue reduced to actions, active tab, links, progress and active states; decorative blue tiles, halos and glows removed app-wide.
+- [x] Calmer surfaces: borderless cards, no decorative shadows, opaque headers and overlays without blur, moderate radii.
+- [x] Lighter titles and section headings; Organisation figures as a readable list.
+- [x] Android status/splash/widget colors aligned with pure black.
+- [x] `bun run verify` green; screens checked in the preview at 360 px.
+- [ ] Validate on a real Android phone — needs a new APK build.

@@ -657,7 +657,7 @@ export function PhotoEditor({
           <p className="truncate text-[13px] font-semibold">{entry.name}</p>
           <p className="truncate text-[11px] text-muted-foreground">
             {dirty ? (
-              <span className="text-primary">{t("photo.header.title.unsaved")}</span>
+              <span className="text-muted-foreground">{t("photo.header.title.unsaved")}</span>
             ) : edited ? (
               t("photo.header.title.saved")
             ) : (
@@ -879,7 +879,7 @@ export function PhotoEditor({
                   onClick={() => setTool(id)}
                   aria-current={active ? "true" : undefined}
                   className={`flex shrink-0 flex-col items-center gap-1 rounded-2xl px-3.5 py-2 text-[11px] font-medium transition-all duration-200 active:scale-95 ${
-                    active ? "bg-primary/15 text-primary" : "text-muted-foreground"
+                    active ? "bg-surface-2 text-primary" : "text-muted-foreground"
                   }`}
                 >
                   <Icon className="h-[18px] w-[18px]" />
@@ -986,7 +986,7 @@ function HeaderButton({
       onPointerCancel={onPressEnd}
       onPointerLeave={onPressEnd}
       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all active:scale-95 disabled:opacity-30 ${
-        active ? "bg-primary/20 text-primary" : "bg-secondary/60 text-foreground"
+        active ? "bg-surface-elevated text-primary" : "bg-secondary/60 text-foreground"
       }`}
     >
       {children}

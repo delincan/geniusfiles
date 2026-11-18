@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="splash_background">#090B0F</color>
+    <color name="splash_background">#000000</color>
     <!-- Widgets (H10) : nuit. -->
-    <color name="widget_surface">#12161D</color>
-    <color name="widget_tile">#2A2A2A</color>
-    <color name="widget_border">#323232</color>
-    <color name="widget_track">#3D3D3D</color>
-    <color name="widget_accent">#4F82D9</color>
-    <color name="widget_text">#F4F4F5</color>
-    <color name="widget_text_muted">#B4B4B8</color>
+    <color name="widget_surface">#16171A</color>
+    <color name="widget_tile">#20201E</color>
+    <color name="widget_border">#353639</color>
+    <color name="widget_track">#484848</color>
+    <color name="widget_accent">#4EA2FE</color>
+    <color name="widget_text">#ECECEC</color>
+    <color name="widget_text_muted">#ABABAB</color>
 </resources>

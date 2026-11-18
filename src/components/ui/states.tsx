@@ -129,7 +129,7 @@ export function TaskProgress({
   return (
     <div className="gf-card gf-appear flex items-center gap-3.5 p-4">
       {Icon ? (
-        <span className="gf-icon-tile bg-primary-softer text-primary">
+        <span className="gf-icon-tile bg-surface-2 text-foreground/85">
           <Icon className="h-[22px] w-[22px]" />
         </span>
       ) : null}

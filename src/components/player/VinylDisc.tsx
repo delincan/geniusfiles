@@ -61,9 +61,8 @@ export function VinylDisc({
         aria-hidden
         className="pointer-events-none absolute -inset-8 rounded-full blur-3xl transition-opacity duration-700"
         style={{
-          background:
-            "radial-gradient(circle, color-mix(in oklab, var(--primary) 26%, transparent) 0%, transparent 66%)",
-          opacity: playing ? 0.7 : 0.28,
+          background: "radial-gradient(circle, rgb(255 255 255 / 0.06) 0%, transparent 66%)",
+          opacity: playing ? 0.7 : 0.35,
         }}
       />
 
@@ -115,8 +114,7 @@ export function VinylDisc({
         <div
           className="absolute left-1/2 top-1/2 aspect-square w-[40%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full"
           style={{
-            background:
-              "linear-gradient(150deg, color-mix(in oklab, var(--primary) 82%, black), color-mix(in oklab, var(--primary) 45%, black))",
+            background: "linear-gradient(150deg, var(--handle), var(--surface-2))",
             boxShadow: "0 8px 22px -8px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,255,255,0.16)",
           }}
         >

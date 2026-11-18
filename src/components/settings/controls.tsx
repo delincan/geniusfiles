@@ -34,14 +34,14 @@ export function Toggle({
       <span
         aria-hidden
         className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-200 ${
-          checked ? "bg-primary" : "bg-surface-elevated"
+          checked ? "bg-primary" : "bg-handle"
         }`}
       >
         <span
-          className={`inline-block h-6 w-6 rounded-full shadow-soft transition-transform duration-200 ease-out ${
+          className={`inline-block h-6 w-6 rounded-full transition-transform duration-200 ease-out ${
             checked
               ? "translate-x-[22px] bg-primary-foreground"
-              : "translate-x-0.5 bg-muted-foreground"
+              : "translate-x-0.5 bg-foreground/80"
           }`}
         />
       </span>
@@ -82,7 +82,7 @@ export function Segmented<T extends string>({
               if (!active) onChange(o.value);
             }}
             className={`gf-press flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg px-2 text-[13px] font-semibold transition-colors ${
-              active ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+              active ? "bg-surface-elevated text-primary" : "text-muted-foreground"
             }`}
           >
             {o.icon ? <o.icon className="h-4 w-4 shrink-0" /> : null}
@@ -126,7 +126,7 @@ export function ChoiceSheet<T extends string | number>({
                 onClose();
               }}
               className={`gf-press flex min-h-[52px] w-full items-center gap-3 rounded-xl px-3 text-left transition-colors ${
-                active ? "bg-primary-soft" : ""
+                active ? "bg-surface-3" : ""
               }`}
             >
               {o.leading ? <span className="shrink-0">{o.leading}</span> : null}

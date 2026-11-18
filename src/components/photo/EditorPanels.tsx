@@ -154,9 +154,7 @@ export function Chip({
       }}
       data-active={active ? "true" : undefined}
       className={`shrink-0 snap-start scroll-ml-2 rounded-full px-3.5 py-2 text-[12px] font-medium transition-all duration-200 active:scale-95 ${
-        active
-          ? "bg-primary text-primary-foreground shadow-[0_6px_18px_-8px_var(--primary)]"
-          : "bg-secondary/70 text-foreground/80"
+        active ? "bg-primary text-primary-foreground" : "bg-secondary/70 text-foreground/80"
       }`}
     >
       {children}
@@ -339,9 +337,7 @@ export function FilterPanel({
           >
             <span
               className={`block h-[62px] w-[62px] overflow-hidden rounded-2xl border-2 transition-all duration-200 ${
-                active === p.id
-                  ? "border-primary shadow-[0_8px_20px_-10px_var(--primary)]"
-                  : "border-transparent"
+                active === p.id ? "border-primary" : "border-transparent"
               }`}
             >
               {thumbs[p.id] ? (

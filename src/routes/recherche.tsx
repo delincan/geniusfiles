@@ -858,7 +858,7 @@ export function SearchPage() {
 
   return (
     <AppShell ownsHeaderInset>
-      <header className="sticky top-0 z-30 -mx-4 border-b border-border/60 bg-background/95 pt-safe backdrop-blur">
+      <header className="sticky top-0 z-30 -mx-4 bg-background pt-safe">
         {selectionMode ? (
           <SelectionActionRow
             count={selectedFiles.length}
@@ -888,7 +888,7 @@ export function SearchPage() {
                       : t("search.input.placeholderGlobal")
                   }
                   aria-label={t("search.input.aria")}
-                  className="h-13 w-full rounded-2xl border border-border bg-surface-elevated pl-11 pr-20 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/30 focus-visible:shadow-none"
+                  className="h-13 w-full rounded-2xl border border-transparent bg-surface-2 pl-11 pr-20 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/30 focus-visible:shadow-none"
                 />
                 <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
                   {query ? (
@@ -933,8 +933,8 @@ export function SearchPage() {
                     onClick={() => setFilters({ ...filters, kind: c.id })}
                     className={`gf-press rounded-full border px-3.5 py-2 text-[12.5px] font-medium transition-colors ${
                       active
-                        ? "border-primary/40 bg-primary/10 text-primary"
-                        : "border-border bg-surface text-foreground hover:border-primary/40 hover:bg-accent"
+                        ? "border-primary/45 bg-surface-elevated text-primary"
+                        : "border-transparent bg-surface-2 text-foreground/85"
                     }`}
                   >
                     {c.label}
@@ -1362,8 +1362,8 @@ function FilterChip({
       onClick={onClick}
       className={`gf-press rounded-full border px-3.5 py-2 text-[12.5px] font-medium transition-colors ${
         active
-          ? "border-primary/40 bg-primary/10 text-primary"
-          : "border-border bg-surface text-foreground hover:border-primary/40 hover:bg-accent"
+          ? "border-primary/45 bg-surface-elevated text-primary"
+          : "border-transparent bg-surface-2 text-foreground/85"
       }`}
     >
       {children}

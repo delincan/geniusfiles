@@ -17,7 +17,7 @@ import type { ResolvedTheme } from "./types";
 
 /** Couleurs de fond officielles par thème (`<meta name="theme-color">`). */
 export const THEME_BACKGROUND: Record<ResolvedTheme, string> = {
-  dark: "#090b0f",
+  dark: "#000000",
   light: "#f5f6f8",
 };
 

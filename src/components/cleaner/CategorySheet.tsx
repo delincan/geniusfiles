@@ -204,7 +204,7 @@ export function CategorySheet({
               : "border border-warning/30 bg-warning/10 text-foreground"
           }`}
         >
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-success" />
           <span>
             {category.safety === "safe" ? t("cleaner.sheet.safe") : t("cleaner.sheet.review")}
           </span>

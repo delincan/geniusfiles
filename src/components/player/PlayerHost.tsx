@@ -48,7 +48,7 @@ function MiniHandle() {
         type="button"
         onClick={() => audioStore.setMiniHidden(false)}
         aria-label={t("media.player.aria.showMini")}
-        className="flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-background/95 px-3 text-[11px] font-medium text-foreground/85 shadow-card backdrop-blur gf-press"
+        className="flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-surface-elevated px-3 text-[11px] font-medium text-foreground/85 gf-press"
       >
         <ChevronUp className="h-4 w-4" />
         {t("media.player.miniShow")}
@@ -75,7 +75,7 @@ function MiniPlayer() {
       className="fixed inset-x-0 z-40 mx-auto flex max-w-[520px] justify-center px-2"
       style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 4.25rem)" }}
     >
-      <div className="relative flex w-full items-center gap-2 overflow-hidden rounded-2xl border border-border/60 bg-background/95 py-1.5 pl-2 pr-1 shadow-elevated backdrop-blur">
+      <div className="relative flex w-full items-center gap-2 overflow-hidden rounded-2xl border border-border/60 bg-surface-elevated py-1.5 pl-2 pr-1 shadow-elevated">
         <button
           type="button"
           onClick={() => audioStore.openUI()}
@@ -101,7 +101,7 @@ function MiniPlayer() {
           type="button"
           onClick={() => audioStore.toggle()}
           aria-label={s.playing ? t("media.player.aria.pause") : t("media.player.aria.play")}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-95"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground text-background transition-transform active:scale-95"
         >
           {s.playing ? (
             <Pause className="h-[17px] w-[17px]" />

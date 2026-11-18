@@ -246,8 +246,8 @@ export function QuickScrollFab({ targetRef, topInset = 12, bottomInset = 12, cla
         transitionDuration: shown ? "160ms" : "260ms",
         transitionTimingFunction: "cubic-bezier(0.22, 0.61, 0.36, 1)",
       }}
-      className={`fixed right-1.5 z-50 flex w-8 flex-col items-center justify-between rounded-full border border-border/60 bg-surface/95 py-1.5 shadow-[0_6px_18px_-6px_rgb(0_0_0/0.45)] backdrop-blur-sm select-none ${
-        dragging ? "bg-primary text-primary-foreground" : "text-foreground/70"
+      className={`fixed right-1.5 z-50 flex w-8 flex-col items-center justify-between rounded-full border border-border/60 bg-surface-elevated py-1.5 select-none ${
+        dragging ? "bg-surface-3 text-primary" : "text-foreground/70"
       } ${shown ? "opacity-100" : "pointer-events-none opacity-0"} ${className ?? ""}`}
     >
       <ChevronUp className="h-[18px] w-[18px]" />

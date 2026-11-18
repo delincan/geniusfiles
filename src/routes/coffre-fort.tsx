@@ -303,7 +303,7 @@ function SetupWizard({ onDone }: { onDone: () => void }) {
     <VaultFullScreen>
       <div className="flex flex-col gap-4 pt-3">
         <div className="flex flex-col items-center gap-3 pb-1 text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-xs">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-2 text-foreground/85">
             <ShieldCheck className="h-6 w-6" />
           </span>
           <div>
@@ -367,7 +367,7 @@ function SetupWizard({ onDone }: { onDone: () => void }) {
                   : "cursor-not-allowed opacity-60"
               }`}
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/12 text-primary">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 text-foreground/85">
                 <Fingerprint className="h-[18px] w-[18px]" />
               </span>
               <div className="min-w-0 flex-1">
@@ -534,7 +534,7 @@ function MethodOption({
         selected ? "!border-primary/60 ring-1 ring-primary/40" : ""
       }`}
     >
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/12 text-primary">
+      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 text-foreground/85">
         <Icon className="h-[18px] w-[18px]" />
       </span>
       <div>
@@ -664,7 +664,7 @@ function LockScreen({ onUnlocked, onReset }: { onUnlocked: () => void; onReset: 
   return (
     <VaultFullScreen>
       <div className="flex min-h-full flex-col items-center justify-center gap-5 py-6 text-center">
-        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/12 text-primary shadow-xs">
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-2 text-foreground/85">
           <Lock className="h-6 w-6" />
         </span>
         <div>
@@ -1044,7 +1044,7 @@ function VaultBrowser() {
       <div className="flex flex-col gap-3 pt-3">
         {/* Bandeau d'état du coffre */}
         <div className="gf-card flex items-center gap-3 p-4">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-xs">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-2 text-foreground/85">
             <Shield className="h-5 w-5" />
           </span>
           <div className="min-w-0 flex-1">
@@ -1157,7 +1157,7 @@ function VaultBrowser() {
                   <button
                     type="button"
                     onClick={() => setAddPickerOpen(true)}
-                    className="gf-press inline-flex h-12 items-center gap-2 rounded-2xl bg-primary px-5 text-[15px] font-semibold text-primary-foreground shadow-soft"
+                    className="gf-press inline-flex h-12 items-center gap-2 rounded-2xl bg-primary px-5 text-[15px] font-semibold text-primary-foreground"
                   >
                     <Plus className="h-[18px] w-[18px]" /> {t("vault.add.cta")}
                   </button>
@@ -1225,7 +1225,7 @@ function VaultBrowser() {
           type="button"
           onClick={() => setAddPickerOpen(true)}
           aria-label={t("vault.add.aria")}
-          className="gf-press fixed bottom-24 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-elevated"
+          className="gf-press fixed bottom-24 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground"
         >
           <Plus className="h-6 w-6" />
         </button>
@@ -1508,7 +1508,7 @@ function FolderTile({
   return (
     <div className="gf-card relative flex flex-col p-2.5">
       <div className="flex items-center justify-between">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-foreground/85">
           <Folder className="h-[18px] w-[18px]" />
         </span>
         <div className="flex shrink-0 items-center">
@@ -1732,7 +1732,7 @@ function ActionRow({
     >
       <span
         className={`flex h-8 w-8 items-center justify-center rounded-lg ${
-          danger ? "bg-destructive/12 text-destructive" : "bg-primary/12 text-primary"
+          danger ? "bg-destructive/12 text-destructive" : "bg-surface-2 text-foreground/85"
         }`}
       >
         <Icon className="h-[18px] w-[18px]" />
@@ -1763,9 +1763,9 @@ function RestorePrompt({
           <button
             type="button"
             onClick={onOriginal}
-            className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:!border-primary/40"
+            className="flex items-center gap-3 rounded-lg bg-surface p-3 text-left hover:!border-primary/40"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/12 text-primary">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-2 text-foreground/85">
               <RotateCcw className="h-[18px] w-[18px]" />
             </span>
             <div>
@@ -1778,9 +1778,9 @@ function RestorePrompt({
           <button
             type="button"
             onClick={onPickTarget}
-            className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:!border-primary/40"
+            className="flex items-center gap-3 rounded-lg bg-surface p-3 text-left hover:!border-primary/40"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/12 text-primary">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-2 text-foreground/85">
               <Folder className="h-[18px] w-[18px]" />
             </span>
             <div>
