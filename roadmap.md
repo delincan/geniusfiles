@@ -60,3 +60,15 @@
 - [x] Clarify multiple selection marks, count and action bar; harmonize action sheets, sort menu and confirmations.
 - [x] Verify the manager in the preview (360 px: list, grid, selection, More, delete, actions, sort) and run `bun run verify`; 42 tests pass.
 - [ ] Check long names, thumbnails and native file operations on a physical Android device — requires a rebuilt APK and a device.
+
+# Step 4 — Automations, Settings and app-wide finish
+
+- [x] Automations list: compact cards (name, objective, status, trigger, last run), switch, run, overflow actions with protected delete.
+- [x] Full-page five-step editor (trigger, conditions, actions, settings, review) on its own screen.
+- [x] History screen actually displayed (was hidden behind the list) and made readable; sober status indicators.
+- [x] Welcoming empty states for automations and history.
+- [x] Settings reorganized by category; add recent-files duration (minutes to one week).
+- [x] Harmonize shared controls (switches, selectors, confirmations, progress, loading) and apply the finish to readers, tools, search, vault, trash, apps, editors, cleaner.
+- [x] Run tests and `bun run verify`; check screens in the preview.
+- [ ] Validate step 4 on a real Android phone (real automation runs, notifications, keyboard, system bars) — needs a new APK build.
+- [x] Suggest next steps after the remix (answer once step 4 is done).

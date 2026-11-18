@@ -54,7 +54,7 @@ export function VaultPreview({
           type="button"
           aria-label={t("action.close")}
           onClick={onClose}
-          className="rounded-full border border-border bg-surface p-1.5 text-muted-foreground hover:text-foreground"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-[18px] w-[18px]" />
         </button>
@@ -68,7 +68,7 @@ export function VaultPreview({
           type="button"
           aria-label={t("vault.item.favoriteAria")}
           onClick={() => onToggleFavorite(item)}
-          className={`rounded-full border border-border bg-surface p-1.5 ${
+          className={`flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface ${
             item.favorite ? "text-warning" : "text-muted-foreground hover:text-foreground"
           }`}
         >
@@ -78,7 +78,7 @@ export function VaultPreview({
           type="button"
           aria-label={t("action.restore")}
           onClick={() => onRestore(item)}
-          className="rounded-full border border-border bg-surface p-1.5 text-muted-foreground hover:text-foreground"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:text-foreground"
         >
           <Undo2 className="h-[18px] w-[18px]" />
         </button>
@@ -86,7 +86,7 @@ export function VaultPreview({
           type="button"
           aria-label={t("action.deleteForever")}
           onClick={() => onDelete(item)}
-          className="rounded-full border border-destructive/30 bg-destructive/10 p-1.5 text-destructive hover:bg-destructive/20"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20"
         >
           <Trash2 className="h-[18px] w-[18px]" />
         </button>

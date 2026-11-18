@@ -1008,7 +1008,7 @@ function AudioStage({
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-5 px-6">
       <audio ref={ref} src={src} preload="metadata" />
-      <div className="flex h-44 w-44 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/40 to-primary/10 shadow-lg">
+      <div className="flex h-44 w-44 items-center justify-center rounded-2xl bg-surface-2">
         <Volume2 className="h-16 w-16 text-media-foreground/80" />
       </div>
       <div className="w-full max-w-md text-center">

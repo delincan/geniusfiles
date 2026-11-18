@@ -48,7 +48,7 @@ function MiniHandle() {
         type="button"
         onClick={() => audioStore.setMiniHidden(false)}
         aria-label={t("media.player.aria.showMini")}
-        className="flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-background/95 px-3 text-[11px] font-medium text-foreground/85 shadow-[0_8px_20px_-12px_rgba(0,0,0,0.6)] backdrop-blur gf-press"
+        className="flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-background/95 px-3 text-[11px] font-medium text-foreground/85 shadow-card backdrop-blur gf-press"
       >
         <ChevronUp className="h-4 w-4" />
         {t("media.player.miniShow")}
@@ -75,7 +75,7 @@ function MiniPlayer() {
       className="fixed inset-x-0 z-40 mx-auto flex max-w-[520px] justify-center px-2"
       style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 4.25rem)" }}
     >
-      <div className="relative flex w-full items-center gap-2 overflow-hidden rounded-2xl border border-border/60 bg-background/95 py-1.5 pl-2 pr-1 shadow-[0_10px_28px_-14px_rgba(0,0,0,0.55)] backdrop-blur">
+      <div className="relative flex w-full items-center gap-2 overflow-hidden rounded-2xl border border-border/60 bg-background/95 py-1.5 pl-2 pr-1 shadow-elevated backdrop-blur">
         <button
           type="button"
           onClick={() => audioStore.openUI()}

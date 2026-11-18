@@ -1,6 +1,10 @@
 import type { AppIcon } from "@/components/icons";
 import type { ReactNode } from "react";
 
+/**
+ * État vide standard : pictogramme bleu sur pastille anthracite, titre
+ * court, une phrase utile et, au besoin, une seule action principale.
+ */
 export function EmptyState({
   icon: Icon,
   title,
@@ -13,16 +17,14 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="gf-appear flex flex-col items-center gap-4 px-6 py-12 text-center">
-      <div className="relative flex h-24 w-24 items-center justify-center">
-        <span aria-hidden className="absolute inset-0 rounded-2xl bg-primary-softer" />
-        <span aria-hidden className="absolute inset-3 rounded-2xl bg-primary-soft/60" />
-        <Icon className="relative h-9 w-9 text-primary" />
-      </div>
+    <div className="gf-appear flex flex-col items-center gap-4 px-6 py-10 text-center">
+      <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-2">
+        <Icon className="h-8 w-8 text-primary" />
+      </span>
       <div className="max-w-[320px] space-y-1.5">
-        <p className="text-[17px] font-semibold text-foreground">{title}</p>
+        <p className="text-[16px] font-semibold text-foreground">{title}</p>
         {description ? (
-          <p className="text-[14px] leading-relaxed text-muted-foreground">{description}</p>
+          <p className="text-[13.5px] leading-relaxed text-muted-foreground">{description}</p>
         ) : null}
       </div>
       {action ? <div className="pt-1">{action}</div> : null}

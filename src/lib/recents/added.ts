@@ -21,6 +21,7 @@ import { listDirectory, getExternalVolumes, toAbsolutePath } from "@/lib/files/f
 import { subscribeFsPatch } from "@/lib/index/patches";
 import { extOf, kindOf } from "@/lib/files/format";
 import type { FileEntry, FileKind, PathRef, StorageRootId } from "@/lib/files/types";
+import { currentRecentWindowMs } from "./window";
 
 export type AddedFile = FileEntry & {
   rootId: StorageRootId;
@@ -34,8 +35,6 @@ const EVENT = "gf:added-changed";
 const MAX_ITEMS = 600;
 const MAX_DIRS = 140;
 const MAX_DEPTH = 3;
-/** Fenêtre affichée par la page dédiée : 7 jours. */
-export const ADDED_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 const POLL_MS = 20_000;
 const MIN_INTERVAL_MS = 4_000;
 
@@ -115,9 +114,9 @@ export function loadAddedFiles(): AddedFile[] {
   return readCache();
 }
 
-/** Fichiers ajoutés durant la fenêtre récente (7 jours par défaut). */
-export function loadAddedWindow(now = Date.now()): AddedFile[] {
-  const min = now - ADDED_WINDOW_MS;
+/** Fichiers ajoutés durant la fenêtre récente choisie dans Paramètres. */
+export function loadAddedWindow(now = Date.now(), windowMs = currentRecentWindowMs()): AddedFile[] {
+  const min = now - windowMs;
   return readCache().filter((f) => f.at >= min);
 }
 

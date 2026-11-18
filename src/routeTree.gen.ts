@@ -22,7 +22,8 @@ import { Route as OrganisationRouteImport } from './routes/organisation'
 import { Route as ParametresRouteImport } from './routes/parametres'
 import { Route as PdfOutilsRouteImport } from './routes/pdf-outils'
 import { Route as RechercheRouteImport } from './routes/recherche'
-import { Route as AutomatisationsHistoriqueRouteImport } from './routes/automatisations.historique'
+import { Route as AutomatisationsEditeurRouteImport } from './routes/automatisations_.editeur'
+import { Route as AutomatisationsHistoriqueRouteImport } from './routes/automatisations_.historique'
 import { Route as CategorieKindRouteImport } from './routes/categorie.$kind'
 import { Route as ApiPublicChatRouteImport } from './routes/api/public/chat'
 import { Route as ApiPublicTimeRouteImport } from './routes/api/public/time'
@@ -92,11 +93,16 @@ const RechercheRoute = RechercheRouteImport.update({
   path: '/recherche',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AutomatisationsEditeurRoute = AutomatisationsEditeurRouteImport.update({
+  id: '/automatisations_/editeur',
+  path: '/automatisations/editeur',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AutomatisationsHistoriqueRoute =
   AutomatisationsHistoriqueRouteImport.update({
-    id: '/historique',
-    path: '/historique',
-    getParentRoute: () => AutomatisationsRoute,
+    id: '/automatisations_/historique',
+    path: '/automatisations/historique',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const CategorieKindRoute = CategorieKindRouteImport.update({
   id: '/categorie/$kind',
@@ -118,7 +124,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/applications': typeof ApplicationsRoute
   '/assistant': typeof AssistantRoute
-  '/automatisations': typeof AutomatisationsRouteWithChildren
+  '/automatisations': typeof AutomatisationsRoute
   '/coffre-fort': typeof CoffreFortRoute
   '/corbeille': typeof CorbeilleRoute
   '/editeur-audio': typeof EditeurAudioRoute
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/parametres': typeof ParametresRoute
   '/pdf-outils': typeof PdfOutilsRoute
   '/recherche': typeof RechercheRoute
+  '/automatisations/editeur': typeof AutomatisationsEditeurRoute
   '/automatisations/historique': typeof AutomatisationsHistoriqueRoute
   '/categorie/$kind': typeof CategorieKindRoute
   '/api/public/chat': typeof ApiPublicChatRoute
@@ -137,7 +144,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/applications': typeof ApplicationsRoute
   '/assistant': typeof AssistantRoute
-  '/automatisations': typeof AutomatisationsRouteWithChildren
+  '/automatisations': typeof AutomatisationsRoute
   '/coffre-fort': typeof CoffreFortRoute
   '/corbeille': typeof CorbeilleRoute
   '/editeur-audio': typeof EditeurAudioRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/parametres': typeof ParametresRoute
   '/pdf-outils': typeof PdfOutilsRoute
   '/recherche': typeof RechercheRoute
+  '/automatisations/editeur': typeof AutomatisationsEditeurRoute
   '/automatisations/historique': typeof AutomatisationsHistoriqueRoute
   '/categorie/$kind': typeof CategorieKindRoute
   '/api/public/chat': typeof ApiPublicChatRoute
@@ -157,7 +165,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/applications': typeof ApplicationsRoute
   '/assistant': typeof AssistantRoute
-  '/automatisations': typeof AutomatisationsRouteWithChildren
+  '/automatisations': typeof AutomatisationsRoute
   '/coffre-fort': typeof CoffreFortRoute
   '/corbeille': typeof CorbeilleRoute
   '/editeur-audio': typeof EditeurAudioRoute
@@ -167,7 +175,8 @@ export interface FileRoutesById {
   '/parametres': typeof ParametresRoute
   '/pdf-outils': typeof PdfOutilsRoute
   '/recherche': typeof RechercheRoute
-  '/automatisations/historique': typeof AutomatisationsHistoriqueRoute
+  '/automatisations_/editeur': typeof AutomatisationsEditeurRoute
+  '/automatisations_/historique': typeof AutomatisationsHistoriqueRoute
   '/categorie/$kind': typeof CategorieKindRoute
   '/api/public/chat': typeof ApiPublicChatRoute
   '/api/public/time': typeof ApiPublicTimeRoute
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/pdf-outils'
     | '/recherche'
+    | '/automatisations/editeur'
     | '/automatisations/historique'
     | '/categorie/$kind'
     | '/api/public/chat'
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/pdf-outils'
     | '/recherche'
+    | '/automatisations/editeur'
     | '/automatisations/historique'
     | '/categorie/$kind'
     | '/api/public/chat'
@@ -226,7 +237,8 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/pdf-outils'
     | '/recherche'
-    | '/automatisations/historique'
+    | '/automatisations_/editeur'
+    | '/automatisations_/historique'
     | '/categorie/$kind'
     | '/api/public/chat'
     | '/api/public/time'
@@ -236,7 +248,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApplicationsRoute: typeof ApplicationsRoute
   AssistantRoute: typeof AssistantRoute
-  AutomatisationsRoute: typeof AutomatisationsRouteWithChildren
+  AutomatisationsRoute: typeof AutomatisationsRoute
   CoffreFortRoute: typeof CoffreFortRoute
   CorbeilleRoute: typeof CorbeilleRoute
   EditeurAudioRoute: typeof EditeurAudioRoute
@@ -246,6 +258,8 @@ export interface RootRouteChildren {
   ParametresRoute: typeof ParametresRoute
   PdfOutilsRoute: typeof PdfOutilsRoute
   RechercheRoute: typeof RechercheRoute
+  AutomatisationsEditeurRoute: typeof AutomatisationsEditeurRoute
+  AutomatisationsHistoriqueRoute: typeof AutomatisationsHistoriqueRoute
   CategorieKindRoute: typeof CategorieKindRoute
   ApiPublicChatRoute: typeof ApiPublicChatRoute
   ApiPublicTimeRoute: typeof ApiPublicTimeRoute
@@ -344,12 +358,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RechercheRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/automatisations/historique': {
-      id: '/automatisations/historique'
-      path: '/historique'
+    '/automatisations_/editeur': {
+      id: '/automatisations_/editeur'
+      path: '/automatisations/editeur'
+      fullPath: '/automatisations/editeur'
+      preLoaderRoute: typeof AutomatisationsEditeurRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/automatisations_/historique': {
+      id: '/automatisations_/historique'
+      path: '/automatisations/historique'
       fullPath: '/automatisations/historique'
       preLoaderRoute: typeof AutomatisationsHistoriqueRouteImport
-      parentRoute: typeof AutomatisationsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/categorie/$kind': {
       id: '/categorie/$kind'
@@ -375,23 +396,11 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AutomatisationsRouteChildren {
-  AutomatisationsHistoriqueRoute: typeof AutomatisationsHistoriqueRoute
-}
-
-const AutomatisationsRouteChildren: AutomatisationsRouteChildren = {
-  AutomatisationsHistoriqueRoute: AutomatisationsHistoriqueRoute,
-}
-
-const AutomatisationsRouteWithChildren = AutomatisationsRoute._addFileChildren(
-  AutomatisationsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApplicationsRoute: ApplicationsRoute,
   AssistantRoute: AssistantRoute,
-  AutomatisationsRoute: AutomatisationsRouteWithChildren,
+  AutomatisationsRoute: AutomatisationsRoute,
   CoffreFortRoute: CoffreFortRoute,
   CorbeilleRoute: CorbeilleRoute,
   EditeurAudioRoute: EditeurAudioRoute,
@@ -401,6 +410,8 @@ const rootRouteChildren: RootRouteChildren = {
   ParametresRoute: ParametresRoute,
   PdfOutilsRoute: PdfOutilsRoute,
   RechercheRoute: RechercheRoute,
+  AutomatisationsEditeurRoute: AutomatisationsEditeurRoute,
+  AutomatisationsHistoriqueRoute: AutomatisationsHistoriqueRoute,
   CategorieKindRoute: CategorieKindRoute,
   ApiPublicChatRoute: ApiPublicChatRoute,
   ApiPublicTimeRoute: ApiPublicTimeRoute,

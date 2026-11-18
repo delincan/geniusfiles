@@ -58,7 +58,7 @@ export function OrganizerPreview({ preview }: { preview: OrgPreview }) {
             ))}
             {n.additions.map((name) => (
               <div key={"a" + name} className="flex items-center gap-2">
-                <PlusCircle className="h-4 w-4 text-emerald-400" />
+                <PlusCircle className="h-4 w-4 text-primary" />
                 <span className="truncate">{name}</span>
               </div>
             ))}

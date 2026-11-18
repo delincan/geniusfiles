@@ -5,6 +5,7 @@
  * l'écran Paramètres et qui ont un effet observable :
  *   - thème de l'interface (clair / sombre / système)
  *   - affichage des fichiers cachés
+ *   - durée couverte par les « Fichiers récents »
  *   - notifications activées ou non
  *
  * Toute préférence sans UI ni effet a été supprimée (taille de texte,
@@ -30,6 +31,8 @@ export type PersonalizationPrefs = {
   files: {
     /** Afficher les fichiers et dossiers commençant par un point. */
     showHidden: boolean;
+    /** Durée couverte par « Fichiers récents », en minutes (15 min à 7 jours). */
+    recentWindowMinutes: number;
   };
 
   notifications: {
@@ -44,6 +47,7 @@ export const DEFAULT_PREFS: PersonalizationPrefs = {
   },
   files: {
     showHidden: false,
+    recentWindowMinutes: 7 * 24 * 60,
   },
   notifications: {
     enabled: true,

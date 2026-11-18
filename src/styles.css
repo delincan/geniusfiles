@@ -560,9 +560,9 @@ html {
   gap: 8px;
   height: 52px;
   padding: 0 20px;
-  border-radius: 18px;
-  background: var(--primary-softer);
-  color: var(--primary);
+  border-radius: var(--radius-xl);
+  background: var(--secondary);
+  color: var(--secondary-foreground);
   font-weight: 600;
   font-size: 15px;
   transition:
@@ -570,7 +570,7 @@ html {
     background-color var(--duration-fast) var(--ease-standard);
   &:active {
     transform: scale(0.98);
-    background: var(--primary-soft);
+    background: var(--surface-elevated);
   }
 }
 @utility btn-ghost {
@@ -580,7 +580,7 @@ html {
   gap: 8px;
   height: 44px;
   padding: 0 14px;
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
   background: transparent;
   color: var(--primary);
   font-weight: 500;
@@ -600,7 +600,7 @@ html {
   gap: 10px;
   height: 52px;
   padding: 0 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   background: var(--input);
   border: 1px solid transparent;
   color: var(--foreground);
@@ -2020,4 +2020,107 @@ svg.gf-icon.h-16 {
 .gf-sheet-action[data-danger="true"]:hover,
 .gf-sheet-action[data-danger="true"]:active {
   background-color: color-mix(in oklab, var(--destructive) 10%, transparent);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Paramètres et Automatisations — étape 4.
+   ───────────────────────────────────────────────────────────── */
+
+/* Ligne de réglage : séparateur aligné sur le libellé, jamais sur l'icône. */
+.gf-settings-row {
+  position: relative;
+}
+.gf-settings-row + .gf-settings-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 52px;
+  height: 1px;
+  background-color: color-mix(in oklab, var(--border) 70%, transparent);
+  pointer-events: none;
+}
+
+/* Retour tactile d'une ligne pleine largeur : aplat neutre, sans zoom. */
+.gf-press-row {
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+.gf-press-row:active {
+  background-color: var(--surface-2);
+}
+
+/* Champ de formulaire : même hauteur, même rayon, même focus partout. */
+.gf-input {
+  display: block;
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--foreground);
+  font-size: 15px;
+  outline: none;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+.gf-input::placeholder {
+  color: var(--muted-foreground-2);
+}
+.gf-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+select.gf-input {
+  appearance: none;
+  padding-right: 40px;
+}
+
+/* Carte d'option sélectionnable (déclencheurs, catalogues). */
+.gf-option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 12px 14px;
+  border-radius: var(--radius-2xl);
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  background-color: var(--surface);
+  text-align: left;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+.gf-option:active {
+  background-color: var(--surface-2);
+}
+.gf-option[aria-checked="true"],
+.gf-option[aria-pressed="true"] {
+  border-color: color-mix(in oklab, var(--primary) 70%, transparent);
+  background-color: var(--primary-softer);
+}
+
+/* Pastille d'icône neutre (bleue lorsque l'option est active). */
+.gf-option-icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-2);
+  color: var(--muted-foreground);
+}
+[aria-checked="true"] > .gf-option-icon,
+[aria-pressed="true"] > .gf-option-icon,
+.gf-option-icon[data-active="true"] {
+  background-color: var(--primary-soft);
+  color: var(--primary);
+}
+.gf-settings-row[data-divider="text"] + .gf-settings-row[data-divider="text"]::before,
+.gf-settings-row + .gf-settings-row[data-divider="full"]::before {
+  left: 16px;
 }

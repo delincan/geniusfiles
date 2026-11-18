@@ -283,7 +283,7 @@ export function WordEditor({
           type="button"
           onClick={() => void write("copy")}
           disabled={saving || load.status !== "ready"}
-          className="flex h-8 shrink-0 items-center rounded-full bg-reader-header-foreground/10 px-3 text-[11.5px] font-medium text-reader-header-foreground disabled:opacity-40 active:scale-95"
+          className="flex h-10 shrink-0 items-center rounded-full bg-reader-header-foreground/10 px-3.5 text-[12.5px] font-medium text-reader-header-foreground disabled:opacity-40 active:scale-95"
         >
           {t("viewer.word.saveAs")}
         </button>
@@ -291,7 +291,7 @@ export function WordEditor({
           type="button"
           onClick={() => setConfirmOverwrite(true)}
           disabled={saving || !dirty || load.status !== "ready"}
-          className="flex h-8 shrink-0 items-center gap-1 rounded-full bg-primary px-3 text-[11.5px] font-semibold text-primary-foreground disabled:opacity-40 active:scale-95"
+          className="flex h-10 shrink-0 items-center gap-1 rounded-full bg-primary px-3.5 text-[12.5px] font-semibold text-primary-foreground disabled:opacity-40 active:scale-95"
         >
           <Save className="h-4 w-4" />
           {saving ? "…" : t("viewer.word.save")}

@@ -731,7 +731,7 @@ function ImagesToPdfSheet({ onClose }: { onClose: () => void }) {
                   <button
                     type="button"
                     onClick={() => move(i, -1)}
-                    className="rounded p-1 text-muted-foreground hover:text-foreground"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground"
                     aria-label={t("pdf.aria.moveUp")}
                   >
                     ↑
@@ -739,7 +739,7 @@ function ImagesToPdfSheet({ onClose }: { onClose: () => void }) {
                   <button
                     type="button"
                     onClick={() => move(i, +1)}
-                    className="rounded p-1 text-muted-foreground hover:text-foreground"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground"
                     aria-label={t("pdf.aria.moveDown")}
                   >
                     ↓
@@ -1041,7 +1041,7 @@ function ScanSheet({ onClose }: { onClose: () => void }) {
                   <button
                     type="button"
                     onClick={() => movePage(i, -1)}
-                    className="rounded p-1 text-muted-foreground hover:text-foreground"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground"
                     aria-label={t("pdf.aria.moveUp")}
                   >
                     ↑
@@ -1049,7 +1049,7 @@ function ScanSheet({ onClose }: { onClose: () => void }) {
                   <button
                     type="button"
                     onClick={() => movePage(i, +1)}
-                    className="rounded p-1 text-muted-foreground hover:text-foreground"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground"
                     aria-label={t("pdf.aria.moveDown")}
                   >
                     ↓
@@ -3189,7 +3189,7 @@ function SignatureLibraryDialog({
       <div className="space-y-2">
         {signatures.map((s) => (
           <div key={s.id} className="flex items-center gap-2 rounded-lg border border-border p-2">
-            <img src={s.dataUrl} alt="" className="h-10 w-16 rounded bg-white object-contain" />
+            <img src={s.dataUrl} alt="" className="h-10 w-16 rounded bg-paper object-contain" />
             <input
               defaultValue={s.name}
               onBlur={(e) => onRename(s.id, e.target.value)}
@@ -3205,7 +3205,7 @@ function SignatureLibraryDialog({
             <button
               type="button"
               onClick={() => onDelete(s.id)}
-              className="rounded border border-destructive/40 p-1 text-destructive"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-destructive/40 text-destructive"
             >
               <Trash2 className="h-3.5 w-3.5" />
             </button>

@@ -1,95 +1,63 @@
 /**
- * Composants UI réutilisables pour la page Paramètres.
+ * Contrôles partagés — interrupteur, choix segmenté et liste de choix.
  *
- * Layout list-first : plus de « boîtes » card-surface autour des
- * sections. Chaque groupe = un micro-titre + une liste divisée. Les
- * groupes secondaires peuvent être repliables (`collapsible`).
+ * Mêmes dimensions tactiles partout (zone ≥ 44 px), bleu GeniusFiles pour
+ * l'état actif uniquement, surfaces neutres pour le reste. Utilisés par les
+ * Paramètres et les Automatisations.
  */
-import { useState, type ComponentType, type ReactNode } from "react";
-import { ChevronDown } from "@/components/icons";
+import type { ComponentType, ReactNode } from "react";
+import { Check } from "@/components/icons";
+import { BottomSheet } from "@/components/files/BottomSheet";
 
-export function SettingsGroup({
-  title,
-  hint,
-  icon: Icon,
-  children,
-  collapsible = false,
-  defaultOpen = true,
+/** Interrupteur : piste bleue quand actif, neutre sinon. */
+export function Toggle({
+  checked,
+  onChange,
+  ariaLabel,
+  disabled,
 }: {
-  title: string;
-  hint?: string;
-  icon?: ComponentType<{ className?: string }>;
-  children: ReactNode;
-  collapsible?: boolean;
-  defaultOpen?: boolean;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  ariaLabel: string;
+  disabled?: boolean;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
-  const isOpen = collapsible ? open : true;
   return (
-    <section className="mt-8">
-      <div className="mb-2 flex items-baseline justify-between px-1">
-        {collapsible ? (
-          <button
-            type="button"
-            onClick={() => setOpen((o) => !o)}
-            className="group -mx-1 flex flex-1 items-center gap-2 rounded-md px-1 py-1 text-left transition-colors hover:bg-secondary/40"
-            aria-expanded={isOpen}
-          >
-            <ChevronDown
-              className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
-                isOpen ? "" : "-rotate-90"
-              }`}
-            />
-            <h2 className="text-[13px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              {title}
-            </h2>
-            {hint ? (
-              <span className="ml-auto text-[11px] text-muted-foreground/70">{hint}</span>
-            ) : null}
-          </button>
-        ) : (
-          <>
-            <h2 className="flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              {Icon ? <Icon className="h-4 w-4 text-primary" /> : null}
-              {title}
-            </h2>
-            {hint ? <span className="text-[11px] text-muted-foreground/70">{hint}</span> : null}
-          </>
-        )}
-      </div>
-      {isOpen ? <div className="divide-y divide-border/50">{children}</div> : null}
-    </section>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={ariaLabel}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+      className="-my-1 -mr-1.5 inline-flex h-11 w-[60px] shrink-0 items-center justify-center disabled:opacity-45"
+    >
+      <span
+        aria-hidden
+        className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-200 ${
+          checked ? "bg-primary" : "bg-surface-elevated"
+        }`}
+      >
+        <span
+          className={`inline-block h-6 w-6 rounded-full shadow-soft transition-transform duration-200 ease-out ${
+            checked
+              ? "translate-x-[22px] bg-primary-foreground"
+              : "translate-x-0.5 bg-muted-foreground"
+          }`}
+        />
+      </span>
+    </button>
   );
 }
 
-export function SettingsRow({
-  label,
-  desc,
-  children,
-}: {
-  label: string;
-  desc?: string;
-  children?: ReactNode;
-}) {
-  return (
-    <div className="flex items-center gap-3 px-1 py-3">
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-[14px] font-medium text-foreground">{label}</p>
-        {desc ? <p className="mt-0.5 text-[12px] text-muted-foreground/80">{desc}</p> : null}
-      </div>
-      {children ? <div className="shrink-0">{children}</div> : null}
-    </div>
-  );
-}
-
-export function SegButtons<T extends string>({
+/** Choix segmenté (2 à 4 options courtes). */
+export function Segmented<T extends string>({
   value,
   options,
   onChange,
   ariaLabel,
 }: {
   value: T;
-  options: { value: T; label: string }[];
+  options: { value: T; label: string; icon?: ComponentType<{ className?: string }> }[];
   onChange: (v: T) => void;
   ariaLabel: string;
 }) {
@@ -97,7 +65,9 @@ export function SegButtons<T extends string>({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className="flex flex-wrap gap-1 rounded-xl border border-border bg-surface p-1"
+      suppressHydrationWarning
+      className="grid gap-1 rounded-xl bg-surface-2 p-1"
+      style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
     >
       {options.map((o) => {
         const active = o.value === value;
@@ -107,14 +77,16 @@ export function SegButtons<T extends string>({
             type="button"
             role="radio"
             aria-checked={active}
-            onClick={() => onChange(o.value)}
-            className={`rounded-lg px-2.5 py-1 text-[11px] font-medium transition-colors ${
-              active
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
+            suppressHydrationWarning
+            onClick={() => {
+              if (!active) onChange(o.value);
+            }}
+            className={`gf-press flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg px-2 text-[13px] font-semibold transition-colors ${
+              active ? "bg-primary text-primary-foreground" : "text-muted-foreground"
             }`}
           >
-            {o.label}
+            {o.icon ? <o.icon className="h-4 w-4 shrink-0" /> : null}
+            <span className="truncate">{o.label}</span>
           </button>
         );
       })}
@@ -122,65 +94,59 @@ export function SegButtons<T extends string>({
   );
 }
 
-export function Toggle({
-  checked,
-  onChange,
-  ariaLabel,
-}: {
-  checked: boolean;
-  onChange: (v: boolean) => void;
-  ariaLabel: string;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={ariaLabel}
-      onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
-        checked ? "bg-primary" : "bg-secondary"
-      }`}
-    >
-      <span
-        className={`inline-block h-5 w-5 rounded-full bg-background shadow transition-transform ${
-          checked ? "translate-x-5" : "translate-x-0.5"
-        }`}
-      />
-    </button>
-  );
-}
-
-export function SelectRow<T extends string | number>({
+/** Liste de choix en feuille : une option par ligne, coche bleue sur l'active. */
+export function ChoiceSheet<T extends string | number>({
+  open,
+  title,
   value,
   options,
   onChange,
-  ariaLabel,
+  onClose,
 }: {
+  open: boolean;
+  title: string;
   value: T;
-  options: { value: T; label: string }[];
+  options: { value: T; label: string; leading?: ReactNode; hint?: string }[];
   onChange: (v: T) => void;
-  ariaLabel: string;
+  onClose: () => void;
 }) {
   return (
-    <div className="relative">
-      <select
-        aria-label={ariaLabel}
-        value={String(value)}
-        onChange={(e) => {
-          const raw = e.target.value;
-          const opt = options.find((o) => String(o.value) === raw);
-          if (opt) onChange(opt.value);
-        }}
-        className="appearance-none rounded-lg border border-border bg-surface py-1.5 pl-2.5 pr-7 text-[12px] font-medium text-foreground focus:border-primary focus:outline-none"
-      >
-        {options.map((o) => (
-          <option key={String(o.value)} value={String(o.value)}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-      <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-    </div>
+    <BottomSheet open={open} onClose={onClose} title={title}>
+      <div role="radiogroup" aria-label={title} className="-mx-2 flex flex-col">
+        {options.map((o) => {
+          const active = o.value === value;
+          return (
+            <button
+              key={String(o.value)}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => {
+                if (!active) onChange(o.value);
+                onClose();
+              }}
+              className={`gf-press flex min-h-[52px] w-full items-center gap-3 rounded-xl px-3 text-left transition-colors ${
+                active ? "bg-primary-soft" : ""
+              }`}
+            >
+              {o.leading ? <span className="shrink-0">{o.leading}</span> : null}
+              <span className="min-w-0 flex-1">
+                <span
+                  className={`block truncate text-[15px] ${
+                    active ? "font-semibold text-foreground" : "font-medium text-foreground"
+                  }`}
+                >
+                  {o.label}
+                </span>
+                {o.hint ? (
+                  <span className="block truncate text-[12px] text-muted-foreground">{o.hint}</span>
+                ) : null}
+              </span>
+              {active ? <Check className="h-5 w-5 shrink-0 text-primary" /> : null}
+            </button>
+          );
+        })}
+      </div>
+    </BottomSheet>
   );
 }

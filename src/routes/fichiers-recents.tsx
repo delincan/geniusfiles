@@ -78,6 +78,8 @@ import {
 } from "@/lib/recents/added";
 import { useT, t as translate } from "@/lib/i18n";
 import { InlineAdBanner } from "@/components/ads/InlineAdBanner";
+import { DEFAULT_RECENT_WINDOW_MINUTES, recentWindowLabel } from "@/lib/recents/window";
+import { loadPrefs } from "@/lib/personalization";
 
 export const Route = createFileRoute("/fichiers-recents")({
   head: () => ({
@@ -126,6 +128,11 @@ export function AddedFilesPage() {
   const [sortKey, setSortKey] = useState<SortKey>("date");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [query, setQuery] = useState("");
+  // Lue après l'hydratation : le rendu serveur ne connaît pas les préférences.
+  const [windowMinutes, setWindowMinutes] = useState(DEFAULT_RECENT_WINDOW_MINUTES);
+  useEffect(() => {
+    setWindowMinutes(loadPrefs().files.recentWindowMinutes);
+  }, []);
   const [searchOpen, setSearchOpen] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [dialog, setDialog] = useState<Dialog>({ kind: "none" });
@@ -628,7 +635,9 @@ export function AddedFilesPage() {
       ) : sorted.length === 0 ? (
         <IllustratedEmptyState
           id="documents"
-          description={t("files.lesFichiersAjoutesAVotreStockage")}
+          description={t("files.recent.emptyWindow", {
+            period: recentWindowLabel(windowMinutes, t),
+          })}
           adSlot="empty-recent"
         />
       ) : (

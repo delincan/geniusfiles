@@ -351,7 +351,7 @@ export function PdfAnnotator({
               type="button"
               disabled={!canUndo}
               onClick={onUndo}
-              className="rounded-md border border-border p-1 disabled:opacity-40"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-border disabled:opacity-40"
               title={t("action.cancel")}
             >
               <Undo2 className="h-4 w-4" />
@@ -360,7 +360,7 @@ export function PdfAnnotator({
               type="button"
               disabled={!canRedo}
               onClick={onRedo}
-              className="rounded-md border border-border p-1 disabled:opacity-40"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-border disabled:opacity-40"
               title={t("media.editor.aria.redo")}
             >
               <Redo2 className="h-4 w-4" />

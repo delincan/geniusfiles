@@ -895,7 +895,7 @@ export function SearchPage() {
                       type="button"
                       onClick={() => setQuery("")}
                       aria-label={t("cleaner.trash.clearSearch.aria")}
-                      className="rounded-lg p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground"
                     >
                       <X className="h-[18px] w-[18px]" />
                     </button>
@@ -904,7 +904,7 @@ export function SearchPage() {
                     type="button"
                     onClick={() => setShowFilters(true)}
                     aria-label={t("search.filters.aria")}
-                    className={`relative rounded-lg p-1.5 transition-colors ${
+                    className={`relative flex h-10 w-10 items-center justify-center rounded-lg transition-colors ${
                       activeFilterCount > 0
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -1210,7 +1210,7 @@ function RecentSearches({
                 type="button"
                 aria-label={t("search.recents.remove.aria", { query: h.query })}
                 onClick={() => onRemove(h.query)}
-                className="rounded-lg p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground"
               >
                 <X className="h-4 w-4" />
               </button>

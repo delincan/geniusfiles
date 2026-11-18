@@ -95,7 +95,7 @@ export function RenameProposalSheet({
                     type="button"
                     onClick={() => edit(i, p.proposed)}
                     aria-label={t("organize.rename.resetAria")}
-                    className="rounded-lg border border-border bg-surface p-1.5 text-muted-foreground hover:text-foreground"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground hover:text-foreground"
                   >
                     <RefreshCw className="h-4 w-4" />
                   </button>

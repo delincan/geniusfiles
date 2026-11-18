@@ -31,8 +31,10 @@ export function requestAppExit(): void {
  */
 const MAIN_NAV_PAGES = ["/assistant", "/automatisations", "/parametres"];
 
+/* Correspondance exacte : un sous-écran (historique, éditeur) revient à
+   l'écran précédent réel, pas directement à l'accueil. */
 function isMainNavPage(pathname: string): boolean {
-  return MAIN_NAV_PAGES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  return MAIN_NAV_PAGES.includes(pathname.replace(/\/+$/, ""));
 }
 
 export function resolveBack(router: AnyRouter, pathname: string): void {

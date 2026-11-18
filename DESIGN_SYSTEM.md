@@ -58,3 +58,11 @@ Progression : pourcentage des jalons terminés, non une estimation du temps rest
 - Sélection : `.gf-select-mark` bleu plein, fond de ligne `primary-soft`, aucun aplat bleu plus large.
 - Menus d'actions : `SheetActionRow`, pictogramme sans pastille, rouge réservé à Supprimer.
 - Confirmations : action principale pleine largeur, Annuler en dessous.
+
+## Automatisations et Paramètres
+
+- Automatisations : cartes compactes (nom, objectif, statut à pastille, déclencheur, dernière exécution), interrupteur, Exécuter, menu « … » ; Supprimer protégé par confirmation.
+- Création et modification : page immersive en cinq étapes (Déclencheur, Conditions, Actions, Réglages, Vérification), barre d'étapes bleue, pied Retour / Suivant fixe ; aucune exécution à l'enregistrement.
+- Historique : regroupé par date, détail dépliable, couleurs de statut sobres (vert réussi, orange partiel, rouge échec).
+- Paramètres : sections titrées (Général, Apparence, Stockage, Gestion des fichiers, Automatisations, Notifications, Confidentialité et sécurité, À propos), lignes `.gf-settings-row`, choix dans une feuille `.gf-option` avec coche bleue.
+- Boutons secondaires sur `secondary`, Annuler en texte neutre ; champs et boutons au rayon `--radius-xl`.

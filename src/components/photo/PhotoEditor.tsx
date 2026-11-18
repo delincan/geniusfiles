@@ -1084,11 +1084,11 @@ function CropOverlay({
           onPointerMove={onMove}
           onPointerUp={onUp}
         >
-          <div className="absolute inset-0 border border-white/80">
-            <span className="absolute left-1/3 top-0 h-full w-px bg-white/30" />
-            <span className="absolute left-2/3 top-0 h-full w-px bg-white/30" />
-            <span className="absolute left-0 top-1/3 h-px w-full bg-white/30" />
-            <span className="absolute left-0 top-2/3 h-px w-full bg-white/30" />
+          <div className="absolute inset-0 border border-media-foreground/80">
+            <span className="absolute left-1/3 top-0 h-full w-px bg-media-foreground/30" />
+            <span className="absolute left-2/3 top-0 h-full w-px bg-media-foreground/30" />
+            <span className="absolute left-0 top-1/3 h-px w-full bg-media-foreground/30" />
+            <span className="absolute left-0 top-2/3 h-px w-full bg-media-foreground/30" />
           </div>
           {(["nw", "ne", "sw", "se"] as const).map((h) => (
             <span
@@ -1096,7 +1096,7 @@ function CropOverlay({
               onPointerDown={onDown(h)}
               onPointerMove={onMove}
               onPointerUp={onUp}
-              className={`absolute h-8 w-8 rounded-md border-2 border-white ${
+              className={`absolute h-8 w-8 rounded-md border-2 border-media-foreground ${
                 h === "nw"
                   ? "-left-1 -top-1 border-b-0 border-r-0"
                   : h === "ne"

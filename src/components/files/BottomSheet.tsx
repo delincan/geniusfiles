@@ -242,13 +242,13 @@ export function PrimaryButton({
       ? "bg-primary text-primary-foreground shadow-soft hover:brightness-105"
       : variant === "danger"
         ? "bg-destructive text-destructive-foreground shadow-soft hover:brightness-105"
-        : "text-primary hover:bg-primary-softer";
+        : "text-foreground hover:bg-surface-2 active:bg-surface-2";
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`inline-flex min-h-11 items-center justify-center rounded-2xl px-5 text-[14px] font-semibold transition-all duration-150 ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${cls}`}
+      className={`inline-flex min-h-12 items-center justify-center rounded-xl px-5 text-[15px] font-semibold transition-all duration-150 ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${cls}`}
     >
       {children}
     </button>

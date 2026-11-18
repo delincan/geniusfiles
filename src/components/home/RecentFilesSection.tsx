@@ -19,7 +19,7 @@ import {
   addedAbsPath,
   addedId,
   addedLocationLabel,
-  loadAddedFiles,
+  loadAddedWindow,
   subscribeAdded,
   watchAddedFiles,
   type AddedFile,
@@ -41,7 +41,7 @@ export function RecentFilesSection() {
   const [viewerName, setViewerName] = useState<string | null>(null);
 
   useEffect(() => {
-    const refresh = () => setFiles(loadAddedFiles().slice(0, MAX_ITEMS));
+    const refresh = () => setFiles(loadAddedWindow().slice(0, MAX_ITEMS));
     refresh();
     const unsubscribe = subscribeAdded(refresh);
     const stop = watchAddedFiles();

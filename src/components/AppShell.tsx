@@ -38,9 +38,12 @@ const NAV: NavItem[] = [
 export function AppShell({
   children,
   ownsHeaderInset = false,
+  immersive = false,
 }: {
   children?: ReactNode;
   ownsHeaderInset?: boolean;
+  /** Écran de tâche plein (éditeur) : sans navigation principale ni bouton de défilement. */
+  immersive?: boolean;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   /* Pendant la lecture d'un document, la navigation principale est
@@ -91,7 +94,7 @@ export function AppShell({
         className={
           isChat
             ? "flex h-dvh min-h-0 flex-1 flex-col overflow-hidden px-0 pb-0 pt-0"
-            : `flex-1 px-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] ${
+            : `flex-1 px-4 ${immersive ? "pb-0" : "pb-[calc(5.5rem+env(safe-area-inset-bottom))]"} ${
                 ownsSafeArea ? "pt-0" : "pt-safe"
               }`
         }
@@ -117,12 +120,16 @@ export function AppShell({
 
       {/* Navigation verticale rapide : la fenêtre est le conteneur défilant
           de tous les écrans de listes. */}
-      {isChat || reader || inPick ? null : <QuickScrollFab topInset={72} bottomInset={104} />}
+      {isChat || reader || inPick || immersive ? null : (
+        <QuickScrollFab topInset={72} bottomInset={104} />
+      )}
       {/* Copies / déplacements en arrière-plan : suivi permanent (sans interface). */}
       {inPick ? null : <TransferTracker />}
       {/* Conflit de copie / déplacement : une seule question, partout. */}
       <ConflictDialog />
-      {reader || inPick ? null : <BottomNav pathname={pathname} keyboardInset={keyboardInset} />}
+      {reader || inPick || immersive ? null : (
+        <BottomNav pathname={pathname} keyboardInset={keyboardInset} />
+      )}
       {/* Aucune bannière globale : les annonces sont intégrées dans le flux
           des écrans concernés (voir <InlineAdBanner /> et <EmptyStateAd />). */}
       {/* Écran opaque de la barre d'état. */}

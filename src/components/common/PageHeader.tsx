@@ -21,12 +21,15 @@ export function PageHeader({
   action,
   eyebrow,
   leading,
+  compact = false,
 }: {
   title: string;
   subtitle?: string;
   action?: ReactNode;
   eyebrow?: string;
   leading?: ReactNode;
+  /** Sous-écran avec bouton Retour : titre plus court (20 px). */
+  compact?: boolean;
 }) {
   return (
     <header className="sticky top-0 z-30 -mx-4 border-b border-border/60 bg-background pt-safe">
@@ -39,7 +42,11 @@ export function PageHeader({
                 {eyebrow}
               </p>
             ) : null}
-            <h1 className="truncate font-display text-[26px] font-bold leading-[1.15] tracking-tight text-foreground">
+            <h1
+              className={`truncate font-display font-bold tracking-tight text-foreground ${
+                compact ? "text-[20px] leading-[1.2]" : "text-[26px] leading-[1.15]"
+              }`}
+            >
               {title}
             </h1>
             {subtitle ? (

@@ -88,7 +88,7 @@ export function ResumeBanner() {
                   type="button"
                   onClick={() => handleResume(job)}
                   disabled={busy === job.id}
-                  className="flex h-8 items-center gap-1 rounded-full bg-primary px-2.5 text-[11px] font-medium text-primary-foreground disabled:opacity-60"
+                  className="flex h-10 items-center gap-1 rounded-full bg-primary px-3.5 text-[12px] font-semibold text-primary-foreground disabled:opacity-60"
                 >
                   <PlayCircle className="h-4 w-4" />
                   {busy === job.id ? "…" : t("home.resume.resume")}
@@ -97,7 +97,7 @@ export function ResumeBanner() {
                   type="button"
                   aria-label={t("home.resume.dismiss")}
                   onClick={() => dismissJob(job.id)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
                 >
                   <X className="h-4 w-4" />
                 </button>

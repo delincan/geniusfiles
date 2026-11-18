@@ -1,4 +1,7 @@
 /**
+ * Couleurs : jetons sémantiques uniquement (bleu = en cours, vert = réussi,
+ * orange = partiel, rouge = échec, gris = désactivé ou en attente).
+ *
  * Derive the display status of an automation from the execution history
  * plus a live "running" set maintained by the engine.
  */
@@ -33,41 +36,47 @@ export function lastRealRun(id: string, history?: ExecutionRecord[]): ExecutionR
 export function displayStatus(
   a: Automation,
   history?: ExecutionRecord[],
-): { status: DisplayStatus; label: string; tone: string } {
+): { status: DisplayStatus; label: string; tone: string; dot: string } {
   if (isRunning(a.id))
     return {
       status: "running",
       label: t("automations.status.running"),
-      tone: "bg-primary/15 text-primary",
+      tone: "bg-primary-soft text-primary",
+      dot: "bg-primary",
     };
   if (!a.enabled)
     return {
       status: "disabled",
       label: t("automations.status.disabled"),
-      tone: "bg-muted text-muted-foreground",
+      tone: "bg-surface-2 text-muted-foreground",
+      dot: "bg-muted-foreground/40",
     };
   const last = lastRealRun(a.id, history);
   if (!last)
     return {
       status: "pending",
       label: t("automations.status.pending"),
-      tone: "bg-amber-500/15 text-amber-500",
+      tone: "bg-surface-2 text-muted-foreground",
+      dot: "bg-muted-foreground",
     };
   if (last.status === "ok")
     return {
       status: "success",
       label: t("automations.status.success"),
-      tone: "bg-emerald-500/15 text-emerald-500",
+      tone: "bg-success/10 text-success",
+      dot: "bg-success",
     };
   if (last.status === "partial")
     return {
       status: "partial",
       label: t("automations.status.partial"),
-      tone: "bg-amber-500/15 text-amber-500",
+      tone: "bg-warning/10 text-warning",
+      dot: "bg-warning",
     };
   return {
     status: "failed",
     label: t("automations.status.failed"),
-    tone: "bg-red-500/15 text-red-500",
+    tone: "bg-destructive/10 text-destructive",
+    dot: "bg-destructive",
   };
 }
