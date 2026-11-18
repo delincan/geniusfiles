@@ -54,7 +54,7 @@ export function PickBar({ request }: { request: PickRequest }) {
             /* Barre de validation : couche fixe jamais recouverte par une
                annonce native. */
             data-gf-ad-blocker
-            className="fixed inset-x-0 z-[3600] mx-auto max-w-[560px] px-3 pl-safe pr-safe"
+            className="fixed inset-x-0 z-[3600] mx-auto max-w-[560px] pl-[calc(0.75rem+env(safe-area-inset-left,0px))] pr-[calc(0.75rem+env(safe-area-inset-right,0px))]"
             aria-label={t("files.pickBar.aria")}
             style={{
               bottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)",
@@ -122,7 +122,7 @@ function DestinationBar({ request, hidden }: { request: PickRequest; hidden: boo
         <Portal>
           <nav
             data-gf-ad-blocker
-            className="fixed inset-x-0 z-[3600] mx-auto max-w-[560px] px-3 pl-safe pr-safe"
+            className="fixed inset-x-0 z-[3600] mx-auto max-w-[560px] pl-[calc(0.75rem+env(safe-area-inset-left,0px))] pr-[calc(0.75rem+env(safe-area-inset-right,0px))]"
             aria-label={t("files.pickDest.aria")}
             style={{
               bottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)",

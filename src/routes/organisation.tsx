@@ -333,7 +333,7 @@ function OrganizationPage() {
             type="button"
             onClick={openRenamer}
             disabled={!report}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-[12px] font-medium disabled:opacity-50"
+            className="gf-press inline-flex h-10 items-center gap-2 rounded-xl bg-surface-2 px-3.5 text-[13px] font-medium text-foreground disabled:opacity-50"
           >
             <PencilLine className="h-4 w-4" /> {t("organize.action.smartRename")}
           </button>
@@ -571,33 +571,38 @@ function RecommendationCard({
     <button
       type="button"
       onClick={() => onOpen(rec)}
-      className="card-surface flex w-full items-start gap-3 p-3 text-left transition-transform active:scale-[0.99]"
+      className="gf-card gf-press flex w-full items-start gap-3 p-4 text-left"
     >
-      <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone}`}>
+      <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone}`}>
         <Icon className="h-[18px] w-[18px]" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[13px] font-medium">{rec.title}</p>
-        <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-          <span className="font-medium">{t("organize.rec.why")}</span> {rec.why}
+        <p className="line-clamp-2 text-[14px] font-semibold leading-snug">{rec.title}</p>
+        <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
+          <span className="font-medium text-foreground/80">{t("organize.rec.why")}</span> {rec.why}
         </p>
+        <span className="mt-2.5 inline-flex items-center gap-1 text-[13px] font-semibold text-primary">
+          {rec.cta}
+          <ChevronRight className="h-4 w-4" />
+        </span>
       </div>
-      <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium">
-        {rec.cta}
-      </span>
     </button>
   );
 }
 
 function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div
-      className={`rounded-xl border p-2 ${
-        highlight ? "border-primary/40 bg-primary/8" : "border-border bg-surface"
-      }`}
-    >
-      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="mt-0.5 text-[13px] font-semibold">{value}</p>
+    <div className="min-w-0 rounded-xl bg-surface-2 p-2.5">
+      <p
+        className={`truncate text-[17px] font-semibold tabular-nums leading-tight ${
+          highlight ? "text-primary" : "text-foreground"
+        }`}
+      >
+        {value}
+      </p>
+      <p className="mt-1 hyphens-auto break-words text-[12px] leading-snug text-muted-foreground">
+        {label}
+      </p>
     </div>
   );
 }

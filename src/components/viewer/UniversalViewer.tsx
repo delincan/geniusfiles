@@ -17,6 +17,7 @@
  *   route (a history entry is pushed on open, popped on close).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReaderState } from "@/components/viewer/ReaderState";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   ArrowLeft,
@@ -1335,9 +1336,7 @@ function TextStage({ src, entry, parent }: { src: string; entry: FileEntry; pare
             </button>
           </div>
         ) : state.status === "error" ? (
-          <p className="text-[12.5px] text-red-600">
-            {t("viewer.text.error", { message: state.message })}
-          </p>
+          <ReaderState tone="error" message={t("viewer.text.error", { message: state.message })} />
         ) : state.status === "ready" ? (
           editing ? (
             <textarea

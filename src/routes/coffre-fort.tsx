@@ -152,14 +152,11 @@ function VaultRoute() {
   useListScrollMemory("vault", true);
 
   const t = useT();
-  /* État connu dès le premier rendu : la configuration du coffre est une
-     lecture locale synchrone. Aucun écran « chargement » à l'ouverture. */
-  const [configured, setConfigured] = useState<boolean | null>(() =>
-    typeof window === "undefined" ? null : isVaultConfigured(),
-  );
-  const [unlocked, setUnlocked] = useState<boolean>(() =>
-    typeof window === "undefined" ? false : isVaultUnlocked(),
-  );
+  /* Lu après l'hydratation (lecture locale synchrone, une seule image) :
+     le rendu serveur ne connaît pas l'état du coffre, et l'initialiser
+     pendant le rendu provoquait un décalage d'hydratation. */
+  const [configured, setConfigured] = useState<boolean | null>(null);
+  const [unlocked, setUnlocked] = useState(false);
 
   useEffect(() => {
     setConfigured(isVaultConfigured());
@@ -178,8 +175,8 @@ function VaultRoute() {
   if (configured === null) {
     return (
       <AppShell>
-        <div className="pt-10 text-center text-[12px] text-muted-foreground">
-          {t("vault.loading")}
+        <div className="pt-10" aria-busy="true">
+          <span className="sr-only">{t("vault.loading")}</span>
         </div>
       </AppShell>
     );
@@ -230,17 +227,15 @@ function VaultFullScreen({ children, footer }: { children: ReactNode; footer?: R
   const t = useT();
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background pt-safe">
-      <div className="flex items-center gap-1 px-2 pt-2">
+      <div className="flex h-14 items-center gap-1 px-2">
         <Link
           to="/"
           aria-label={t("vault.exit")}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground active:scale-95"
+          className="gf-press flex h-11 w-11 items-center justify-center rounded-xl text-foreground active:bg-surface-2"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-[22px] w-[22px]" />
         </Link>
-        <span className="text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-          {t("vault.title")}
-        </span>
+        <span className="text-[17px] font-semibold text-foreground">{t("vault.title")}</span>
       </div>
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pb-6">{children}</div>
       {footer ? (
@@ -1004,6 +999,7 @@ function VaultBrowser() {
       {/* En-tête soudé : enfant direct de `.gf-page`, donc jamais tiré par
           le geste « tirer pour actualiser » (voir ScrollFeel). */}
       <PageHeader
+        compact
         title={current ? current.name : t("vault.title")}
         subtitle={
           selectionCount > 0
@@ -1011,9 +1007,7 @@ function VaultBrowser() {
             : t("vault.usage.summary", { count: usage.count, size: formatSize(usage.bytes) })
         }
         eyebrow={current ? t("vault.title") : undefined}
-        leading={
-          <BackButton className="gf-press flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-2 text-muted-foreground hover:text-foreground" />
-        }
+        leading={<BackButton />}
         action={
           <div className="flex items-center gap-0.5">
             <button

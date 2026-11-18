@@ -1,6 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useT, t, t as translate } from "@/lib/i18n";
 import { AudioEditor } from "@/components/audio/AudioEditor";
+import { AppShell } from "@/components/AppShell";
+import { PageHeader } from "@/components/common/PageHeader";
+import { BackButton } from "@/components/navigation/BackButton";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Music4 } from "@/components/icons";
 import { kindOf } from "@/lib/files/format";
 import type { FileEntry, PathRef, StorageRootId } from "@/lib/files/types";
 
@@ -46,9 +51,23 @@ function AudioEditorRoute() {
   };
   if (!name) {
     return (
-      <div className="flex min-h-dvh items-center justify-center text-[13px] text-muted-foreground">
-        {t("media.editor.noFileSelected")}
-      </div>
+      <AppShell>
+        <PageHeader compact leading={<BackButton />} title={t("media.editor.audioTitle")} />
+        <EmptyState
+          icon={Music4}
+          title={t("media.editor.noFileSelected")}
+          description={t("media.editor.noFile.desc")}
+          action={
+            <button
+              type="button"
+              className="btn-primary gf-press"
+              onClick={() => void navigate({ to: "/categorie/$kind", params: { kind: "audio" } })}
+            >
+              {t("media.editor.noFile.cta")}
+            </button>
+          }
+        />
+      </AppShell>
     );
   }
   return <AudioEditor parent={parent} entry={entry} onExit={() => void navigate({ to: "/" })} />;

@@ -288,7 +288,7 @@ export function TextField({
           onSubmit();
         }
       }}
-      className="w-full rounded-2xl border border-transparent bg-input px-4 h-[52px] text-[15px] text-foreground outline-none transition-all duration-150 focus:border-primary focus:bg-surface focus-visible:ring-4 focus-visible:ring-primary/20 placeholder:text-muted-foreground-2"
+      className="w-full rounded-xl border border-transparent bg-input px-4 h-[52px] text-[15px] text-foreground outline-none transition-all duration-150 focus:border-primary focus:bg-surface focus-visible:ring-4 focus-visible:ring-primary/20 placeholder:text-muted-foreground-2"
     />
   );
 }

@@ -72,3 +72,13 @@
 - [x] Run tests and `bun run verify`; check screens in the preview.
 - [ ] Validate step 4 on a real Android phone (real automation runs, notifications, keyboard, system bars) — needs a new APK build.
 - [x] Suggest next steps after the remix (answer once step 4 is done).
+
+# Step 5 — Global finish and quality control
+
+- [x] Audit every screen (dark, 360 px wide): identity, overflow, truncation, touch targets, states.
+- [x] Fix inconsistencies found (components, typography, spacing, colors) without redesign.
+- [x] Android feel: press feedback, page transition, sheets, back, keyboard, system bars.
+- [x] States: loading, empty, no results, error, permission denied, storage/service unavailable.
+- [x] Mascot use checked (welcome, empty states), not multiplied.
+- [x] Quality pass: navigation, search, folders, multi-select, file ops, Genius AI, automations, settings; tests + `bun run verify`.
+- [ ] Validate step 5 on a real Android phone (system bars, keyboard, real search and file operations) — needs a new APK build.

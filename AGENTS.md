@@ -69,3 +69,4 @@ le job `validate` échoue et bloque la génération de l'APK/AAB si `verify` éc
 - File rows, grid cells and file action sheets reuse the shared `gf-file-tile`, `gf-select-mark` and `SheetActionRow` recipes; list, grid, search and categories then stay visually identical.
 - `.oj-cache` is generated dev-server output and stays excluded from ESLint and Prettier; linting its bundles makes `bun run verify` hang.
 - Automation create/edit is a full-page route (`automatisations_.editeur`) and history a flat sibling route; both render outside the list page because the list has no `<Outlet />`, and `AppShell immersive` hides the bottom navigation for the editor.
+- Never combine `px-*` with `pl-safe`/`pr-safe` on one element: those utilities replace the side padding with the bare inset (zero on most phones). Write `pl-[calc(<pad>+env(safe-area-inset-left,0px))]` and its right twin instead.

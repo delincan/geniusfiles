@@ -649,7 +649,7 @@ export function PhotoEditor({
   const body = (
     <div className="fixed inset-0 z-[2100] flex animate-fade-in flex-col bg-background text-foreground">
       {/* Header */}
-      <header className="flex items-center gap-1 px-3 pl-safe pr-safe pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] pb-1.5">
+      <header className="flex items-center gap-1 pl-[calc(0.75rem+env(safe-area-inset-left,0px))] pr-[calc(0.75rem+env(safe-area-inset-right,0px))] pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] pb-1.5">
         <HeaderButton label={t("photo.header.close")} onClick={requestClose}>
           <X className="h-5 w-5" />
         </HeaderButton>
@@ -736,7 +736,7 @@ export function PhotoEditor({
 
       {/* Tool panel */}
       <CommitContext.Provider value={commitDraft}>
-        <div className="glass-panel rounded-t-3xl border-t border-border/50 px-3 pb-[calc(env(safe-area-inset-bottom,0px)+0.4rem)] pt-2 pl-safe pr-safe">
+        <div className="glass-panel rounded-t-3xl border-t border-border/50 pl-[calc(0.75rem+env(safe-area-inset-left,0px))] pr-[calc(0.75rem+env(safe-area-inset-right,0px))] pb-[calc(env(safe-area-inset-bottom,0px)+0.4rem)] pt-2">
           <div className="mb-1.5">
             {tool === "crop" ? (
               <>

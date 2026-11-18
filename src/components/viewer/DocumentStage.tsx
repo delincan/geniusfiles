@@ -7,6 +7,7 @@
  * (zoom, search, page jump). No dependency on external viewers.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReaderState } from "@/components/viewer/ReaderState";
 import {
   Search,
   ZoomIn,
@@ -221,13 +222,12 @@ export function DocumentStage({
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         {state.status === "loading" ? (
-          <div className="p-6 text-center text-[13px] text-reader-muted">
-            {t("viewer.document.loading")}
-          </div>
+          <ReaderState tone="loading" message={t("viewer.document.loading")} />
         ) : state.status === "error" ? (
-          <div className="p-6 text-center text-[13px] text-red-600">
-            {t("viewer.document.error", { message: state.message })}
-          </div>
+          <ReaderState
+            tone="error"
+            message={t("viewer.document.error", { message: state.message })}
+          />
         ) : state.status === "ready" ? (
           <div
             data-gf-selectable="true"

@@ -43,14 +43,16 @@ export function PageHeader({
               </p>
             ) : null}
             <h1
-              className={`truncate font-display font-bold tracking-tight text-foreground ${
-                compact ? "text-[20px] leading-[1.2]" : "text-[26px] leading-[1.15]"
+              className={`line-clamp-2 break-words font-display font-bold tracking-tight text-foreground ${
+                compact
+                  ? "text-[20px] leading-[1.2]"
+                  : "text-[24px] leading-[1.15] min-[400px]:text-[26px]"
               }`}
             >
               {title}
             </h1>
             {subtitle ? (
-              <p className="mt-0.5 truncate text-[12.5px] leading-snug text-muted-foreground">
+              <p className="mt-0.5 line-clamp-2 text-[12.5px] leading-snug text-muted-foreground">
                 {subtitle}
               </p>
             ) : null}

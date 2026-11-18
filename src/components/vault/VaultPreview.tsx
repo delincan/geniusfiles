@@ -49,7 +49,7 @@ export function VaultPreview({
 
   return (
     <div className="fixed inset-0 z-[70] flex flex-col bg-background">
-      <header className="glass-panel flex items-center gap-2 border-b border-border px-3 pb-2 pl-safe pr-safe pt-[calc(env(safe-area-inset-top,0px)+0.5rem)]">
+      <header className="glass-panel flex items-center gap-2 border-b border-border pl-[calc(0.75rem+env(safe-area-inset-left,0px))] pr-[calc(0.75rem+env(safe-area-inset-right,0px))] pb-2 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)]">
         <button
           type="button"
           aria-label={t("action.close")}

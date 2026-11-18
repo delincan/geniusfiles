@@ -24,7 +24,6 @@ import {
   BrainCircuit,
   ChevronRight,
   Clock,
-  Cpu,
   Download,
   Eye,
   ExternalLink,
@@ -39,7 +38,6 @@ import {
   Shield,
   Sparkles,
   Trash2,
-  User,
   X,
 } from "@/components/icons";
 import { toast } from "sonner";
@@ -260,15 +258,14 @@ function AppsPage() {
   return (
     <AppShell>
       <PageHeader
+        compact
         title={t("organize.apps.title")}
         subtitle={
           loading
             ? t("organize.apps.subtitleLoading")
             : `${t("organize.apps.count", { count: stats.total })} · ${formatSize(stats.totalBytes)}`
         }
-        leading={
-          <BackButton className="gf-press flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-2 text-muted-foreground hover:text-foreground" />
-        }
+        leading={<BackButton />}
         action={
           <button
             type="button"
@@ -317,10 +314,10 @@ function AppsPage() {
       <div className="mt-2.5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
         <div className="flex min-w-0 gap-1.5 overflow-x-auto scrollbar-hidden">
           <Chip active={filter === "user"} onClick={() => setFilter("user")}>
-            <User className="h-[18px] w-[18px]" /> {t("organize.apps.filter.user")}
+            {t("organize.apps.filter.user")}
           </Chip>
           <Chip active={filter === "system"} onClick={() => setFilter("system")}>
-            <Cpu className="h-[18px] w-[18px]" /> {t("organize.apps.filter.system")}
+            {t("organize.apps.filter.system")}
           </Chip>
           <Chip active={filter === "all"} onClick={() => setFilter("all")}>
             {t("organize.apps.filter.all")}

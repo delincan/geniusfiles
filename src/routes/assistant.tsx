@@ -438,7 +438,7 @@ function AssistantPage() {
               placeholder={t("assistant.input.placeholder")}
               aria-label={t("assistant.input.ariaLabel")}
               {...kbSentence}
-              className="max-h-32 min-h-[44px] w-full min-w-0 flex-1 resize-none self-center bg-transparent px-3 py-[11px] text-[15px] leading-[22px] text-foreground placeholder:text-muted-foreground focus:outline-none"
+              className="max-h-32 min-h-[44px] w-full min-w-0 flex-1 resize-none self-center bg-transparent px-3 py-[11px] text-[15px] leading-[22px] text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:shadow-none"
             />
             {isBusy ? (
               <Button
@@ -507,7 +507,7 @@ function Welcome({ privacyOpen, onPrivacy }: { privacyOpen: boolean; onPrivacy: 
         size="sm"
         onClick={onPrivacy}
         aria-expanded={privacyOpen}
-        className="mt-4 h-auto min-h-11 whitespace-normal text-[12px] font-normal text-muted-foreground"
+        className="mt-4 h-auto min-h-11 max-w-[20rem] gap-2 whitespace-normal text-left text-[12.5px] font-normal text-muted-foreground"
       >
         <ShieldCheck className="shrink-0 text-primary" />
         {t("assistant.welcome.privacy1")}

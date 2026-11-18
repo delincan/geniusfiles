@@ -19,6 +19,7 @@
  *   changement d'application ou interruption ne perdent jamais le travail.
  */
 import { trackEditorSave, useEditorUsage } from "@/lib/native/useAnalyticsScreen";
+import { ReaderState } from "@/components/viewer/ReaderState";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Redo2, Save, SquarePen, Undo2 } from "@/components/icons";
 import { ReaderHeader, HeaderButton } from "@/components/viewer/ReaderHeader";
@@ -306,13 +307,9 @@ export function WordEditor({
 
       <div className="min-h-0 flex-1 overflow-auto bg-reader-surface">
         {load.status === "loading" ? (
-          <p className="p-6 text-center text-[13px] text-reader-muted">
-            {t("viewer.word.opening")}
-          </p>
+          <ReaderState tone="loading" message={t("viewer.word.opening")} />
         ) : load.status === "error" ? (
-          <p className="p-6 text-center text-[13px] text-red-600">
-            {t("viewer.word.error", { message: load.message })}
-          </p>
+          <ReaderState tone="error" message={t("viewer.word.error", { message: load.message })} />
         ) : (
           <textarea
             value={text}

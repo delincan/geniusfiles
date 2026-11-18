@@ -194,7 +194,7 @@ export function SelectionBar({
         <nav
           /* Couche fixe : aucune annonce native ne peut la recouvrir. */
           data-gf-ad-blocker
-          className="fixed inset-x-0 z-[55] mx-auto max-w-[560px] px-3 pl-safe pr-safe"
+          className="fixed inset-x-0 z-[55] mx-auto max-w-[560px] pl-[calc(0.75rem+env(safe-area-inset-left,0px))] pr-[calc(0.75rem+env(safe-area-inset-right,0px))]"
           aria-label={t("ops.selection.ariaLabel")}
           style={{
             bottom: "calc(env(safe-area-inset-bottom, 0px) + 76px)",

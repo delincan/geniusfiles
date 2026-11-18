@@ -91,7 +91,7 @@ export function FilesTopBar({
           />
         </div>
       ) : (
-        <div className="flex h-12 items-center gap-1 px-1.5 pl-safe pr-safe">
+        <div className="flex h-12 items-center gap-1 pl-[calc(0.375rem+env(safe-area-inset-left,0px))] pr-[calc(0.375rem+env(safe-area-inset-right,0px))]">
           <IconButton label={t("action.back")} onClick={onBack}>
             <ArrowLeft className="h-[21px] w-[21px]" />
           </IconButton>

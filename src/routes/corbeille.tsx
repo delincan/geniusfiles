@@ -19,7 +19,7 @@
  */
 import { useListScrollMemory } from "@/lib/files/use-list-scroll";
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ArrowDownAZ, Check, CheckSquare, MoreVertical, Square, X } from "@/components/icons";
 import {
   GfSort as ArrowUpDown,
@@ -127,9 +127,16 @@ function TrashPage() {
   useListScrollMemory("trash", true);
 
   const t = useT();
-  const initialTrash = useMemo(() => peekTrashItems(), []);
-  const [items, setItems] = useState<TrashItem[] | null>(() => initialTrash?.items ?? null);
-  const [totalBytes, setTotalBytes] = useState(() => initialTrash?.totalBytes ?? 0);
+  const [items, setItems] = useState<TrashItem[] | null>(null);
+  const [totalBytes, setTotalBytes] = useState(0);
+  /* Dernière liste connue, posée avant le premier affichage du navigateur :
+     retour instantané sans décalage avec le rendu serveur. */
+  useLayoutEffect(() => {
+    const cached = peekTrashItems();
+    if (!cached) return;
+    setItems((current) => current ?? cached.items);
+    setTotalBytes((current) => current || cached.totalBytes);
+  }, []);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState(false);
   const [confirmEmpty, setConfirmEmpty] = useState(false);
@@ -369,13 +376,12 @@ function TrashPage() {
   return (
     <AppShell>
       <PageHeader
+        compact
         title={
           anySelected ? t("unit.selected", { count: selected.size }) : t("cleaner.trash.title")
         }
         subtitle={anySelected ? t("cleaner.trash.selectHint") : subtitle}
-        leading={
-          <BackButton className="gf-press flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-2 text-muted-foreground hover:text-foreground" />
-        }
+        leading={<BackButton />}
         action={
           <div className="flex items-center gap-0.5">
             <button

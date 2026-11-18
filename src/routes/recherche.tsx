@@ -23,7 +23,7 @@ import {
   type SelectionItem,
 } from "@/lib/files/selection-store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Search, Clock, X, SlidersHorizontal, Trash2 } from "@/components/icons";
+import { Search, Clock, X, SlidersHorizontal, Trash2, HardDrive } from "@/components/icons";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Spinner } from "@/components/ui/states";
@@ -31,6 +31,7 @@ import { BACK_PRIORITY, useBackHandler } from "@/lib/navigation/back-stack";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { InlineAdBanner } from "@/components/ads/InlineAdBanner";
 import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { BottomSheet, NamePrompt } from "@/components/files/BottomSheet";
 import { DeleteConfirmDialog } from "@/components/files/DeleteConfirmDialog";
 import { FileGridView, FileListView } from "@/components/files/FileList";
@@ -867,7 +868,7 @@ export function SearchPage() {
             onSelectRange={selectedFiles.length >= 1 ? selectRange : undefined}
           />
         ) : (
-          <div className="px-4 pb-3 pl-safe pr-safe">
+          <div className="pl-[calc(1rem+env(safe-area-inset-left,0px))] pr-[calc(1rem+env(safe-area-inset-right,0px))] pb-3">
             <div className="mt-2">
               <label className="relative block">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground" />
@@ -957,7 +958,11 @@ export function SearchPage() {
         />
       ) : (
         <>
-          <div className="mt-4 flex items-center justify-between text-[11px] text-muted-foreground">
+          <div
+            className={`mt-4 flex items-center justify-between text-[12px] text-muted-foreground ${
+              !scanning && results.length === 0 ? "hidden" : ""
+            }`}
+          >
             <span>
               {results.length > 0
                 ? `${t("search.results.found", { count: results.length })}${
@@ -1013,11 +1018,29 @@ export function SearchPage() {
 
           {!scanning && results.length === 0 ? (
             <div className="mt-4">
-              <IllustratedEmptyState
-                id="search"
-                adSlot="empty-search"
-                description={t("search.empty.description", { query })}
-              />
+              {roots.length === 0 && !scope ? (
+                /* Aucun stockage lisible : ce n'est pas « aucun résultat ». */
+                <EmptyState
+                  icon={HardDrive}
+                  title={t("search.noStorage.title")}
+                  description={t("search.noStorage.desc")}
+                  action={
+                    <button
+                      type="button"
+                      className="btn-secondary gf-press"
+                      onClick={() => void navigate({ to: "/parametres" })}
+                    >
+                      {t("search.noStorage.cta")}
+                    </button>
+                  }
+                />
+              ) : (
+                <IllustratedEmptyState
+                  id="search"
+                  adSlot="empty-search"
+                  description={t("search.empty.description", { query })}
+                />
+              )}
             </div>
           ) : null}
 

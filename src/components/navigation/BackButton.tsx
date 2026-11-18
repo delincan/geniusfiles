@@ -6,7 +6,7 @@ import { ArrowLeft } from "@/components/icons";
 import { useAppBack } from "@/lib/navigation/use-app-back";
 import { useT } from "@/lib/i18n";
 
-export function BackButton({ className, size = 16 }: { className?: string; size?: number }) {
+export function BackButton({ className, size = 22 }: { className?: string; size?: number }) {
   const t = useT();
   const goBack = useAppBack();
   return (
@@ -16,7 +16,7 @@ export function BackButton({ className, size = 16 }: { className?: string; size?
       aria-label={t("action.back")}
       className={
         className ??
-        "rounded-lg border border-border bg-surface p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+        "gf-press -ml-2 flex h-11 w-11 items-center justify-center rounded-xl text-foreground active:bg-surface-2"
       }
     >
       <ArrowLeft style={{ height: size, width: size }} />

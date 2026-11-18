@@ -431,7 +431,7 @@ export function ImageViewer({
 
       {/* Top bar */}
       <div
-        className={`relative z-10 flex items-center gap-2 bg-gradient-to-b from-background via-background/90 to-transparent px-4 pb-6 pl-safe pr-safe pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] transition-all duration-200 ${
+        className={`relative z-10 flex items-center gap-2 bg-gradient-to-b from-background via-background/90 to-transparent pl-[calc(1rem+env(safe-area-inset-left,0px))] pr-[calc(1rem+env(safe-area-inset-right,0px))] pb-6 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] transition-all duration-200 ${
           chrome ? "opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
         }`}
       >
@@ -471,7 +471,7 @@ export function ImageViewer({
 
       {/* Floating bottom action bar */}
       <div
-        className={`relative z-10 bg-gradient-to-t from-background via-background/90 to-transparent px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1rem)] pl-safe pr-safe pt-8 transition-all duration-200 ${
+        className={`relative z-10 bg-gradient-to-t from-background via-background/90 to-transparent pl-[calc(1rem+env(safe-area-inset-left,0px))] pr-[calc(1rem+env(safe-area-inset-right,0px))] pb-[calc(env(safe-area-inset-bottom,0px)+1rem)] pt-8 transition-all duration-200 ${
           chrome ? "opacity-100" : "pointer-events-none translate-y-3 opacity-0"
         }`}
       >

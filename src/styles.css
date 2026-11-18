@@ -1056,6 +1056,15 @@ canvas + .textLayer ~ canvas,
     opacity: 0.82;
   }
 
+  /* Cases à cocher natives : même bleu et même taille partout. */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--primary);
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
   /* Anneau de focus unique dans toute l'application (clavier / accessibilité). */
   html:not([data-gf-input="touch"])
     :where(button, a, [role="button"], input, textarea, select, [tabindex]):focus-visible {

@@ -66,3 +66,12 @@ Progression : pourcentage des jalons terminés, non une estimation du temps rest
 - Historique : regroupé par date, détail dépliable, couleurs de statut sobres (vert réussi, orange partiel, rouge échec).
 - Paramètres : sections titrées (Général, Apparence, Stockage, Gestion des fichiers, Automatisations, Notifications, Confidentialité et sécurité, À propos), lignes `.gf-settings-row`, choix dans une feuille `.gf-option` avec coche bleue.
 - Boutons secondaires sur `secondary`, Annuler en texte neutre ; champs et boutons au rayon `--radius-xl`.
+
+## Finitions globales
+
+- Retour : flèche seule 44 px (`BackButton`), sans pastille ; sous-écrans en titre compact 20 px.
+- Titres de page sur deux lignes au plus, jamais coupés au milieu d'un mot.
+- Chiffres clés : valeur 17/600 au-dessus, libellé 12 px gris dessous, tuile `surface-2` sans bordure.
+- Lecteurs : chargement et erreur centrés (`ReaderState`), jamais de texte rouge brut.
+- Cases à cocher natives : 20 px, bleu `primary`.
+- États : « aucun résultat » distinct de « aucun stockage accessible », chacun avec une action utile.

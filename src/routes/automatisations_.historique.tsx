@@ -98,12 +98,7 @@ function HistoryPage() {
   return (
     <AppShell>
       <PageHeader
-        leading={
-          <BackButton
-            className="gf-press -ml-2 flex h-11 w-11 items-center justify-center rounded-xl text-foreground"
-            size={22}
-          />
-        }
+        leading={<BackButton />}
         compact
         title={tr("automations.ui.history.title")}
         subtitle={tr("automations.history.page.retained", { count: history.length })}

@@ -7,7 +7,7 @@
  * transmet donc un chemin d'APK réel à la fonctionnalité appelante
  * (transfert, partage, sauvegarde…), jamais une simple description.
  */
-import { ChevronLeft } from "@/components/icons";
+import { ArrowLeft } from "@/components/icons";
 import { useEffect, useMemo, useState } from "react";
 
 import { PageHeader } from "@/components/common/PageHeader";
@@ -115,6 +115,7 @@ export function AppsPickScreen({ request }: { request: PickRequest }) {
   return (
     <div className="flex flex-col gap-4 pb-6">
       <PageHeader
+        compact
         title={t("files.apps.title")}
         subtitle={t("files.apps.subtitle")}
         leading={
@@ -122,9 +123,9 @@ export function AppsPickScreen({ request }: { request: PickRequest }) {
             type="button"
             onClick={() => popPickScreen()}
             aria-label={t("action.back")}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors active:bg-secondary/60"
+            className="gf-press -ml-2 flex h-11 w-11 items-center justify-center rounded-xl text-foreground active:bg-surface-2"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <ArrowLeft className="h-[22px] w-[22px]" />
           </button>
         }
       />
