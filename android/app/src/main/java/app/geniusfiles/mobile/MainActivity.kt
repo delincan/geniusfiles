@@ -73,7 +73,7 @@ class MainActivity : BridgeActivity() {
         try {
             val light = isLightTheme()
             window.setBackgroundDrawable(
-                ColorDrawable(if (light) 0xFFF5F6F8.toInt() else 0xFF191919.toInt()),
+                ColorDrawable(if (light) 0xFFF5F6F8.toInt() else 0xFF000000.toInt()),
             )
             WindowInsetsControllerCompat(window, window.decorView).apply {
                 isAppearanceLightStatusBars = light
@@ -213,7 +213,7 @@ class MainActivity : BridgeActivity() {
                 @Suppress("DEPRECATION")
                 webView.settings.forceDark = android.webkit.WebSettings.FORCE_DARK_OFF
             }
-            webView.setBackgroundColor(if (isLightTheme()) 0xFFF5F6F8.toInt() else 0xFF191919.toInt())
+            webView.setBackgroundColor(if (isLightTheme()) 0xFFF5F6F8.toInt() else 0xFF000000.toInt())
         } catch (_: Throwable) {
             /* réglage non supporté */
         }
@@ -274,9 +274,9 @@ class MainActivity : BridgeActivity() {
         val light = lightOverride ?: isLightTheme()
         // Filet de sécurité derrière la WebView et pendant ses frames de
         // composition : aucune fenêtre noire lors d'un changement de thème.
-        window.setBackgroundDrawable(ColorDrawable(if (light) 0xFFF5F6F8.toInt() else 0xFF191919.toInt()))
+        window.setBackgroundDrawable(ColorDrawable(if (light) 0xFFF5F6F8.toInt() else 0xFF000000.toInt()))
         try {
-            bridge?.webView?.setBackgroundColor(if (light) 0xFFF5F6F8.toInt() else 0xFF191919.toInt())
+            bridge?.webView?.setBackgroundColor(if (light) 0xFFF5F6F8.toInt() else 0xFF000000.toInt())
         } catch (_: Throwable) {
             /* WebView pas encore créée */
         }

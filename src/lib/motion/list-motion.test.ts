@@ -30,7 +30,10 @@ describe("mouvement des listes de fichiers", () => {
   });
 
   it("une mise à jour massive ou une liste vide n'anime rien", () => {
-    const prev = ["keep", ...Array.from({ length: LIST_MOTION_MAX_CHANGES + 1 }, (_, i) => `d${i}`)];
+    const prev = [
+      "keep",
+      ...Array.from({ length: LIST_MOTION_MAX_CHANGES + 1 }, (_, i) => `d${i}`),
+    ];
     expect(planListMotion(prev, ["keep"])).toEqual({ kind: "none" });
     expect(planListMotion([], ["a"])).toEqual({ kind: "none" });
     expect(planListMotion(["a"], [])).toEqual({ kind: "none" });

@@ -348,7 +348,7 @@ export function BottomSheet({
           role="dialog"
           aria-modal="true"
           aria-label={title}
-          className={`relative z-10 flex w-full flex-col overflow-hidden bg-surface transition-all duration-150 ease-out ${
+          className={`relative z-10 flex w-full flex-col overflow-hidden bg-surface transition-[opacity,transform] duration-150 ease-out ${
             visible ? "scale-100 opacity-100" : "scale-[0.97] opacity-0"
           } ${
             isFullScreen

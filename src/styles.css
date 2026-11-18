@@ -871,7 +871,18 @@ html {
     var(--surface-2) 75%
   );
   background-size: 200% 100%;
-  animation: gf-shimmer 1.4s linear infinite;
+  /* Révélé après 160 ms seulement : un chargement rapide n'affiche rien. */
+  animation:
+    gf-skeleton-reveal 160ms var(--ease-standard) 160ms both,
+    gf-shimmer 1.4s linear infinite;
+}
+@keyframes gf-skeleton-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Apparition douce du contenu — évite les sauts et clignotements. */

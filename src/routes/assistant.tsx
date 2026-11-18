@@ -200,6 +200,12 @@ function AssistantPage() {
   const messages = useMemo(() => (hydrated ? chat.messages : []), [hydrated, chat.messages]);
 
   const task = useSyncExternalStore(subscribeTask, getTask, getServerTask);
+  /* Messages déjà présents à l'ouverture : affichés directement. Seuls les
+     nouveaux messages apparaissent en fondu. */
+  const initialIds = useRef<Set<string> | null>(null);
+  if (initialIds.current === null && hydrated) {
+    initialIds.current = new Set(chat.messages.map((m) => m.id));
+  }
   const isBusy = status === "submitted" || status === "streaming";
   const taskRunning = task.phase !== "idle";
 
@@ -357,7 +363,13 @@ function AssistantPage() {
           {messages.length === 0 && !taskRunning ? (
             <Welcome privacyOpen={privacyOpen} onPrivacy={() => setPrivacyOpen((open) => !open)} />
           ) : (
-            head.map((m) => <MessageBubble key={m.id} message={m} />)
+            head.map((m) => (
+              <MessageBubble
+                key={m.id}
+                message={m}
+                animate={!(initialIds.current?.has(m.id) ?? true)}
+              />
+            ))
           )}
 
           {offlineBlocked ? <ChatOfflineState onRetry={() => handleSubmit()} /> : null}
@@ -578,7 +590,7 @@ function CopyButton({ text, align }: { text: string; align: "start" | "end" }) {
   );
 }
 
-function MessageBubble({ message }: { message: UIMessage }) {
+function MessageBubble({ message, animate }: { message: UIMessage; animate: boolean }) {
   const isUser = message.role === "user";
   const parts = Array.isArray(message.parts) ? message.parts : [];
   const text = parts.map((p) => (p?.type === "text" ? p.text : "")).join("");
@@ -586,7 +598,7 @@ function MessageBubble({ message }: { message: UIMessage }) {
   return (
     <Message
       from={message.role}
-      className={`gf-appear gf-chat-safe ${isUser ? "max-w-[88%]" : "max-w-full"}`}
+      className={`${animate ? "gf-appear " : ""}gf-chat-safe ${isUser ? "max-w-[88%]" : "max-w-full"}`}
     >
       <MessageContent
         className={

@@ -47,8 +47,8 @@ export function PipelineTrace({ task }: { task: TaskSnapshot }) {
         className="h-1 overflow-hidden rounded-full bg-surface-2"
       >
         <div
-          className={`h-full rounded-full transition-[width] duration-200 ${task.failed || task.cancelled ? "bg-destructive" : "bg-primary"}`}
-          style={{ width: `${progress}%` }}
+          className={`h-full w-full origin-left transition-transform duration-200 ${task.failed || task.cancelled ? "bg-destructive" : "bg-primary"}`}
+          style={{ transform: `scaleX(${progress / 100})` }}
         />
       </div>
     </div>

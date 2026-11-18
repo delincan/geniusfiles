@@ -138,40 +138,40 @@ export function FileListView({
   const totalSize = virtualizer.getTotalSize();
   return (
     <div ref={motionRef} className="relative">
-    <div ref={parentRef} style={{ position: "relative", height: `${totalSize}px` }}>
-      {items.map((v) => {
-        const entry = entries[v.index];
-        return (
-          <div
-            key={entryKey(entry)}
-            data-index={v.index}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: `${ROW_HEIGHT}px`,
-              transform: `translateY(${v.start - scrollMargin}px)`,
-              contain: "layout paint style",
-            }}
-          >
-            <FileRow
-              flipKey={entryKey(entry)}
-              entry={entry}
-              parent={parent ?? null}
-              onOpen={onOpen}
-              onQuickOpen={onQuickOpen}
-              renderIcon={renderIcon}
-              onLongPress={onLongPress}
-              onMore={onMore}
-              selectionMode={selectionMode}
-              isSelected={isSelected(entry)}
-              onToggleSelect={onToggleSelect}
-            />
-          </div>
-        );
-      })}
-    </div>
+      <div ref={parentRef} style={{ position: "relative", height: `${totalSize}px` }}>
+        {items.map((v) => {
+          const entry = entries[v.index];
+          return (
+            <div
+              key={entryKey(entry)}
+              data-index={v.index}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: `${ROW_HEIGHT}px`,
+                transform: `translateY(${v.start - scrollMargin}px)`,
+                contain: "layout paint style",
+              }}
+            >
+              <FileRow
+                flipKey={entryKey(entry)}
+                entry={entry}
+                parent={parent ?? null}
+                onOpen={onOpen}
+                onQuickOpen={onQuickOpen}
+                renderIcon={renderIcon}
+                onLongPress={onLongPress}
+                onMore={onMore}
+                selectionMode={selectionMode}
+                isSelected={isSelected(entry)}
+                onToggleSelect={onToggleSelect}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -318,46 +318,46 @@ export function FileGridView({
   const totalSize = virtualizer.getTotalSize();
   return (
     <div ref={motionRef} className="relative">
-    <div ref={parentRef} style={{ position: "relative", height: `${totalSize}px` }}>
-      {items.map((v) => {
-        const start = v.index * COLS;
-        const rowEntries = entries.slice(start, start + COLS);
-        return (
-          <div
-            key={v.key}
-            data-index={v.index}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: `${GRID_ROW_HEIGHT}px`,
-              transform: `translateY(${v.start - scrollMargin}px)`,
-              contain: "layout paint style",
-            }}
-          >
-            <div className="grid grid-cols-3 gap-x-2 px-3 pb-2.5">
-              {rowEntries.map((entry) => (
-                <GridCell
-                  key={entryKey(entry)}
-                  flipKey={entryKey(entry)}
-                  entry={entry}
-                  parent={parent ?? null}
-                  onOpen={onOpen}
-                  onQuickOpen={onQuickOpen}
-                  renderIcon={renderIcon}
-                  onLongPress={onLongPress}
-                  onMore={onMore}
-                  selectionMode={selectionMode}
-                  isSelected={isSelected(entry)}
-                  onToggleSelect={onToggleSelect}
-                />
-              ))}
+      <div ref={parentRef} style={{ position: "relative", height: `${totalSize}px` }}>
+        {items.map((v) => {
+          const start = v.index * COLS;
+          const rowEntries = entries.slice(start, start + COLS);
+          return (
+            <div
+              key={v.key}
+              data-index={v.index}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: `${GRID_ROW_HEIGHT}px`,
+                transform: `translateY(${v.start - scrollMargin}px)`,
+                contain: "layout paint style",
+              }}
+            >
+              <div className="grid grid-cols-3 gap-x-2 px-3 pb-2.5">
+                {rowEntries.map((entry) => (
+                  <GridCell
+                    key={entryKey(entry)}
+                    flipKey={entryKey(entry)}
+                    entry={entry}
+                    parent={parent ?? null}
+                    onOpen={onOpen}
+                    onQuickOpen={onQuickOpen}
+                    renderIcon={renderIcon}
+                    onLongPress={onLongPress}
+                    onMore={onMore}
+                    selectionMode={selectionMode}
+                    isSelected={isSelected(entry)}
+                    onToggleSelect={onToggleSelect}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
