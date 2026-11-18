@@ -68,7 +68,7 @@ export default {
   "home.delete.cancelledWithCount": "Deletion cancelled — {count} {unit} already moved",
   "home.delete.cancelled": "Deletion cancelled",
   "home.delete.doneSingle": "“{name}” moved to trash",
-  "home.delete.doneMultiple": "{count} {unit}s moved to trash",
+  "home.delete.doneMultiple": "{count} {unit} moved to trash",
   "home.delete.failed": "{count} deletion(s) failed",
 
   "home.share.failed": "Couldn't share",

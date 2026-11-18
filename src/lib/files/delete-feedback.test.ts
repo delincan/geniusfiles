@@ -17,15 +17,25 @@ describe("Message après « Supprimer définitivement »", () => {
       permanent: true,
       count: 1,
       name: "photo.jpg",
-      unit: "fichier",
+      unit: "file",
     });
     expect(msg).toBe("« photo.jpg » supprimé définitivement");
   });
 
   it("plusieurs fichiers supprimés définitivement", () => {
     setLocale("fr");
-    const msg = deleteDoneMessage({ permanent: true, count: 3, name: "a", unit: "fichier" });
+    const msg = deleteDoneMessage({ permanent: true, count: 3, name: "a", unit: "file" });
     expect(msg).toBe("3 fichiers supprimés définitivement");
+  });
+
+  it("le mot « fichiers » est traduit, jamais le code interne", () => {
+    setLocale("fr");
+    expect(deleteDoneMessage({ permanent: false, count: 2, name: "a", unit: "file" })).toBe(
+      "2 fichiers déplacés dans la Corbeille",
+    );
+    expect(deleteDoneMessage({ permanent: true, count: 2, name: "a", unit: "folder" })).toBe(
+      "2 dossiers supprimés définitivement",
+    );
   });
 
   it("sans la case, le message parle toujours de la Corbeille", () => {
@@ -34,7 +44,7 @@ describe("Message après « Supprimer définitivement »", () => {
       permanent: false,
       count: 1,
       name: "photo.jpg",
-      unit: "fichier",
+      unit: "file",
     });
     expect(msg).toBe("« photo.jpg » déplacé dans la Corbeille");
   });
@@ -47,8 +57,11 @@ describe("Message après « Supprimer définitivement »", () => {
 
   it("annulation et historique ne parlent pas de Corbeille pour une suppression définitive", () => {
     setLocale("fr");
-    expect(deleteCancelledMessage({ permanent: true, count: 2, unit: "fichier" })).not.toMatch(
+    expect(deleteCancelledMessage({ permanent: true, count: 2, unit: "file" })).not.toMatch(
       /Corbeille|déplacé/,
+    );
+    expect(deleteCancelledMessage({ permanent: true, count: 2, unit: "file" })).toBe(
+      "Suppression annulée — 2 fichiers déjà supprimé(s) définitivement",
     );
     expect(deleteHistorySummary({ permanent: true, count: 2, name: "a" })).not.toMatch(/Corbeille/);
   });

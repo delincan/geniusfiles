@@ -19,7 +19,7 @@ export default {
   "settings.android.desc": "Notificações, armazenamento e outros acessos do app.",
   "settings.android.unavailable": "Não foi possível abrir as configurações do Android.",
   "home.delete.permanentSingle": "«{name}» excluído permanentemente",
-  "home.delete.permanentMultiple": "{count} {unit}s excluídos permanentemente",
+  "home.delete.permanentMultiple": "{count} {unit} excluídos permanentemente",
   "home.delete.permanentCancelledWithCount":
     "Exclusão cancelada — {count} {unit} já excluído(s) permanentemente",
   "files.delete.deletedForeverVerb": "excluído(s) permanentemente",

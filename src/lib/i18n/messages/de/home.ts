@@ -68,7 +68,7 @@ export default {
   "home.delete.cancelledWithCount": "Löschen abgebrochen — {count} {unit} bereits verschoben",
   "home.delete.cancelled": "Löschen abgebrochen",
   "home.delete.doneSingle": "„{name}“ in den Papierkorb verschoben",
-  "home.delete.doneMultiple": "{count} {unit}s in den Papierkorb verschoben",
+  "home.delete.doneMultiple": "{count} {unit} in den Papierkorb verschoben",
   "home.delete.failed": "{count} Löschung(en) fehlgeschlagen",
 
   "home.share.failed": "Teilen fehlgeschlagen",

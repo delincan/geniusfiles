@@ -4,6 +4,12 @@
  * croirait pouvoir restaurer un fichier qui n'existe plus.
  */
 import { t } from "@/lib/i18n";
+import type { CountUnit } from "@/lib/files/describe";
+
+/** « fichiers », « dossiers », « éléments » dans la langue active. */
+function unitWord(unit: CountUnit, count: number): string {
+  return t(`unit.${unit}`, { count });
+}
 
 /** Participe passé utilisé dans les bilans « {count} éléments {verb} ». */
 export function deleteVerb(permanent: boolean): string {
@@ -15,7 +21,7 @@ export function deleteDoneMessage(opts: {
   permanent: boolean;
   count: number;
   name: string;
-  unit: string;
+  unit: CountUnit;
 }): string {
   const { permanent, count, name, unit } = opts;
   if (count === 1) {
@@ -23,7 +29,7 @@ export function deleteDoneMessage(opts: {
   }
   return t(permanent ? "home.delete.permanentMultiple" : "home.delete.doneMultiple", {
     count,
-    unit,
+    unit: unitWord(unit, count),
   });
 }
 
@@ -31,7 +37,7 @@ export function deleteDoneMessage(opts: {
 export function deleteCancelledMessage(opts: {
   permanent: boolean;
   count: number;
-  unit: string;
+  unit: CountUnit;
 }): string {
   const { permanent, count, unit } = opts;
   if (count === 0) return t("home.delete.cancelled");
@@ -39,7 +45,7 @@ export function deleteCancelledMessage(opts: {
     permanent ? "home.delete.permanentCancelledWithCount" : "home.delete.cancelledWithCount",
     {
       count,
-      unit,
+      unit: unitWord(unit, count),
     },
   );
 }

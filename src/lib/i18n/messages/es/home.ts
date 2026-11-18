@@ -68,7 +68,7 @@ export default {
   "home.delete.cancelledWithCount": "Eliminación cancelada — {count} {unit} ya movidos",
   "home.delete.cancelled": "Eliminación cancelada",
   "home.delete.doneSingle": "“{name}” movido a la papelera",
-  "home.delete.doneMultiple": "{count} {unit}s movidos a la papelera",
+  "home.delete.doneMultiple": "{count} {unit} movidos a la papelera",
   "home.delete.failed": "{count} eliminación(es) fallida(s)",
 
   "home.share.failed": "No se pudo compartir",

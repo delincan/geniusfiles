@@ -68,7 +68,7 @@ export default {
   "home.delete.cancelledWithCount": "Exclusão cancelada — {count} {unit} já movido(s)",
   "home.delete.cancelled": "Exclusão cancelada",
   "home.delete.doneSingle": "“{name}” movido para a lixeira",
-  "home.delete.doneMultiple": "{count} {unit}s movidos para a lixeira",
+  "home.delete.doneMultiple": "{count} {unit} movidos para a lixeira",
   "home.delete.failed": "{count} exclusão(ões) falhou(aram)",
 
   "home.share.failed": "Não foi possível compartilhar",

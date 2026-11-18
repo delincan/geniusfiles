@@ -68,7 +68,7 @@ export default {
   "home.delete.cancelledWithCount": "Suppression annulée — {count} {unit} déjà déplacé(s)",
   "home.delete.cancelled": "Suppression annulée",
   "home.delete.doneSingle": "« {name} » déplacé dans la Corbeille",
-  "home.delete.doneMultiple": "{count} {unit}s déplacés dans la Corbeille",
+  "home.delete.doneMultiple": "{count} {unit} déplacés dans la Corbeille",
   "home.delete.failed": "{count} suppression(s) impossible(s)",
 
   "home.share.failed": "Partage impossible",

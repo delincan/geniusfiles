@@ -19,7 +19,7 @@ export default {
   "settings.android.desc": "Notifications, storage and other app access.",
   "settings.android.unavailable": "Couldn't open Android settings.",
   "home.delete.permanentSingle": "“{name}” permanently deleted",
-  "home.delete.permanentMultiple": "{count} {unit}s permanently deleted",
+  "home.delete.permanentMultiple": "{count} {unit} permanently deleted",
   "home.delete.permanentCancelledWithCount":
     "Deletion cancelled — {count} {unit} already permanently deleted",
   "files.delete.deletedForeverVerb": "permanently deleted",
