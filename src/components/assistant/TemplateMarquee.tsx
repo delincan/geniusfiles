@@ -18,7 +18,8 @@ export function TemplateMarquee({ onPick }: { onPick: (text: string) => void }) 
         onClick={() => onPick(text)}
         tabIndex={copy === 1 ? -1 : undefined}
         aria-hidden={copy === 1 || undefined}
-        className="h-10 shrink-0 whitespace-nowrap rounded-full bg-surface px-3.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground active:bg-surface-2 active:text-foreground"
+        title={text}
+        className="h-10 max-w-[15rem] shrink-0 truncate whitespace-nowrap rounded-full border border-border bg-surface px-3.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground active:bg-surface-2 active:text-foreground"
       >
         {text}
       </button>

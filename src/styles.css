@@ -2148,6 +2148,8 @@ select.gf-input {
 .gf-marquee {
   overflow: hidden;
   max-width: 100%;
+  /* Bords estompés : on voit que la rangée continue sans couper net une puce. */
+  mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
 }
 .gf-marquee-track {
   display: flex;
