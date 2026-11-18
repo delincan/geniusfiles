@@ -2142,3 +2142,44 @@ select.gf-input {
 .gf-settings-row + .gf-settings-row[data-divider="full"]::before {
   left: 16px;
 }
+
+/* Suggestions Genius AI : défilement continu vers la gauche. La piste
+   contient deux copies identiques ; -50 % ramène exactement au début. */
+.gf-marquee {
+  overflow: hidden;
+  max-width: 100%;
+}
+.gf-marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 8px;
+  padding-right: 8px;
+  animation-name: gf-marquee-left;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.gf-marquee:hover .gf-marquee-track,
+.gf-marquee:active .gf-marquee-track,
+.gf-marquee:focus-within .gf-marquee-track {
+  animation-play-state: paused;
+}
+@keyframes gf-marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gf-marquee {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .gf-marquee-track {
+    animation: none;
+  }
+  .gf-marquee-track > [aria-hidden="true"] {
+    display: none;
+  }
+}

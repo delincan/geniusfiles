@@ -5,6 +5,7 @@
  * exactement comme un code PIN par `src/lib/vault/auth.ts` : il est dérivé en
  * PBKDF2-SHA256 et jamais stocké en clair.
  */
+import { vibrate } from "@/lib/feedback/haptics";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useT } from "@/lib/i18n";
 
@@ -89,7 +90,7 @@ export function PatternLock({
           if (mid != null && !prev.includes(mid)) return [...prev, mid, hit];
         }
         try {
-          navigator.vibrate?.(8);
+          vibrate(8);
         } catch {
           /* ignore */
         }

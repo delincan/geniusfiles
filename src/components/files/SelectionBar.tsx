@@ -1,14 +1,4 @@
-import { Check, MoreHorizontal, X } from "@/components/icons";
-import {
-  GfTransfer as ArrowLeftRight,
-  GfSelectAll as CheckCheck,
-  GfCopyFiles as Copy,
-  GfMoveTo as FolderInput,
-  GfShareNodes as Share2,
-  GfRename as SquarePen,
-  GfTrash as Trash2,
-  type AppIcon,
-} from "@/components/icons";
+import { ACTION_ICON, MoreHorizontal, X, type AppIcon } from "@/components/icons";
 import { Portal } from "@/components/common/Portal";
 import { useT } from "@/lib/i18n";
 
@@ -46,30 +36,30 @@ export function SelectionActionRow({
         type="button"
         onClick={onClear}
         aria-label={t("ops.selection.exit")}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-foreground transition-colors active:bg-surface-2"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-foreground transition-colors active:bg-surface-2"
       >
         <X className="h-[22px] w-[22px]" />
       </button>
-      <span className="flex min-w-0 items-center gap-2.5 px-1">
-        <span aria-hidden data-selected="true" className="gf-select-mark">
-          <Check className="h-3.5 w-3.5" strokeWidth={3} />
+      <span className="flex min-w-0 flex-col justify-center px-1 leading-tight">
+        <span className="truncate text-[15px] font-semibold tabular-nums tracking-[-0.01em] text-foreground">
+          {t("unit.selected", { count })}
         </span>
-        <span className="flex min-w-0 flex-col justify-center leading-tight">
-          <span className="truncate text-[16px] font-semibold tabular-nums tracking-[-0.01em] text-foreground">
-            {t("unit.selected", { count })}
+        {sizeLabel ? (
+          <span className="mt-0.5 truncate text-[12px] tabular-nums text-muted-foreground">
+            {sizeLabel}
           </span>
-          {sizeLabel ? (
-            <span className="mt-0.5 truncate text-[12px] tabular-nums text-muted-foreground">
-              {sizeLabel}
-            </span>
-          ) : null}
-        </span>
+        ) : null}
       </span>
-      <div className="flex shrink-0 items-center gap-1 pr-0.5">
-        <TopAction icon={CheckCheck} label={t("action.selectAll")} onClick={onSelectAll} />
+      <div className="flex shrink-0 items-center gap-1.5 pr-1">
+        <TopAction
+          icon={ACTION_ICON.selectAll}
+          label={t("ops.selection.allShort")}
+          ariaLabel={t("action.selectAll")}
+          onClick={onSelectAll}
+        />
         {onSelectRange ? (
           <TopAction
-            icon={ArrowLeftRight}
+            icon={ACTION_ICON.selectRange}
             label={t("ops.selection.range")}
             onClick={onSelectRange}
           />
@@ -115,24 +105,28 @@ export function SelectionTopBar({
   );
 }
 
+/** Action texte + icône : lisible d'un coup d'œil, zone tactile 44 px. */
 function TopAction({
   icon: Icon,
   label,
+  ariaLabel,
   onClick,
 }: {
   icon: AppIcon;
   label: string;
+  ariaLabel?: string;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={label}
-      title={label}
-      className="flex h-11 w-11 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground active:bg-surface-2"
+      aria-label={ariaLabel ?? label}
+      title={ariaLabel ?? label}
+      className="relative flex h-9 items-center gap-1.5 rounded-full bg-surface-2 px-3 text-[13px] font-medium text-foreground transition-colors before:absolute before:-inset-y-1 before:inset-x-0 before:content-[''] hover:bg-surface-3 active:bg-surface-3"
     >
-      <Icon className="h-5 w-5" />
+      <Icon className="h-4 w-4 shrink-0" />
+      <span className="whitespace-nowrap">{label}</span>
     </button>
   );
 }
@@ -177,13 +171,19 @@ export function SelectionBar({
     onClick: () => void;
     danger?: boolean;
   }> = [
-    { key: "share", icon: Share2, label: t("action.share"), onClick: onShare ?? onMore },
+    { key: "share", icon: ACTION_ICON.share, label: t("action.share"), onClick: onShare ?? onMore },
     ...(canRename
-      ? [{ key: "rename", icon: SquarePen, label: t("action.rename"), onClick: onRename }]
+      ? [{ key: "rename", icon: ACTION_ICON.rename, label: t("action.rename"), onClick: onRename }]
       : []),
-    { key: "copy", icon: Copy, label: t("action.copy"), onClick: onCopy },
-    { key: "move", icon: FolderInput, label: t("action.move"), onClick: onMove },
-    { key: "delete", icon: Trash2, label: t("action.delete"), onClick: onDelete, danger: true },
+    { key: "copy", icon: ACTION_ICON.copy, label: t("action.copy"), onClick: onCopy },
+    { key: "move", icon: ACTION_ICON.move, label: t("action.move"), onClick: onMove },
+    {
+      key: "delete",
+      icon: ACTION_ICON.delete,
+      label: t("action.delete"),
+      onClick: onDelete,
+      danger: true,
+    },
     { key: "more", icon: MoreHorizontal, label: t("action.more"), onClick: onMore },
   ];
   return (

@@ -111,14 +111,14 @@ export function SettingsChoiceRow({
   icon?: IconType;
   label: string;
   desc?: ReactNode;
-  value: ReactNode;
+  value?: ReactNode;
   onClick: () => void;
 }) {
   return (
     <button type="button" onClick={onClick} className={`${ROW} gf-press-row`}>
       <RowBody icon={icon} label={label} desc={desc} />
       <span className="flex max-w-[45%] shrink-0 items-center gap-1 text-[13px] font-medium text-muted-foreground">
-        <span className="truncate">{value}</span>
+        {value ? <span className="truncate">{value}</span> : null}
         <ChevronRight className="h-[18px] w-[18px] shrink-0 text-muted-foreground/70" />
       </span>
     </button>

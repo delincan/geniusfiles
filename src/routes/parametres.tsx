@@ -1,9 +1,9 @@
 /**
  * Paramètres — organisation par catégories.
  *
- * Général, Apparence, Stockage, Gestion des fichiers, Automatisations,
- * Notifications, Confidentialité et sécurité, À propos. Chaque ligne pilote
- * un réglage réel ou ouvre un écran existant : aucun réglage fictif.
+ * Général, Fichiers, Stockage, Automatisations, Notifications, À propos.
+ * Chaque ligne pilote un réglage réel (appliqué à l'application ou au
+ * téléphone) ou ouvre un écran existant : aucun réglage fictif.
  *
  * Tous les textes proviennent de `@/lib/i18n`.
  */
@@ -11,12 +11,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { InlineAdBanner } from "@/components/ads/InlineAdBanner";
 import { useAdSlot } from "@/lib/ads/useAdSlot";
 import {
+  ArrowUpDown,
   Bell,
   Check,
   Clock3,
   Eraser,
   Eye,
   FileText,
+  Folder,
+  LayoutGrid,
+  LayoutList,
   Type,
   HardDrive,
   History,
@@ -25,10 +29,11 @@ import {
   Moon,
   Shield,
   ShieldCheck,
+  SlidersHorizontal,
   Sun,
   Trash2,
+  Waves,
   Zap,
-  GfVault,
 } from "@/components/icons";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -46,10 +51,17 @@ import {
 import { ChoiceSheet, Segmented, Toggle } from "@/components/settings/controls";
 import {
   trashRetentionOptions,
+  loadFoldersFirst,
+  loadSort,
   loadTrashRetention,
+  loadView,
+  saveFoldersFirst,
+  saveSort,
   saveTrashRetention,
+  saveView,
   type TrashRetentionDays,
 } from "@/lib/files/preferences";
+import type { SortKey, SortOrder, ViewMode } from "@/lib/files/types";
 import { DEFAULT_PREFS, usePrefs, type ThemeMode } from "@/lib/personalization";
 import {
   LOCALES,
@@ -80,6 +92,13 @@ import { useQuota } from "@/lib/quota/useQuota";
 
 /* Injectée au build depuis `package.json` (voir vite.config.ts). */
 const APP_VERSION = __APP_VERSION__;
+
+/** Identifiant Android de GeniusFiles (voir capacitor.config.ts). */
+const APP_PACKAGE = "app.geniusfiles.mobile";
+const SUPPORT_EMAIL = "geniusfiles.contact@gmail.com";
+
+const SORT_KEYS: SortKey[] = ["name", "date", "size", "type"];
+const SORT_ORDERS: SortOrder[] = ["asc", "desc"];
 
 /** Drapeaux associés à chaque option de langue (système = globe). */
 const LOCALE_FLAGS: Record<LocalePreference, string> = {
@@ -113,7 +132,7 @@ export const Route = createFileRoute("/parametres")({
   component: SettingsPage,
 });
 
-type Sheet = "language" | "recent" | "trash" | null;
+type Sheet = "language" | "recent" | "trash" | "sort" | null;
 
 function SettingsPage() {
   const t = useT();
@@ -123,10 +142,21 @@ function SettingsPage() {
   const [retention, setRetention] = useState<TrashRetentionDays>(30);
   const [clearing, setClearing] = useState(false);
   const [sheet, setSheet] = useState<Sheet>(null);
+  const [view, setView] = useState<ViewMode>("list");
+  const [sort, setSort] = useState<{ key: SortKey; order: SortOrder }>({
+    key: "name",
+    order: "asc",
+  });
+  const [foldersFirst, setFoldersFirst] = useState(true);
+  const [android, setAndroid] = useState(false);
 
   useEffect(() => {
     setHydrated(true);
     setRetention(loadTrashRetention());
+    setView(loadView());
+    setSort(loadSort());
+    setFoldersFirst(loadFoldersFirst());
+    setAndroid(isStorageManaged());
   }, []);
 
   const theme = hydrated ? prefs.appearance.theme : DEFAULT_PREFS.appearance.theme;
@@ -139,6 +169,24 @@ function SettingsPage() {
 
   const setNotifications = (enabled: boolean) =>
     setPrefs((p) => ({ ...p, notifications: { ...p.notifications, enabled } }));
+
+  const setHaptics = (haptics: boolean) =>
+    setPrefs((p) => ({ ...p, feedback: { ...p.feedback, haptics } }));
+
+  const sortLabel = (key: SortKey, order: SortOrder) =>
+    `${t(`files.sort.${key}`)} · ${order === "asc" ? t("files.sort.ascending") : t("files.sort.descending")}`;
+  const sortValue = `${sort.key}:${sort.order}`;
+
+  const viewOptions: { value: ViewMode; label: string; icon: typeof Moon }[] = [
+    { value: "list", label: t("settings.view.list"), icon: LayoutList },
+    { value: "grid", label: t("settings.view.grid"), icon: LayoutGrid },
+  ];
+
+  const openAndroidSettings = async () => {
+    const { openAppSettings } = await import("@/lib/apps/api");
+    const ok = await openAppSettings(APP_PACKAGE);
+    if (!ok) toast.error(t("settings.android.unavailable"));
+  };
 
   const clearCache = async () => {
     setClearing(true);
@@ -190,9 +238,6 @@ function SettingsPage() {
             }
             onClick={() => setSheet("language")}
           />
-        </SettingsSection>
-
-        <SettingsSection title={t("settings.group.appearance")}>
           <SettingsStackedRow
             icon={MonitorSmartphone}
             label={t("settings.theme.label")}
@@ -209,23 +254,51 @@ function SettingsPage() {
               }}
             />
           </SettingsStackedRow>
-        </SettingsSection>
-
-        <SettingsSection title={t("settings.group.storage")}>
-          <StorageAccessRow />
-          <StorageSpaceRow />
           <SettingsRow
-            icon={Eraser}
-            label={t("settings.cache.label")}
-            desc={t("settings.cache.desc")}
+            icon={Waves}
+            label={t("settings.haptics.label")}
+            desc={t("settings.haptics.desc")}
           >
-            <SettingsAction onClick={clearCache} disabled={clearing}>
-              {clearing ? t("settings.cache.working") : t("settings.cache.action")}
-            </SettingsAction>
+            <Toggle
+              checked={hydrated ? prefs.feedback.haptics : DEFAULT_PREFS.feedback.haptics}
+              onChange={setHaptics}
+              ariaLabel={t("settings.haptics.label")}
+            />
           </SettingsRow>
         </SettingsSection>
 
         <SettingsSection title={t("settings.group.files")}>
+          <SettingsStackedRow
+            icon={LayoutList}
+            label={t("settings.view.label")}
+            desc={t("settings.view.desc")}
+          >
+            <Segmented
+              ariaLabel={t("settings.view.label")}
+              value={view}
+              options={viewOptions}
+              onChange={(next) => {
+                setView(next);
+                saveView(next);
+              }}
+            />
+          </SettingsStackedRow>
+          <SettingsChoiceRow
+            icon={ArrowUpDown}
+            label={t("files.sort.by")}
+            value={<span suppressHydrationWarning>{sortLabel(sort.key, sort.order)}</span>}
+            onClick={() => setSheet("sort")}
+          />
+          <SettingsRow icon={Folder} label={t("files.sort.foldersFirst")}>
+            <Toggle
+              checked={foldersFirst}
+              onChange={(next) => {
+                setFoldersFirst(next);
+                saveFoldersFirst(next);
+              }}
+              ariaLabel={t("files.sort.foldersFirst")}
+            />
+          </SettingsRow>
           <SettingsRow
             icon={Eye}
             label={t("settings.hidden.label")}
@@ -253,6 +326,20 @@ function SettingsPage() {
           />
         </SettingsSection>
 
+        <SettingsSection title={t("settings.group.storage")}>
+          <StorageAccessRow />
+          <StorageSpaceRow />
+          <SettingsRow
+            icon={Eraser}
+            label={t("settings.cache.label")}
+            desc={t("settings.cache.desc")}
+          >
+            <SettingsAction onClick={clearCache} disabled={clearing}>
+              {clearing ? t("settings.cache.working") : t("settings.cache.action")}
+            </SettingsAction>
+          </SettingsRow>
+        </SettingsSection>
+
         <SettingsSection title={t("settings.group.automations")}>
           <AutomationQuotaRow />
           <SettingsNavRow
@@ -275,21 +362,14 @@ function SettingsPage() {
               ariaLabel={t("settings.notifications.label")}
             />
           </SettingsRow>
-        </SettingsSection>
-
-        <SettingsSection title={t("settings.group.privacy")}>
-          <SettingsNavRow
-            icon={GfVault}
-            label={t("settings.privacy.vault")}
-            desc={t("settings.privacy.vaultDesc")}
-            to="/coffre-fort"
-          />
-          <SettingsLink
-            icon={Shield}
-            label={t("settings.about.privacy")}
-            desc={t("settings.about.privacyDesc")}
-            href="https://alphafxstudio.github.io/geniusfiles-legal-docs/politique-de-confidentialite"
-          />
+          {android ? (
+            <SettingsChoiceRow
+              icon={SlidersHorizontal}
+              label={t("settings.android.label")}
+              desc={t("settings.android.desc")}
+              onClick={() => void openAndroidSettings()}
+            />
+          ) : null}
         </SettingsSection>
 
         <SettingsSection title={t("settings.group.about")}>
@@ -307,6 +387,11 @@ function SettingsPage() {
             </div>
           </div>
           <SettingsLink
+            icon={Shield}
+            label={t("settings.about.privacy")}
+            href="https://alphafxstudio.github.io/geniusfiles-legal-docs/politique-de-confidentialite"
+          />
+          <SettingsLink
             icon={FileText}
             label={t("settings.about.terms")}
             href="https://alphafxstudio.github.io/geniusfiles-legal-docs/conditions-d-utilisation"
@@ -314,15 +399,11 @@ function SettingsPage() {
           <SettingsLink
             icon={Mail}
             label={t("settings.about.contact")}
-            desc="support@geniusfiles.app"
-            href="mailto:support@geniusfiles.app"
+            desc={SUPPORT_EMAIL}
+            href={`mailto:${SUPPORT_EMAIL}`}
           />
         </SettingsSection>
       </div>
-
-      <p className="pb-4 text-center text-[11px] text-muted-foreground/70">
-        {t("settings.footer", { version: APP_VERSION })}
-      </p>
 
       <SettingsAdBanner />
 
@@ -373,6 +454,21 @@ function SettingsPage() {
           setRetention(v);
           saveTrashRetention(v);
           toast.success(t("settings.trash.updated"));
+        }}
+      />
+      <ChoiceSheet
+        open={sheet === "sort"}
+        title={t("files.sort.by")}
+        value={sortValue}
+        onClose={() => setSheet(null)}
+        options={SORT_KEYS.flatMap((key) =>
+          SORT_ORDERS.map((order) => ({ value: `${key}:${order}`, label: sortLabel(key, order) })),
+        )}
+        onChange={(next) => {
+          const [key, order] = next.split(":") as [SortKey, SortOrder];
+          const value = { key, order };
+          setSort(value);
+          saveSort(value);
         }}
       />
     </AppShell>

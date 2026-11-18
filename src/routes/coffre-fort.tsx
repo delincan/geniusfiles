@@ -13,6 +13,7 @@
  * public listing, so nothing extra is needed to make protected files
  * disappear from Fichiers, Galerie, Recherche or Nettoyeur.
  */
+import { vibrate } from "@/lib/feedback/haptics";
 import { trackEvent } from "@/lib/native/analytics";
 import { useListScrollMemory } from "@/lib/files/use-list-scroll";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
@@ -20,6 +21,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { toast } from "sonner";
 import { useT, t, t as translate } from "@/lib/i18n";
 import { ArrowDownAZ, ArrowLeft, ChevronRight, FolderPlus, Grid3X3, X } from "@/components/icons";
+import { ACTION_ICON } from "@/components/icons";
 import {
   GfSort as ArrowUpDown,
   GfRecent as Clock,
@@ -35,7 +37,6 @@ import {
   GfSettings as Settings,
   GfVaultOpen as Shield,
   GfShieldCheck as ShieldCheck,
-  GfRename as SquarePen,
   GfFavorite as Star,
   GfTrash as Trash2,
   GfRestore as Undo2,
@@ -629,7 +630,7 @@ function LockScreen({ onUnlocked, onReset }: { onUnlocked: () => void; onReset: 
         setError(method === "pattern" ? t("vault.lock.error.pattern") : t("vault.lock.error.code"));
         setSecret("");
         try {
-          navigator.vibrate?.([12, 60, 12]);
+          vibrate([12, 60, 12]);
         } catch {
           /* ignore */
         }
@@ -1518,7 +1519,7 @@ function FolderTile({
             onClick={onRename}
             className="gf-press flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground"
           >
-            <SquarePen className="h-[18px] w-[18px]" />
+            <ACTION_ICON.rename className="h-[18px] w-[18px]" />
           </button>
           <button
             type="button"
@@ -1692,7 +1693,11 @@ function ItemActionSheet({
               label={item.favorite ? t("vault.item.favoriteRemove") : t("vault.item.favoriteAdd")}
               onClick={() => onFavorite(item)}
             />
-            <ActionRow icon={Folder} label={t("vault.item.moveTo")} onClick={() => onMove(item)} />
+            <ActionRow
+              icon={ACTION_ICON.move}
+              label={t("vault.item.moveTo")}
+              onClick={() => onMove(item)}
+            />
             <ActionRow
               icon={Undo2}
               label={t("vault.item.restoreEllipsis")}

@@ -92,3 +92,14 @@
 - [x] Android status/splash/widget colors aligned with pure black.
 - [x] `bun run verify` green; screens checked in the preview at 360 px.
 - [ ] Validate on a real Android phone — needs a new APK build.
+
+# Step 7 — Targeted cleanup (home, Genius AI, automations, settings, icons, selection)
+
+- [x] Home header: app name + search only (no logo, no greeting), better use of the space.
+- [x] Genius AI welcome: no logo/name; privacy note visibly expandable; suggestions scroll to the left.
+- [x] Automations page: remove illustration, simpler and clearer layout.
+- [x] Settings: clearer structure; remove Privacy & security section (privacy policy → About); remove "files stay on device" note and footer line; support email geniusfiles.contact@gmail.com; add real useful settings.
+- [x] Same icon for the same action everywhere (file sheet vs reader menus).
+- [x] Selection bar: remove blue check, organize, clearer "Tout"/"Intervalle" labels.
+- [x] Answer the remix "next step" question.
+- [ ] Check the Android permissions shortcut and vibrations on a real phone — needs a new APK build.

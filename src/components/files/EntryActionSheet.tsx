@@ -1,17 +1,4 @@
-import {
-  GfCopyFiles as Copy,
-  GfExternalApp as ExternalLink,
-  GfEyeOpen as Eye,
-  GfCompress as FileArchive,
-  GfMoveTo as FolderInput,
-  GfInfo as Info,
-  GfApk as Package,
-  GfExtract as PackageOpen,
-  GfShareNodes as Share2,
-  GfRename as SquarePen,
-  GfTrash as Trash2,
-  GfAudioEditor as Waves,
-} from "@/components/icons";
+import { ACTION_ICON, GfApk as Package, GfAudioEditor as Waves } from "@/components/icons";
 import type { FileEntry } from "@/lib/files/types";
 import { FileIcon } from "./FileIcon";
 import { SheetActionRow as ActionRow, SheetDivider } from "./SheetActionRow";
@@ -92,7 +79,7 @@ export function EntryActionSheet({
                 {canReadArchive(entry) ? (
                   <>
                     <ActionRow
-                      icon={PackageOpen}
+                      icon={ACTION_ICON.extract}
                       label={t("files.actions.exploreContent")}
                       onClick={() => onAction("openArchive")}
                     />
@@ -109,7 +96,7 @@ export function EntryActionSheet({
             {isArchive ? (
               <>
                 <ActionRow
-                  icon={PackageOpen}
+                  icon={ACTION_ICON.extract}
                   label={t("files.actions.openArchive")}
                   onClick={() => onAction("openArchive")}
                 />
@@ -123,14 +110,14 @@ export function EntryActionSheet({
             ) : null}
             {showOpen ? (
               <ActionRow
-                icon={Eye}
+                icon={ACTION_ICON.open}
                 label={t("files.actions.openWithApp")}
                 onClick={() => onAction("open")}
               />
             ) : null}
             {showOpenWith ? (
               <ActionRow
-                icon={ExternalLink}
+                icon={ACTION_ICON.openWith}
                 label={t("files.actions.openWithOther")}
                 onClick={() => onAction("openWith")}
               />
@@ -144,35 +131,39 @@ export function EntryActionSheet({
             ) : null}
             {!entry.isDirectory ? (
               <ActionRow
-                icon={Share2}
+                icon={ACTION_ICON.share}
                 label={t("action.share")}
                 onClick={() => onAction("share")}
               />
             ) : null}
             <ActionRow
-              icon={SquarePen}
+              icon={ACTION_ICON.rename}
               label={t("action.rename")}
               onClick={() => onAction("rename")}
             />
             <ActionRow
-              icon={Copy}
+              icon={ACTION_ICON.copy}
               label={t("files.actions.copyTo")}
               onClick={() => onAction("copy")}
             />
             <ActionRow
-              icon={FolderInput}
+              icon={ACTION_ICON.move}
               label={t("files.actions.moveTo")}
               onClick={() => onAction("move")}
             />
             <ActionRow
-              icon={FileArchive}
+              icon={ACTION_ICON.compress}
               label={t("files.actions.compressEllipsis")}
               onClick={() => onAction("compress")}
             />
-            <ActionRow icon={Info} label={t("action.details")} onClick={() => onAction("info")} />
+            <ActionRow
+              icon={ACTION_ICON.info}
+              label={t("action.details")}
+              onClick={() => onAction("info")}
+            />
             <SheetDivider />
             <ActionRow
-              icon={Trash2}
+              icon={ACTION_ICON.delete}
               label={t("action.delete")}
               onClick={() => onAction("delete")}
               danger

@@ -16,6 +16,7 @@ import {
   Menu,
   PenSquare,
   ShieldCheck,
+  ChevronDown,
   WifiOff,
   Copy,
   Check,
@@ -487,37 +488,53 @@ function Welcome({ privacyOpen, onPrivacy }: { privacyOpen: boolean; onPrivacy: 
   const t = useT();
   return (
     <div className="gf-appear gf-chat-safe mx-auto flex w-full max-w-sm flex-col items-center text-center">
-      <img
-        src="/brand/geniusfiles-logo-128.png"
-        alt="GeniusFiles"
-        className="mb-5 h-16 w-16 object-contain"
-      />
-      <h2 className="font-display text-[22px] font-semibold leading-tight text-foreground">
-        {t("assistant.header.title")}
-      </h2>
-      <p className="mt-2 text-[16px] font-medium leading-snug text-foreground">
+      <h2 className="font-display text-[22px] font-semibold leading-tight tracking-[-0.01em] text-foreground">
         {t("assistant.welcome.title")}
-      </p>
+      </h2>
       <p className="mt-2 max-w-[20rem] text-[14px] leading-relaxed text-muted-foreground">
         {t("assistant.welcome.desc")}
       </p>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={onPrivacy}
-        aria-expanded={privacyOpen}
-        className="mt-4 h-auto min-h-11 max-w-[20rem] gap-2 whitespace-normal text-left text-[12.5px] font-normal text-muted-foreground"
+      {/* Note de confidentialité : une vraie commande dépliable — contour,
+          chevron et libellé « En savoir plus » indiquent qu'on peut l'ouvrir. */}
+      <div
+        className={`mt-5 w-full max-w-[20rem] overflow-hidden rounded-2xl border text-left transition-colors ${
+          privacyOpen ? "border-border bg-surface" : "border-border/70"
+        }`}
       >
-        <ShieldCheck className="shrink-0 text-muted-foreground" />
-        {t("assistant.welcome.privacy1")}
-      </Button>
-      {privacyOpen ? (
-        <div className="gf-appear mt-2 space-y-2 text-left text-[13px] leading-relaxed text-muted-foreground">
-          <p>{t("assistant.welcome.privacy2")}</p>
-          <p>{t("assistant.welcome.privacy3")}</p>
-        </div>
-      ) : null}
+        <button
+          type="button"
+          onClick={onPrivacy}
+          aria-expanded={privacyOpen}
+          aria-controls="assistant-privacy-details"
+          className="flex min-h-12 w-full items-center gap-3 px-3.5 py-2.5 text-left transition-colors active:bg-surface-2"
+        >
+          <ShieldCheck className="h-[18px] w-[18px] shrink-0 text-muted-foreground" />
+          <span className="min-w-0 flex-1">
+            <span className="block text-[13px] leading-snug text-foreground/90">
+              {t("assistant.welcome.privacy1")}
+            </span>
+            <span className="mt-0.5 block text-[12px] font-medium text-primary">
+              {privacyOpen
+                ? t("assistant.welcome.privacyLess")
+                : t("assistant.welcome.privacyMore")}
+            </span>
+          </span>
+          <ChevronDown
+            className={`h-[18px] w-[18px] shrink-0 text-muted-foreground transition-transform duration-200 ${
+              privacyOpen ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+        {privacyOpen ? (
+          <div
+            id="assistant-privacy-details"
+            className="gf-appear space-y-2 border-t border-border/60 px-3.5 py-3 text-[13px] leading-relaxed text-muted-foreground"
+          >
+            <p>{t("assistant.welcome.privacy2")}</p>
+            <p>{t("assistant.welcome.privacy3")}</p>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -68,3 +68,40 @@ export const STORAGE_ICON = {
   external: GfExternalStorage,
   network: GfNetworkStorage,
 } satisfies Record<string, GfIconComponent>;
+
+import {
+  GfCompress,
+  GfCopyFiles,
+  GfEyeOpen,
+  GfExternalApp,
+  GfExtract,
+  GfFolderOpen,
+  GfInfo,
+  GfMoveTo,
+  GfRename,
+  GfSelectAll,
+  GfShareNodes,
+  GfTransfer,
+  GfTrash,
+} from "./set";
+
+/**
+ * Actions sur un fichier : une action = un pictogramme, partout (menu du
+ * gestionnaire, menu des lecteurs, barre de sélection, coffre-fort…).
+ * Aucun écran ne choisit sa propre icône pour ces actions.
+ */
+export const ACTION_ICON = {
+  open: GfEyeOpen,
+  openWith: GfExternalApp,
+  openFolder: GfFolderOpen,
+  share: GfShareNodes,
+  rename: GfRename,
+  copy: GfCopyFiles,
+  move: GfMoveTo,
+  compress: GfCompress,
+  extract: GfExtract,
+  info: GfInfo,
+  delete: GfTrash,
+  selectAll: GfSelectAll,
+  selectRange: GfTransfer,
+} satisfies Record<string, GfIconComponent>;

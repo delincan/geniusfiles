@@ -21,11 +21,8 @@ import { ReaderState } from "@/components/viewer/ReaderState";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   ArrowLeft,
-  Copy,
   Download,
   ExternalLink,
-  FileArchive,
-  FolderOpen,
   Gauge,
   Info,
   ListMusic,
@@ -44,10 +41,10 @@ import {
   SquarePen,
   Subtitles,
   Timer,
-  Trash2,
   Volume2,
   X,
 } from "@/components/icons";
+import { ACTION_ICON } from "@/components/icons";
 import type { FileEntry, PathRef } from "@/lib/files/types";
 import { BACK_PRIORITY, registerBackHandler } from "@/lib/navigation/back-stack";
 import { formatDate, formatSize } from "@/lib/files/format";
@@ -337,42 +334,50 @@ export function UniversalViewer({
           onClose={() => setMenuOpen(false)}
           title={t("viewer.actions.title")}
         >
-          <div className="flex flex-col">
-            <MenuRow icon={Info} label={t("viewer.actions.info")} onClick={() => fireI("info")} />
+          <div className="-mx-2.5 -mt-3 flex flex-col">
             <MenuRow
-              icon={ExternalLink}
+              icon={ACTION_ICON.info}
+              label={t("viewer.actions.info")}
+              onClick={() => fireI("info")}
+            />
+            <MenuRow
+              icon={ACTION_ICON.openWith}
               label={t("viewer.actions.openWith")}
               onClick={() => fireI("openWith")}
             />
             <MenuRow
-              icon={FolderOpen}
+              icon={ACTION_ICON.openFolder}
               label={t("viewer.actions.openFolder")}
               onClick={() => fireI("openFolder")}
             />
             <MenuRow
-              icon={SquarePen}
+              icon={ACTION_ICON.rename}
               label={t("viewer.actions.rename")}
               onClick={() => fireI("rename")}
             />
-            <MenuRow icon={Copy} label={t("viewer.actions.copyTo")} onClick={() => fireI("copy")} />
             <MenuRow
-              icon={FolderOpen}
+              icon={ACTION_ICON.copy}
+              label={t("viewer.actions.copyTo")}
+              onClick={() => fireI("copy")}
+            />
+            <MenuRow
+              icon={ACTION_ICON.move}
               label={t("viewer.actions.moveTo")}
               onClick={() => fireI("move")}
             />
             <MenuRow
-              icon={FileArchive}
+              icon={ACTION_ICON.compress}
               label={t("viewer.actions.compress")}
               onClick={() => fireI("compress")}
             />
             <MenuRow
-              icon={Share2}
+              icon={ACTION_ICON.share}
               label={t("viewer.actions.share")}
               onClick={() => fireI("share")}
             />
-            <div className="my-1 h-px bg-border/40" />
+            <div aria-hidden className="mx-2.5 my-1.5 h-px bg-border/60" />
             <MenuRow
-              icon={Trash2}
+              icon={ACTION_ICON.delete}
               label={t("viewer.actions.delete")}
               onClick={() => fireI("delete")}
               danger
@@ -409,37 +414,45 @@ export function UniversalViewer({
           onClose={() => setMenuOpen(false)}
           title={t("viewer.actions.title")}
         >
-          <div className="flex flex-col">
-            <MenuRow icon={Info} label={t("viewer.actions.info")} onClick={() => fireP("info")} />
+          <div className="-mx-2.5 -mt-3 flex flex-col">
             <MenuRow
-              icon={ExternalLink}
+              icon={ACTION_ICON.info}
+              label={t("viewer.actions.info")}
+              onClick={() => fireP("info")}
+            />
+            <MenuRow
+              icon={ACTION_ICON.openWith}
               label={t("viewer.actions.openWith")}
               onClick={() => fireP("openWith")}
             />
             <MenuRow
-              icon={FolderOpen}
+              icon={ACTION_ICON.openFolder}
               label={t("viewer.actions.openFolder")}
               onClick={() => fireP("openFolder")}
             />
             <MenuRow
-              icon={SquarePen}
+              icon={ACTION_ICON.rename}
               label={t("viewer.actions.rename")}
               onClick={() => fireP("rename")}
             />
-            <MenuRow icon={Copy} label={t("viewer.actions.copyTo")} onClick={() => fireP("copy")} />
             <MenuRow
-              icon={FolderOpen}
+              icon={ACTION_ICON.copy}
+              label={t("viewer.actions.copyTo")}
+              onClick={() => fireP("copy")}
+            />
+            <MenuRow
+              icon={ACTION_ICON.move}
               label={t("viewer.actions.moveTo")}
               onClick={() => fireP("move")}
             />
             <MenuRow
-              icon={Share2}
+              icon={ACTION_ICON.share}
               label={t("viewer.actions.share")}
               onClick={() => fireP("share")}
             />
-            <div className="my-1 h-px bg-border/40" />
+            <div aria-hidden className="mx-2.5 my-1.5 h-px bg-border/60" />
             <MenuRow
-              icon={Trash2}
+              icon={ACTION_ICON.delete}
               label={t("viewer.actions.delete")}
               onClick={() => fireP("delete")}
               danger
@@ -512,38 +525,50 @@ export function UniversalViewer({
         onClose={() => setMenuOpen(false)}
         title={t("viewer.actions.title")}
       >
-        <div className="flex flex-col">
-          <MenuRow icon={Info} label={t("viewer.actions.info")} onClick={() => fire("info")} />
+        <div className="-mx-2.5 -mt-3 flex flex-col">
           <MenuRow
-            icon={ExternalLink}
+            icon={ACTION_ICON.info}
+            label={t("viewer.actions.info")}
+            onClick={() => fire("info")}
+          />
+          <MenuRow
+            icon={ACTION_ICON.openWith}
             label={t("viewer.actions.openWith")}
             onClick={() => fire("openWith")}
           />
           <MenuRow
-            icon={FolderOpen}
+            icon={ACTION_ICON.openFolder}
             label={t("viewer.actions.openFolder")}
             onClick={() => fire("openFolder")}
           />
           <MenuRow
-            icon={SquarePen}
+            icon={ACTION_ICON.rename}
             label={t("viewer.actions.rename")}
             onClick={() => fire("rename")}
           />
-          <MenuRow icon={Copy} label={t("viewer.actions.copyTo")} onClick={() => fire("copy")} />
           <MenuRow
-            icon={FolderOpen}
+            icon={ACTION_ICON.copy}
+            label={t("viewer.actions.copyTo")}
+            onClick={() => fire("copy")}
+          />
+          <MenuRow
+            icon={ACTION_ICON.move}
             label={t("viewer.actions.moveTo")}
             onClick={() => fire("move")}
           />
           <MenuRow
-            icon={FileArchive}
+            icon={ACTION_ICON.compress}
             label={t("viewer.actions.compress")}
             onClick={() => fire("compress")}
           />
-          <MenuRow icon={Share2} label={t("viewer.actions.share")} onClick={() => fire("share")} />
-          <div className="my-1 h-px bg-border/40" />
           <MenuRow
-            icon={Trash2}
+            icon={ACTION_ICON.share}
+            label={t("viewer.actions.share")}
+            onClick={() => fire("share")}
+          />
+          <div aria-hidden className="mx-2.5 my-1.5 h-px bg-border/60" />
+          <MenuRow
+            icon={ACTION_ICON.delete}
             label={t("viewer.actions.delete")}
             onClick={() => fire("delete")}
             danger
@@ -600,22 +625,17 @@ function MenuRow({
   value?: string;
   disabled?: boolean;
 }) {
+  /* Même recette que les menus du gestionnaire (`SheetActionRow`) : même
+     pictogramme, même taille, même zone tactile. */
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex min-h-11 items-center gap-3 rounded-lg px-2 py-2 text-left text-[13.5px] transition-colors active:bg-secondary/60 hover:bg-secondary/60 disabled:opacity-40 ${
-        danger ? "text-destructive" : "text-foreground"
-      }`}
+      data-danger={danger || undefined}
+      className="gf-sheet-action disabled:opacity-40"
     >
-      <span
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-          danger ? "bg-destructive/12 text-destructive" : "bg-secondary/60 text-muted-foreground"
-        }`}
-      >
-        <Icon className="h-[18px] w-[18px]" />
-      </span>
+      <Icon className="gf-sheet-action-icon" />
       <span className="min-w-0 flex-1 truncate">{label}</span>
       {value ? (
         <span className="shrink-0 text-[12px] tabular-nums text-muted-foreground">{value}</span>

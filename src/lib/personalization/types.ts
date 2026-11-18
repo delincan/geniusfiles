@@ -7,6 +7,7 @@
  *   - affichage des fichiers cachés
  *   - durée couverte par les « Fichiers récents »
  *   - notifications activées ou non
+ *   - vibrations (retour haptique) de l'application
  *
  * Toute préférence sans UI ni effet a été supprimée (taille de texte,
  * densité, animations, indexation, canaux de notification, contraintes
@@ -38,6 +39,11 @@ export type PersonalizationPrefs = {
   notifications: {
     enabled: boolean;
   };
+
+  feedback: {
+    /** Vibrations courtes de l'application (curseurs, schéma du coffre…). */
+    haptics: boolean;
+  };
 };
 
 export const DEFAULT_PREFS: PersonalizationPrefs = {
@@ -51,5 +57,8 @@ export const DEFAULT_PREFS: PersonalizationPrefs = {
   },
   notifications: {
     enabled: true,
+  },
+  feedback: {
+    haptics: true,
   },
 };

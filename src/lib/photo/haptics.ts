@@ -5,6 +5,8 @@
  * pays for it) and falls back to the Vibration API in the browser. Ticks are
  * rate-limited so a fast slider drag can never turn into a continuous buzz.
  */
+import { hapticsEnabled, vibrate } from "@/lib/feedback/haptics";
+
 let impact: ((opts: { style: string }) => Promise<void>) | null = null;
 let styleEnum: Record<string, string> | null = null;
 let loading = false;
@@ -25,6 +27,7 @@ function ensureNative() {
 
 /** A single, discreet tick — used when a slider crosses a graduation. */
 export function tick(strength: "light" | "medium" = "light") {
+  if (!hapticsEnabled()) return;
   const now = typeof performance !== "undefined" ? performance.now() : Date.now();
   // Never more than ~25 ticks per second, whatever the drag speed.
   if (now - last < 38) return;
@@ -36,7 +39,5 @@ export function tick(strength: "light" | "medium" = "light") {
     );
     return;
   }
-  if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
-    navigator.vibrate(strength === "medium" ? 12 : 5);
-  }
+  vibrate(strength === "medium" ? 12 : 5);
 }

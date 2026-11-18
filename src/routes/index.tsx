@@ -1788,21 +1788,11 @@ function RootView({
     };
   }, []);
 
-  // Le salut dépend de l'heure locale : on rend une valeur stable au
-  // premier passage (SSR + hydratation), puis on l'ajuste après montage.
-  const [greeting, setGreeting] = useState(() => t("home.greeting.morning"));
-  useEffect(() => {
-    const h = new Date().getHours();
-    setGreeting(
-      h < 6
-        ? t("home.greeting.night")
-        : h < 12
-          ? t("home.greeting.morning")
-          : h < 18
-            ? t("home.greeting.afternoon")
-            : t("home.greeting.evening"),
-    );
-  }, [t]);
+  // Accueil : recherche globale (tous les stockages).
+  const openSearch = () => {
+    setSearchScope(null);
+    navigate({ to: "/recherche" });
+  };
 
   /* Tailles des tuiles : mêmes règles de catégorisation que les écrans de
      catégorie (voir `category-rules.ts`) — jamais l'espace de stockage,
@@ -1924,40 +1914,30 @@ function RootView({
 
   return (
     <div className="home-dashboard flex flex-col gap-6 pb-6">
-      {/* Salutation = titre principal de la page, en en-tête collant. */}
-      <PageHeader
-        title={pick ? pick.title : "GeniusFiles"}
-        leading={
-          pick ? undefined : (
-            <img src="/brand/geniusfiles-logo-128.png" alt="" className="size-10 object-contain" />
-          )
-        }
-        subtitle={
-          pick
-            ? pick.purpose === "destination"
+      {pick ? (
+        <PageHeader
+          title={pick.title}
+          subtitle={
+            pick.purpose === "destination"
               ? pick.mode === "move"
                 ? t("files.pickDest.subtitleMove")
                 : t("files.pickDest.subtitleCopy")
               : t("home.subtitle.pick")
-            : greeting
-        }
-        action={
-          <Button
-            variant="secondary"
-            size="icon"
-            type="button"
-            onClick={() => {
-              // Accueil : recherche globale (tous les stockages).
-              setSearchScope(null);
-              navigate({ to: "/recherche" });
-            }}
-            className="shrink-0 rounded-xl"
-            aria-label={t("action.search")}
-          >
-            <Search className="h-5 w-5" />
-          </Button>
-        }
-      />
+          }
+          action={<HomeSearchButton onOpen={openSearch} label={t("action.search")} />}
+        />
+      ) : (
+        /* En-tête d'accueil : le nom de l'application, la recherche. Rien
+           d'autre — la hauteur gagnée revient directement au contenu. */
+        <header className="sticky top-0 z-30 -mx-4 bg-background pt-safe">
+          <div className="flex h-14 items-center justify-between gap-3 pl-[calc(1rem+env(safe-area-inset-left,0px))] pr-[calc(0.75rem+env(safe-area-inset-right,0px))]">
+            <h1 className="min-w-0 truncate font-display text-[22px] font-semibold tracking-[-0.02em] text-foreground">
+              GeniusFiles
+            </h1>
+            <HomeSearchButton onOpen={openSearch} label={t("action.search")} />
+          </div>
+        </header>
+      )}
 
       {pick ? (
         pick.purpose === "destination" ? null : (
@@ -2055,6 +2035,21 @@ function RootView({
  * Aide contextuelle affichée à la place des outils pendant une session
  * de sélection : trois gestes suffisent, rien d'autre n'est proposé.
  */
+function HomeSearchButton({ onOpen, label }: { onOpen: () => void; label: string }) {
+  return (
+    <Button
+      variant="secondary"
+      size="icon"
+      type="button"
+      onClick={onOpen}
+      className="h-11 w-11 shrink-0 rounded-full"
+      aria-label={label}
+    >
+      <Search className="h-5 w-5" />
+    </Button>
+  );
+}
+
 function PickHowTo({ multi }: { multi: boolean }) {
   const t = useT();
   return (

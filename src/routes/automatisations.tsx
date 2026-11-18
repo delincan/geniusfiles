@@ -137,14 +137,16 @@ function AutomationsPage() {
         title={tr("automations.title")}
         subtitle={tr("automations.ui.subtitle")}
         action={
-          <button
-            type="button"
-            onClick={openCreate}
-            className="gf-press flex h-10 items-center gap-1.5 rounded-xl bg-primary pl-3 pr-3.5 text-[13px] font-semibold text-primary-foreground"
-          >
-            <Plus className="h-[18px] w-[18px]" />
-            {tr("automations.new")}
-          </button>
+          items.length ? (
+            <button
+              type="button"
+              onClick={openCreate}
+              className="gf-press flex h-10 items-center gap-1.5 rounded-xl bg-primary pl-3 pr-3.5 text-[13px] font-semibold text-primary-foreground"
+            >
+              <Plus className="h-[18px] w-[18px]" />
+              {tr("automations.new")}
+            </button>
+          ) : undefined
         }
       />
 
@@ -200,41 +202,45 @@ function AutomationsPage() {
             si aucune annonce n'est disponible. */}
         {items.length === 0 ? <EmptyStateAd slot="empty-automations" /> : null}
 
-        <section className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-3 px-1">
-            <h2 className="type-subtitle text-foreground">{tr("automations.ui.history.recent")}</h2>
-            {history.length ? (
-              <Link
-                to="/automatisations/historique"
-                className="-mr-2 flex h-10 items-center gap-0.5 rounded-xl px-2 text-[13px] font-semibold text-primary"
-              >
-                {tr("automations.ui.history.seeAll")}
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            ) : null}
-          </div>
-          {history.length ? (
-            <ul className="gf-card">
-              {history.slice(0, RECENT_RUNS).map((h) => (
-                <HistoryEntry key={h.id} record={h} />
-              ))}
-            </ul>
-          ) : (
-            <div className="gf-card flex items-center gap-3 px-4 py-3.5">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-muted-foreground">
-                <History className="h-[18px] w-[18px]" />
-              </span>
-              <div className="min-w-0">
-                <p className="text-[14px] font-medium text-foreground">
-                  {tr("automations.history.none")}
-                </p>
-                <p className="text-[12px] text-muted-foreground">
-                  {tr("automations.history.hint")}
-                </p>
-              </div>
+        {items.length || history.length ? (
+          <section className="flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-3 px-1">
+              <h2 className="type-subtitle text-foreground">
+                {tr("automations.ui.history.recent")}
+              </h2>
+              {history.length ? (
+                <Link
+                  to="/automatisations/historique"
+                  className="-mr-2 flex h-10 items-center gap-0.5 rounded-xl px-2 text-[13px] font-semibold text-primary"
+                >
+                  {tr("automations.ui.history.seeAll")}
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              ) : null}
             </div>
-          )}
-        </section>
+            {history.length ? (
+              <ul className="gf-card">
+                {history.slice(0, RECENT_RUNS).map((h) => (
+                  <HistoryEntry key={h.id} record={h} />
+                ))}
+              </ul>
+            ) : (
+              <div className="gf-card flex items-center gap-3 px-4 py-3.5">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-muted-foreground">
+                  <History className="h-[18px] w-[18px]" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[14px] font-medium text-foreground">
+                    {tr("automations.history.none")}
+                  </p>
+                  <p className="text-[12px] text-muted-foreground">
+                    {tr("automations.history.hint")}
+                  </p>
+                </div>
+              </div>
+            )}
+          </section>
+        ) : null}
       </div>
 
       {/* Page remplie : bannière adaptative en fin de flux. */}
@@ -289,46 +295,56 @@ function Overview({
     },
   ];
   return (
-    <div className="gf-card grid grid-cols-3 divide-x divide-border/60">
+    <div className="grid grid-cols-3 gap-2">
       {cells.map((c) => (
-        <div key={c.label} className="flex min-w-0 flex-col gap-1 px-3 py-3.5">
+        <div
+          key={c.label}
+          className="flex min-w-0 flex-col gap-1.5 rounded-xl bg-surface px-3 py-3"
+        >
           <span
             suppressHydrationWarning
-            className="text-[20px] font-bold leading-none tabular-nums text-foreground"
+            className="text-[18px] font-semibold leading-none tabular-nums text-foreground"
           >
             {c.value}
           </span>
-          <span className="truncate text-[12px] text-muted-foreground">{c.label}</span>
+          <span className="text-[12px] leading-tight text-muted-foreground">{c.label}</span>
         </div>
       ))}
     </div>
   );
 }
 
-/** Aucune règle : la mascotte, une phrase, une action, et le principe en trois temps. */
+/**
+ * Aucune règle : une phrase, une action, puis le principe en trois temps
+ * (Quand → Si → Alors), présenté comme un fil simple, sans illustration.
+ */
 function EmptyAutomations({ onCreate, remaining }: { onCreate: () => void; remaining: number }) {
   const tr = useT();
   const steps = [
-    { icon: Zap, title: tr("automations.step.trigger"), desc: tr("automations.ui.how.trigger") },
+    {
+      icon: Zap,
+      word: tr("automations.ui.how.when"),
+      title: tr("automations.step.trigger"),
+      desc: tr("automations.ui.how.trigger"),
+    },
     {
       icon: Filter,
+      word: tr("automations.ui.how.if"),
       title: tr("automations.step.conditions"),
       desc: tr("automations.ui.how.conditions"),
     },
-    { icon: Play, title: tr("automations.step.actions"), desc: tr("automations.ui.how.actions") },
+    {
+      icon: Play,
+      word: tr("automations.ui.how.then"),
+      title: tr("automations.step.actions"),
+      desc: tr("automations.ui.how.actions"),
+    },
   ];
   return (
     <>
-      <div className="gf-card flex flex-col items-center px-5 pb-5 pt-5 text-center">
-        <img
-          src="/onboarding/step-6.webp"
-          alt=""
-          width={120}
-          height={160}
-          className="h-[150px] w-auto object-contain"
-        />
-        <h2 className="mt-3 type-title text-foreground">{tr("automations.ui.empty.title")}</h2>
-        <p className="mt-1.5 max-w-[300px] text-[13.5px] leading-relaxed text-muted-foreground">
+      <section className="flex flex-col px-1">
+        <h2 className="type-title text-foreground">{tr("automations.ui.empty.title")}</h2>
+        <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
           {tr("automations.ui.empty.desc")}
         </p>
         <button
@@ -339,25 +355,41 @@ function EmptyAutomations({ onCreate, remaining }: { onCreate: () => void; remai
           <Plus className="h-5 w-5" />
           {tr("automations.ui.empty.cta")}
         </button>
-        <p suppressHydrationWarning className="mt-3 text-[12px] text-muted-foreground">
+        <p
+          suppressHydrationWarning
+          className="mt-2.5 text-center text-[12px] text-muted-foreground"
+        >
           {remaining > 0 ? tr("quota.remaining", { count: remaining }) : tr("quota.none")}
         </p>
-      </div>
-      <ol className="gf-card">
-        {steps.map((s, i) => (
-          <li key={s.title} className="gf-settings-row flex items-center gap-3 px-4 py-3">
-            <span className="gf-option-icon">
-              <s.icon className="h-5 w-5" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[14px] font-medium text-foreground">
-                {i + 1}. {s.title}
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h3 className="px-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          {tr("automations.ui.how.title")}
+        </h3>
+        <ol className="flex flex-col px-1">
+          {steps.map((s, i) => (
+            <li key={s.title} className="relative flex gap-3.5 pb-5 last:pb-0">
+              {i < steps.length - 1 ? (
+                <span aria-hidden className="absolute bottom-0 left-[17px] top-10 w-px bg-border" />
+              ) : null}
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-2 text-foreground/85">
+                <s.icon className="h-[18px] w-[18px]" />
               </span>
-              <span className="block text-[12px] leading-snug text-muted-foreground">{s.desc}</span>
-            </span>
-          </li>
-        ))}
-      </ol>
+              <span className="min-w-0 flex-1 pt-0.5">
+                <span className="block text-[14px] font-medium text-foreground">
+                  <span className="text-primary">{s.word}</span>
+                  <span className="text-muted-foreground"> · </span>
+                  {s.title}
+                </span>
+                <span className="mt-0.5 block text-[13px] leading-snug text-muted-foreground">
+                  {s.desc}
+                </span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </section>
     </>
   );
 }
