@@ -37,7 +37,28 @@ function isMainNavPage(pathname: string): boolean {
   return MAIN_NAV_PAGES.includes(pathname.replace(/\/+$/, ""));
 }
 
+const EDITABLE = "input, textarea, select, [contenteditable=''], [contenteditable='true']";
+
+/**
+ * Clavier logiciel encore ouvert sur un champ : le retour le referme
+ * d'abord. Android le fait normalement lui-même ; ce filet couvre les
+ * WebView qui transmettent quand même l'appui.
+ */
+export function dismissKeyboardIfOpen(): boolean {
+  if (typeof document === "undefined" || typeof window === "undefined") return false;
+  const el = document.activeElement;
+  if (!(el instanceof HTMLElement) || !el.matches(EDITABLE)) return false;
+  const vv = window.visualViewport;
+  const inset = vv ? window.innerHeight - (vv.height + vv.offsetTop) : 0;
+  if (inset <= 80) return false;
+  el.blur();
+  return true;
+}
+
 export function resolveBack(router: AnyRouter, pathname: string): void {
+  // 0. Clavier ouvert : il se ferme avant toute autre chose.
+  if (dismissKeyboardIfOpen()) return;
+
   // 1. Surfaces internes de la page (priorité décroissante) : lecteur
   //    ouvert, dialogue, menu, mode sélection, dossier courant…
   if (runRegisteredBackHandlers()) return;

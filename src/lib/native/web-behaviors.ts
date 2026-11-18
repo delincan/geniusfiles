@@ -17,6 +17,107 @@ function isEditable(target: EventTarget | null): boolean {
   return !!el.closest(EDITABLE) || !!el.closest(SELECTABLE);
 }
 
+/* ------------------------------------------------------------------ */
+/* Retour tactile immédiat                                             */
+/* ------------------------------------------------------------------ */
+
+/** Tout ce qui réagit à un appui : boutons, liens, lignes, onglets, choix. */
+export const PRESSABLE =
+  "button, a[href], [role='button'], [role='menuitem'], [role='menuitemradio'], [role='tab'], [role='radio'], [role='checkbox'], [role='switch'], [role='option'], summary, label[for], [data-gf-pressable]";
+export const PRESSED_ATTR = "data-gf-pressed";
+/**
+ * Délai avant d'afficher l'état pressé : comme le « tap timeout » d'Android,
+ * il laisse le temps de reconnaître un défilement, pour qu'une liste qu'on
+ * fait glisser ne clignote pas. Un appui bref est montré dès le relâchement.
+ */
+export const PRESS_SHOW_DELAY_MS = 60;
+/** Durée minimale de l'état pressé après le relâchement (appui très bref). */
+export const PRESS_HOLD_MS = 110;
+/** Au-delà de ce déplacement, le doigt fait défiler : l'appui est annulé. */
+const PRESS_SLOP_PX = 10;
+
+function pressTarget(target: EventTarget | null): Element | null {
+  if (typeof Element === "undefined" || !(target instanceof Element)) return null;
+  const el = target.closest(PRESSABLE);
+  if (!el) return null;
+  if (el.matches(":disabled, [aria-disabled='true']")) return null;
+  if (el.closest("[data-gf-no-press]")) return null;
+  return el;
+}
+
+/**
+ * Peint l'état « pressé » dès le contact du doigt, sans attendre le
+ * `:active` tardif de la WebView. Aucun événement n'est annulé : le clic,
+ * le défilement et l'appui long restent ceux du navigateur.
+ */
+function installPressFeedback(): () => void {
+  let el: Element | null = null;
+  let origin: { x: number; y: number } | null = null;
+  let showTimer: ReturnType<typeof setTimeout> | null = null;
+  let releaseTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const clearTimers = () => {
+    if (showTimer) clearTimeout(showTimer);
+    if (releaseTimer) clearTimeout(releaseTimer);
+    showTimer = releaseTimer = null;
+  };
+  const reset = () => {
+    clearTimers();
+    el?.removeAttribute(PRESSED_ATTR);
+    el = null;
+    origin = null;
+  };
+
+  const onDown = (e: PointerEvent) => {
+    if (e.pointerType !== "touch" && e.pointerType !== "pen") return;
+    reset();
+    const target = pressTarget(e.target);
+    if (!target) return;
+    el = target;
+    origin = { x: e.clientX, y: e.clientY };
+    showTimer = setTimeout(() => {
+      showTimer = null;
+      el?.setAttribute(PRESSED_ATTR, "");
+    }, PRESS_SHOW_DELAY_MS);
+  };
+  const onMove = (e: PointerEvent) => {
+    if (!el || !origin) return;
+    if (
+      Math.abs(e.clientX - origin.x) > PRESS_SLOP_PX ||
+      Math.abs(e.clientY - origin.y) > PRESS_SLOP_PX
+    )
+      reset();
+  };
+  const onUp = () => {
+    if (!el) return;
+    const current = el;
+    if (showTimer) {
+      clearTimeout(showTimer);
+      showTimer = null;
+    }
+    current.setAttribute(PRESSED_ATTR, "");
+    releaseTimer = setTimeout(() => {
+      current.removeAttribute(PRESSED_ATTR);
+      if (el === current) {
+        el = null;
+        origin = null;
+      }
+    }, PRESS_HOLD_MS);
+  };
+
+  document.addEventListener("pointerdown", onDown, { capture: true, passive: true });
+  document.addEventListener("pointermove", onMove, { capture: true, passive: true });
+  document.addEventListener("pointerup", onUp, { capture: true, passive: true });
+  document.addEventListener("pointercancel", reset, { capture: true, passive: true });
+  return () => {
+    reset();
+    document.removeEventListener("pointerdown", onDown, { capture: true });
+    document.removeEventListener("pointermove", onMove, { capture: true });
+    document.removeEventListener("pointerup", onUp, { capture: true });
+    document.removeEventListener("pointercancel", reset, { capture: true });
+  };
+}
+
 /** Installe les gardes globaux. Retourne une fonction de désinstallation. */
 export function installNativeBehaviors(): () => void {
   if (typeof document === "undefined") return () => {};
@@ -62,8 +163,10 @@ export function installNativeBehaviors(): () => void {
   document.addEventListener("contextmenu", onContextMenu, { capture: true });
   document.addEventListener("selectstart", onSelectStart, { capture: true });
   document.addEventListener("dragstart", onDragStart, { capture: true });
+  const stopPress = installPressFeedback();
 
   return () => {
+    stopPress();
     document.removeEventListener("pointerdown", onPointerDown, { capture: true });
     document.removeEventListener("keydown", onKeyDown, { capture: true });
     document.removeEventListener("contextmenu", onContextMenu, { capture: true });

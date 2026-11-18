@@ -49,7 +49,7 @@ export function EntryActionSheet({
   const showOpenWith = entry ? !entry.isDirectory : false;
   const showEditAudio = entry ? !entry.isDirectory && entry.kind === "audio" : false;
   return (
-    <BottomSheet open={open && !!entry} onClose={onClose}>
+    <BottomSheet sheet open={open && !!entry} onClose={onClose}>
       {entry ? (
         <>
           <div className="mb-2 flex items-center gap-3 pr-10">

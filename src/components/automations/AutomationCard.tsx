@@ -157,7 +157,7 @@ export function AutomationCard({
         </button>
       </div>
 
-      <BottomSheet open={menuOpen} onClose={() => setMenuOpen(false)} title={automation.name}>
+      <BottomSheet sheet open={menuOpen} onClose={() => setMenuOpen(false)} title={automation.name}>
         <div className="-mx-2 flex flex-col">
           <SheetActionRow
             icon={Pencil}

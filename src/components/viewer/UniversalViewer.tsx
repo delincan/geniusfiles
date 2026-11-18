@@ -16,6 +16,7 @@
  * - **Android back button** dismisses the viewer instead of leaving the
  *   route (a history entry is pushed on open, popped on close).
  */
+import { acceptMenuTap } from "@/lib/feedback/tap-guard";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ReaderState } from "@/components/viewer/ReaderState";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -330,6 +331,7 @@ export function UniversalViewer({
           />
         ) : null}
         <BottomSheet
+          sheet
           open={menuOpen}
           onClose={() => setMenuOpen(false)}
           title={t("viewer.actions.title")}
@@ -410,6 +412,7 @@ export function UniversalViewer({
         />
 
         <BottomSheet
+          sheet
           open={menuOpen}
           onClose={() => setMenuOpen(false)}
           title={t("viewer.actions.title")}
@@ -521,6 +524,7 @@ export function UniversalViewer({
 
       {/* Actions — compact centered modal, shared with the file manager */}
       <BottomSheet
+        sheet
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
         title={t("viewer.actions.title")}
@@ -630,7 +634,9 @@ function MenuRow({
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={() => {
+        if (acceptMenuTap()) onClick();
+      }}
       disabled={disabled}
       data-danger={danger || undefined}
       className="gf-sheet-action disabled:opacity-40"
@@ -1128,6 +1134,7 @@ function AudioStage({
       </div>
 
       <BottomSheet
+        sheet
         open={queueOpen}
         onClose={() => setQueueOpen(false)}
         title={t("viewer.media.queue")}

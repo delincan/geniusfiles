@@ -111,7 +111,7 @@ export function ChoiceSheet<T extends string | number>({
   onClose: () => void;
 }) {
   return (
-    <BottomSheet open={open} onClose={onClose} title={title}>
+    <BottomSheet sheet open={open} onClose={onClose} title={title}>
       <div role="radiogroup" aria-label={title} className="-mx-2 flex flex-col">
         {options.map((o) => {
           const active = o.value === value;

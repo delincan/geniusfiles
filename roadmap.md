@@ -103,3 +103,14 @@
 - [x] Selection bar: remove blue check, organize, clearer "Tout"/"Intervalle" labels.
 - [x] Answer the remix "next step" question.
 - [ ] Check the Android permissions shortcut and vibrations on a real phone — needs a new APK build.
+
+## Step 8 — Touch interactions (no visual identity change)
+
+- [x] Inspect existing press, long-press, sheet, back-button and nav behaviour
+- [x] Immediate, consistent pressed state on every tappable element; no hover-only behaviour
+- [x] File manager: tap opens, long-press selects (no scroll conflict, never destructive)
+- [x] Bottom sheets: short animation, close button, swipe-down to close, safe areas
+- [x] Android Back closes keyboard → menus/sheets → previous screen
+- [x] No double triggers; reduced-motion respected; light haptics only where useful
+- [x] Verify main interactions across sections
+- [ ] Feel-check touches, swipe-to-close and Back on a real Android phone — needs a new APK build.

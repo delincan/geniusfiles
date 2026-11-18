@@ -267,6 +267,10 @@
   --duration-fast: 150ms;
   --duration-base: 180ms;
   --duration-slow: 220ms;
+
+  /* ---------- États tactiles ---------- */
+  /* Voile posé sur l'élément pressé : teinte du texte, jamais une nouvelle couleur. */
+  --state-pressed: color-mix(in oklab, var(--foreground) 10%, transparent);
 }
 
 /* ============================================================
@@ -1123,14 +1127,28 @@ html[data-gf-input="touch"]
   box-shadow: var(--tw-shadow, 0 0 transparent) !important;
 }
 
-html[data-gf-input="touch"]
-  :where(button, a, [role="button"], [role="menuitem"], [role="tab"], summary):not(
-    :disabled,
-    [aria-disabled="true"]
-  ):active {
-  /* Touch down peint immédiatement ; la transition existante reste au release. */
+/* Au doigt, l'état pressé est piloté par `data-gf-pressed` (posé dès le
+   contact par web-behaviors.ts) : un voile discret comme le retour d'appui
+   Android, au lieu du `:active` tardif et de l'atténuation « page web ». */
+html[data-gf-input="touch"] :where(button, a, [role="button"]):not(:disabled):active {
+  opacity: 1;
+}
+html[data-gf-input="touch"] [data-gf-pressed] {
+  /* Apparition instantanée ; la transition existante adoucit le relâchement. */
   transition-duration: 0s !important;
-  opacity: 0.82;
+  background-image: linear-gradient(var(--state-pressed), var(--state-pressed)) !important;
+}
+/* Barre de navigation : le voile se pose sur la pastille de l'onglet,
+   comme sur Android, et non sur toute la colonne. */
+html[data-gf-input="touch"] [data-gf-bottom-nav] a[data-gf-pressed] {
+  background-image: none !important;
+}
+html[data-gf-input="touch"] [data-gf-bottom-nav] a[data-gf-pressed] > span:first-child {
+  background-image: linear-gradient(var(--state-pressed), var(--state-pressed));
+}
+/* Éléments compacts (boutons, puces, onglets) : léger enfoncement en plus. */
+html[data-gf-input="touch"] :is(.gf-press, .gf-chip, [data-gf-press-scale])[data-gf-pressed] {
+  transform: scale(0.97);
 }
 
 /* Contenu de page : apparition très courte, jamais clignotante.

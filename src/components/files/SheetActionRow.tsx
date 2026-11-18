@@ -1,4 +1,5 @@
 import type { AppIcon } from "@/components/icons";
+import { acceptMenuTap } from "@/lib/feedback/tap-guard";
 
 /**
  * Rangée d'action partagée des feuilles « Actions » et « Plus » : même
@@ -19,7 +20,9 @@ export function SheetActionRow({
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={() => {
+        if (acceptMenuTap()) onClick();
+      }}
       data-danger={danger || undefined}
       className="gf-sheet-action"
     >

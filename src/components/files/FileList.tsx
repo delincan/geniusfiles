@@ -7,6 +7,8 @@ import { useFolderCount } from "@/lib/files/folder-count";
 import type { FileEntry, PathRef } from "@/lib/files/types";
 import { FileIcon } from "./FileIcon";
 import { useWindowVirtualList } from "@/hooks/use-virtual-list";
+import { vibrate } from "@/lib/feedback/haptics";
+import { acceptOpenTap } from "@/lib/feedback/tap-guard";
 
 // Hauteurs FIXES : aucune re-mesure pendant le défilement, donc aucune
 // « danse » des éléments, même en défilement rapide sur 100 000 fichiers.
@@ -61,7 +63,10 @@ function usePressBinder(entry: FileEntry, onLongPress: (e: FileEntry) => void) {
         clear();
         origin.current = { x: e.clientX, y: e.clientY };
         timer.current = window.setTimeout(() => {
+          timer.current = null;
           fired.current = true;
+          // Un seul tic bref : il confirme que la sélection a démarré.
+          vibrate(10);
           onLongPress(entry);
         }, LONG_PRESS_MS);
       },
@@ -201,7 +206,7 @@ export const FileRow = memo(function FileRow({
       onClick={() => {
         if (press.fired.current) return;
         if (selectionMode) onToggleSelect(entry);
-        else onOpen(entry);
+        else if (acceptOpenTap()) onOpen(entry);
       }}
       aria-pressed={selectionMode ? isSelected : undefined}
       style={{ height: ROW_HEIGHT }}
@@ -238,12 +243,8 @@ export const FileRow = memo(function FileRow({
       </div>
       {selectionMode ? (
         <SelectToggle selected={isSelected} onToggle={() => onToggleSelect(entry)} />
-      ) : entry.isDirectory ? (
-        <ChevronRight
-          aria-hidden
-          className="-mr-1 h-[18px] w-[18px] shrink-0 text-muted-foreground-2"
-        />
       ) : (
+        /* Fichiers ET dossiers : chaque élément a son menu contextuel. */
         <MoreAction onClick={() => onMore(entry)} />
       )}
     </button>
@@ -258,7 +259,7 @@ export function FileGridView({
   onQuickOpen,
   renderIcon,
   onLongPress,
-  onMore: _onMore,
+  onMore,
   selectionMode,
   isSelected,
   onToggleSelect,
@@ -283,6 +284,7 @@ export function FileGridView({
             onQuickOpen={onQuickOpen}
             renderIcon={renderIcon}
             onLongPress={onLongPress}
+            onMore={onMore}
             selectionMode={selectionMode}
             isSelected={isSelected(entry)}
             onToggleSelect={onToggleSelect}
@@ -323,6 +325,7 @@ export function FileGridView({
                   onQuickOpen={onQuickOpen}
                   renderIcon={renderIcon}
                   onLongPress={onLongPress}
+                  onMore={onMore}
                   selectionMode={selectionMode}
                   isSelected={isSelected(entry)}
                   onToggleSelect={onToggleSelect}
@@ -343,6 +346,7 @@ const GridCell = memo(function GridCell({
   onQuickOpen,
   renderIcon,
   onLongPress,
+  onMore,
   selectionMode,
   isSelected,
   onToggleSelect,
@@ -353,6 +357,7 @@ const GridCell = memo(function GridCell({
   onQuickOpen?: (e: FileEntry) => void;
   renderIcon?: (entry: FileEntry) => React.ReactNode;
   onLongPress: (e: FileEntry) => void;
+  onMore: (e: FileEntry) => void;
   selectionMode: boolean;
   isSelected: boolean;
   onToggleSelect: (e: FileEntry) => void;
@@ -374,7 +379,7 @@ const GridCell = memo(function GridCell({
       onClick={() => {
         if (press.fired.current) return;
         if (selectionMode) onToggleSelect(entry);
-        else onOpen(entry);
+        else if (acceptOpenTap()) onOpen(entry);
       }}
       aria-pressed={selectionMode ? isSelected : undefined}
       style={{ height: GRID_CELL_HEIGHT }}
@@ -410,11 +415,14 @@ const GridCell = memo(function GridCell({
         />
       ) : null}
 
-      <div className="min-w-0 px-0.5">
-        <p className="truncate text-[13px] font-medium leading-[18px] text-foreground">
-          {entry.name}
-        </p>
-        <p className="truncate text-[11.5px] leading-4 text-muted-foreground">{meta}</p>
+      <div className="flex min-w-0 items-start gap-0.5 pl-0.5">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[13px] font-medium leading-[18px] text-foreground">
+            {entry.name}
+          </p>
+          <p className="truncate text-[11.5px] leading-4 text-muted-foreground">{meta}</p>
+        </div>
+        {selectionMode ? null : <MoreAction compact onClick={() => onMore(entry)} />}
       </div>
     </button>
   );
@@ -508,7 +516,7 @@ function OpenZone({
   );
 }
 
-function MoreAction({ onClick }: { onClick: () => void }) {
+function MoreAction({ onClick, compact }: { onClick: () => void; compact?: boolean }) {
   const t = useT();
   return (
     <span
@@ -526,9 +534,13 @@ function MoreAction({ onClick }: { onClick: () => void }) {
           onClick();
         }
       }}
-      className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground active:bg-secondary"
+      /* Le menu ne déclenche ni l'ouverture ni l'appui long de la ligne. */
+      onPointerDown={(e) => e.stopPropagation()}
+      className={`flex shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground active:bg-secondary ${
+        compact ? "-mr-1 -mt-1 h-9 w-8" : "-mr-2 h-11 w-11"
+      }`}
     >
-      <MoreVertical className="h-5 w-5" />
+      <MoreVertical className={compact ? "h-[18px] w-[18px]" : "h-5 w-5"} />
     </span>
   );
 }

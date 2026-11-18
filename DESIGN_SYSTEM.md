@@ -87,3 +87,9 @@ Progression : pourcentage des jalons terminés, non une estimation du temps rest
 - Interrupteurs : piste `handle` éteinte, bleue allumée. Curseurs : piste `border`, pouce blanc.
 - Voiles modaux opaques (`scrim` 70 %) et en-têtes collants opaques, sans flou (fluidité sur appareils modestes).
 - Lecteurs : bouton Lecture blanc sur fond média, progression bleue.
+
+## Interactions tactiles
+
+- **État pressé** : voile `--state-pressed` (texte à 10 %) posé dès le contact du doigt via `data-gf-pressed`. Les éléments compacts (`gf-press`, `gf-chip`) s'enfoncent aussi légèrement (`scale(0.97)`). Dans la barre de navigation, le voile se pose sur la pastille de l'onglet.
+- **Panneaux inférieurs** (`BottomSheet sheet`) : menus d'actions et listes de choix. Poignée, ✕, appui sur le fond ou glissement vers le bas pour fermer. Les confirmations restent des dialogues centrés.
+- **Appui long** : démarre la sélection (un tic de vibration bref si les vibrations sont activées), jamais une action destructive. Chaque fichier et dossier a aussi un bouton ⋮ en liste comme en grille.

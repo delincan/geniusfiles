@@ -12,6 +12,7 @@ import { Portal } from "@/components/common/Portal";
 import { useInPickLayer } from "@/components/files/pick-layer-context";
 import { BACK_PRIORITY, registerBackHandler } from "@/lib/navigation/back-stack";
 import { useT } from "@/lib/i18n";
+import { SHEET_EXIT_MS, SHEET_SLOP_PX, shouldDismissSheet } from "./sheet-gesture";
 
 // Shared stack of currently-open BottomSheet ids. Only the topmost entry
 // consumes hardware-back / Escape events so nested sheets do not
@@ -57,6 +58,7 @@ export function BottomSheet({
   children,
   footer,
   fullScreen,
+  sheet,
 }: {
   open: boolean;
   onClose: () => void;
@@ -64,12 +66,25 @@ export function BottomSheet({
   children: ReactNode;
   footer?: ReactNode;
   fullScreen?: boolean;
+  /**
+   * Panneau inférieur (menus d'actions, listes de choix) : glisse depuis le
+   * bas, se referme d'un glissement vers le bas, du bouton ✕ ou d'un appui
+   * sur le fond. Les confirmations restent des dialogues centrés.
+   */
+  sheet?: boolean;
 }) {
   const tr = useT();
   const ref = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  /* Le panneau est rendu dans un portail monté après coup : on suit
+     l'élément réel pour brancher le geste dès qu'il existe. */
+  const [sheetEl, setSheetEl] = useState<HTMLDivElement | null>(null);
+  const backdropRef = useRef<HTMLButtonElement>(null);
   const stateId = useId();
   const defaults = useContext(BottomSheetDefaultsContext);
   const isFullScreen = fullScreen ?? defaults.fullScreen;
+  const isSheet = Boolean(sheet) && !isFullScreen;
+  const exitMs = isSheet ? SHEET_EXIT_MS : 140;
 
   // Keep the element mounted briefly while the exit animation plays.
   const [mounted, setMounted] = useState(open);
@@ -81,10 +96,10 @@ export function BottomSheet({
       requestAnimationFrame(() => setVisible(true));
     } else if (mounted) {
       setVisible(false);
-      const t = window.setTimeout(() => setMounted(false), 140);
+      const t = window.setTimeout(() => setMounted(false), exitMs);
       return () => window.clearTimeout(t);
     }
-  }, [open, mounted]);
+  }, [open, mounted, exitMs]);
 
   // Escape + retour matériel + verrou de défilement.
   //
@@ -137,7 +152,176 @@ export function BottomSheet({
     };
   }, [open, stateId]);
 
+  // Glisser vers le bas pour fermer (panneau inférieur uniquement). Le
+  // geste ne démarre que s'il est clairement vertical et que la liste est
+  // en haut : faire défiler le contenu ne ferme jamais le panneau.
+  useEffect(() => {
+    if (!isSheet || !sheetEl) return;
+    const panel = sheetEl;
+    let start: { x: number; y: number; t: number; fromBody: boolean } | null = null;
+    let dragging = false;
+    let ignore = false;
+    let dy = 0;
+    let suppressClickUntil = 0;
+
+    const setOffset = (y: number, animate: boolean) => {
+      panel.style.transition = animate ? "" : "none";
+      panel.style.transform = y > 0 ? `translateY(${y}px)` : "";
+      const backdrop = backdropRef.current;
+      if (backdrop) {
+        const h = panel.offsetHeight || 1;
+        backdrop.style.transition = animate ? "" : "none";
+        backdrop.style.opacity = y > 0 ? String(Math.max(0, 1 - y / h)) : "";
+      }
+    };
+    const onStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      const tch = e.touches[0];
+      const body = bodyRef.current;
+      start = {
+        x: tch.clientX,
+        y: tch.clientY,
+        t: performance.now(),
+        fromBody: !!body && body.contains(e.target as Node),
+      };
+      dragging = false;
+      ignore = false;
+      dy = 0;
+    };
+    const onMove = (e: TouchEvent) => {
+      if (!start || ignore) return;
+      const tch = e.touches[0];
+      const ddx = tch.clientX - start.x;
+      const ddy = tch.clientY - start.y;
+      if (!dragging) {
+        if (Math.abs(ddx) < SHEET_SLOP_PX && Math.abs(ddy) < SHEET_SLOP_PX) return;
+        const body = bodyRef.current;
+        const atTop = !start.fromBody || !body || body.scrollTop <= 0;
+        if (ddy > 0 && Math.abs(ddy) > Math.abs(ddx) && atTop) {
+          dragging = true;
+          start = { ...start, y: tch.clientY, t: performance.now() };
+        } else {
+          ignore = true;
+          return;
+        }
+      }
+      dy = Math.max(0, tch.clientY - start.y);
+      if (e.cancelable) e.preventDefault();
+      setOffset(dy, false);
+    };
+    const onEnd = () => {
+      if (!start) return;
+      const s0 = start;
+      start = null;
+      if (!dragging) return;
+      dragging = false;
+      suppressClickUntil = performance.now() + 350;
+      const elapsed = Math.max(1, performance.now() - s0.t);
+      const h = panel.offsetHeight || 1;
+      if (shouldDismissSheet(dy, elapsed, h)) {
+        panel.style.transition = "";
+        panel.style.transform = "translateY(100%)";
+        onCloseRef.current();
+      } else {
+        setOffset(0, true);
+      }
+    };
+    const onClickCapture = (e: MouseEvent) => {
+      if (performance.now() < suppressClickUntil) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    panel.addEventListener("touchstart", onStart, { passive: true });
+    panel.addEventListener("touchmove", onMove, { passive: false });
+    panel.addEventListener("touchend", onEnd, { passive: true });
+    panel.addEventListener("touchcancel", onEnd, { passive: true });
+    panel.addEventListener("click", onClickCapture, { capture: true });
+    return () => {
+      panel.removeEventListener("touchstart", onStart);
+      panel.removeEventListener("touchmove", onMove);
+      panel.removeEventListener("touchend", onEnd);
+      panel.removeEventListener("touchcancel", onEnd);
+      panel.removeEventListener("click", onClickCapture, { capture: true });
+      panel.style.transform = "";
+      panel.style.transition = "";
+    };
+  }, [isSheet, sheetEl]);
+
   if (!mounted) return null;
+
+  if (isSheet) {
+    return (
+      <Portal>
+        <div
+          className={`fixed inset-0 ${inPick ? "z-[3800]" : "z-[3000]"} flex items-end justify-center`}
+          role="presentation"
+        >
+          <button
+            ref={backdropRef}
+            aria-label={tr("action.close")}
+            onClick={onClose}
+            tabIndex={-1}
+            className={`absolute inset-0 h-full w-full cursor-default bg-scrim/70 transition-opacity duration-200 ease-out ${
+              visible ? "opacity-100" : "opacity-0"
+            }`}
+          />
+          <div
+            ref={setSheetEl}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
+            data-gf-sheet
+            className={`relative z-10 flex max-h-[min(88dvh,calc(100dvh-env(safe-area-inset-top,0px)-24px))] w-full max-w-[560px] flex-col overflow-hidden rounded-t-2xl border border-b-0 border-border/70 bg-surface shadow-elevated will-change-transform ${
+              visible
+                ? "translate-y-0 transition-transform duration-[220ms] ease-[cubic-bezier(0.2,0,0,1)]"
+                : "translate-y-full transition-transform duration-[180ms] ease-[cubic-bezier(0.3,0,1,1)]"
+            }`}
+          >
+            {/* Poignée : indique qu'on peut faire glisser le panneau vers le bas. */}
+            <div aria-hidden className="flex h-5 shrink-0 items-end justify-center">
+              <span className="h-1 w-9 rounded-full bg-muted-foreground/45" />
+            </div>
+            {title ? (
+              <div className="flex items-center justify-between gap-3 pb-1 pl-6 pr-4 pt-1.5">
+                <h3 className="min-w-0 truncate text-[17px] font-semibold text-foreground">
+                  {title}
+                </h3>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label={tr("action.close")}
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-surface-2 hover:text-foreground"
+                >
+                  <X className="h-[18px] w-[18px]" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label={tr("action.close")}
+                className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-surface-2 text-muted-foreground hover:bg-surface-3 hover:text-foreground"
+              >
+                <X className="h-[18px] w-[18px]" />
+              </button>
+            )}
+            <div
+              ref={bodyRef}
+              className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pb-[max(1rem,env(safe-area-inset-bottom,0px))] pt-3"
+            >
+              {children}
+            </div>
+            {footer ? (
+              <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border/60 bg-surface px-6 pb-[max(1rem,env(safe-area-inset-bottom,0px))] pt-4">
+                {footer}
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </Portal>
+    );
+  }
 
   const hasHeader = Boolean(title);
 

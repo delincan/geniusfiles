@@ -50,7 +50,7 @@ export function MoreActionsSheet({
 }) {
   const t = useT();
   return (
-    <BottomSheet open={open} onClose={onClose} title={t("action.more")}>
+    <BottomSheet sheet open={open} onClose={onClose} title={t("action.more")}>
       <div className="-mx-2.5 -mt-3 flex flex-col">
         {actions.map((a) => {
           let Icon: AppIcon = ICONS[a.id];
