@@ -18,4 +18,10 @@ export default {
   "settings.android.label": "Permisos de Android",
   "settings.android.desc": "Notificaciones, almacenamiento y otros accesos de la app.",
   "settings.android.unavailable": "No se pudieron abrir los ajustes de Android.",
+  "home.delete.permanentSingle": "«{name}» eliminado definitivamente",
+  "home.delete.permanentMultiple": "{count} {unit}s eliminados definitivamente",
+  "home.delete.permanentCancelledWithCount":
+    "Eliminación cancelada — {count} {unit} ya eliminado(s) definitivamente",
+  "files.delete.deletedForeverVerb": "eliminado(s) definitivamente",
+  "home.delete.permanentSubtitle": "Eliminación definitiva",
 };

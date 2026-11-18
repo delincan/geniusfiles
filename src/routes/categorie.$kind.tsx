@@ -5,6 +5,7 @@
  * dossier d'origine. Les résultats streament pendant l'analyse et
  * sont mis en cache : réouvrir la catégorie est quasi instantané.
  */
+import { deleteVerb } from "@/lib/files/delete-feedback";
 import { fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppNavigate } from "@/lib/navigation/pick-nav";
@@ -605,16 +606,12 @@ export function CategoryPage({ kind }: { kind: CategoryKind }) {
       });
       clearSelection();
       refreshAfterMutation();
-      const s = batchSummary(
-        permanent ? t("action.deleteForever") : t("files.recent.movedToTrashVerb"),
-        ok,
-        failed,
-      );
+      const s = batchSummary(deleteVerb(permanent), ok, failed);
       if (s.ok) toast.success(s.message);
       else toast.error(s.message);
       return ok > 0;
     },
-    [clearSelection, t],
+    [clearSelection],
   );
 
   const doShare = useCallback(

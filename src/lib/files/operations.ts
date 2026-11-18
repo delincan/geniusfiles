@@ -9,6 +9,7 @@
  * All batch operations report incremental progress and honour a cancel
  * signal so the UI can offer "Annuler" during long copies / moves.
  */
+import { deleteHistorySummary } from "./delete-feedback";
 import {
   isAndroidNative,
   listNativeDirectory,
@@ -618,7 +619,8 @@ async function runDelete(
   if (succeeded > 0 || failed.length > 0) {
     recordOperation({
       kind: "delete",
-      summary: t("ops.delete.summary", {
+      summary: deleteHistorySummary({
+        permanent: !!opts.permanent,
         count: succeeded,
         name: confirmed[0]?.name ?? targets[0].name,
       }),

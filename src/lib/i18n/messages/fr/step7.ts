@@ -18,4 +18,10 @@ export default {
   "settings.android.label": "Autorisations Android",
   "settings.android.desc": "Notifications, stockage et autres accès de l'application.",
   "settings.android.unavailable": "Impossible d'ouvrir les paramètres Android.",
+  "home.delete.permanentSingle": "« {name} » supprimé définitivement",
+  "home.delete.permanentMultiple": "{count} {unit}s supprimés définitivement",
+  "home.delete.permanentCancelledWithCount":
+    "Suppression annulée — {count} {unit} déjà supprimé(s) définitivement",
+  "files.delete.deletedForeverVerb": "supprimé(s) définitivement",
+  "home.delete.permanentSubtitle": "Suppression définitive",
 };

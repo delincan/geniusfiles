@@ -18,4 +18,10 @@ export default {
   "settings.android.label": "Android-Berechtigungen",
   "settings.android.desc": "Benachrichtigungen, Speicher und weitere App-Zugriffe.",
   "settings.android.unavailable": "Android-Einstellungen konnten nicht geöffnet werden.",
+  "home.delete.permanentSingle": "„{name}“ endgültig gelöscht",
+  "home.delete.permanentMultiple": "{count} {unit}s endgültig gelöscht",
+  "home.delete.permanentCancelledWithCount":
+    "Löschen abgebrochen — {count} {unit} bereits endgültig gelöscht",
+  "files.delete.deletedForeverVerb": "endgültig gelöscht",
+  "home.delete.permanentSubtitle": "Endgültiges Löschen",
 };

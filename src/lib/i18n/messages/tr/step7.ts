@@ -18,4 +18,10 @@ export default {
   "settings.android.label": "Android izinleri",
   "settings.android.desc": "Bildirimler, depolama ve diğer uygulama erişimleri.",
   "settings.android.unavailable": "Android ayarları açılamadı.",
+  "home.delete.permanentSingle": "“{name}” kalıcı olarak silindi",
+  "home.delete.permanentMultiple": "{count} {unit} kalıcı olarak silindi",
+  "home.delete.permanentCancelledWithCount":
+    "Silme iptal edildi — {count} {unit} zaten kalıcı olarak silindi",
+  "files.delete.deletedForeverVerb": "kalıcı olarak silindi",
+  "home.delete.permanentSubtitle": "Kalıcı olarak siliniyor",
 };

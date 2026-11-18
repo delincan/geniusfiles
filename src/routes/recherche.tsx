@@ -11,6 +11,7 @@
  * de défilement) est conservé : ouvrir un fichier puis revenir ne
  * réinitialise jamais la recherche.
  */
+import { deleteVerb } from "@/lib/files/delete-feedback";
 import { fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
 import { useListScrollMemory } from "@/lib/files/use-list-scroll";
 import { createFileRoute } from "@tanstack/react-router";
@@ -663,16 +664,12 @@ export function SearchPage() {
       clearSelection();
       setResults((prev) => prev.filter((r) => !removed.has(resultId(r))));
       refreshAfterMutation();
-      const s = batchSummary(
-        permanent ? t("action.deleteForever") : t("files.recent.movedToTrashVerb"),
-        ok,
-        failed,
-      );
+      const s = batchSummary(deleteVerb(permanent), ok, failed);
       if (s.ok) toast.success(s.message);
       else toast.error(s.message);
       return ok > 0;
     },
-    [clearSelection, refreshAfterMutation, t],
+    [clearSelection, refreshAfterMutation],
   );
 
   const doTransfer = useCallback(

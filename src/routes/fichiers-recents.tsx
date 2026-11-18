@@ -8,6 +8,7 @@
  * d'ajout réelles) sur une fenêtre de 7 jours ; la liste connue
  * s'affiche instantanément puis se rafraîchit en arrière-plan.
  */
+import { deleteVerb } from "@/lib/files/delete-feedback";
 import { fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
 import { useListScrollMemory } from "@/lib/files/use-list-scroll";
 import { createFileRoute } from "@tanstack/react-router";
@@ -396,16 +397,12 @@ export function AddedFilesPage() {
       });
       clearSelection();
       refreshAfterMutation();
-      const s = batchSummary(
-        permanent ? t("action.deleteForever") : t("files.recent.movedToTrashVerb"),
-        ok,
-        failed,
-      );
+      const s = batchSummary(deleteVerb(permanent), ok, failed);
       if (s.ok) toast.success(s.message);
       else toast.error(s.message);
       return ok > 0;
     },
-    [clearSelection, t],
+    [clearSelection],
   );
 
   const doTransfer = useCallback(

@@ -1,4 +1,5 @@
 import { archiveTypeOf, fileTypeOf, resultOf, trackEvent } from "@/lib/native/analytics";
+import { deleteCancelledMessage, deleteDoneMessage } from "@/lib/files/delete-feedback";
 import { useAnalyticsScreen } from "@/lib/native/useAnalyticsScreen";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppNavigate } from "@/lib/navigation/pick-nav";
@@ -931,7 +932,9 @@ export function FilesPage() {
         signalRef.current = signal;
         setProgress(null);
         setProgressTitle(progressLabel(t("home.delete.label"), undefined, entries.length, unit));
-        setProgressSubtitle(t("home.delete.subtitle"));
+        setProgressSubtitle(
+          t(opts?.permanent ? "home.delete.permanentSubtitle" : "home.delete.subtitle"),
+        );
         setProgressOpen(true);
       }
       try {
@@ -967,17 +970,18 @@ export function FilesPage() {
       invalidateSizes();
       if (cancelled) {
         toast.info(
-          succeeded > 0
-            ? t("home.delete.cancelledWithCount", { count: succeeded, unit })
-            : t("home.delete.cancelled"),
+          deleteCancelledMessage({ permanent: !!opts?.permanent, count: succeeded, unit }),
         );
         return false;
       }
       if (failed.length === 0) {
         toast.success(
-          entries.length === 1
-            ? t("home.delete.doneSingle", { name: entries[0].name })
-            : t("home.delete.doneMultiple", { count: succeeded, unit }),
+          deleteDoneMessage({
+            permanent: !!opts?.permanent,
+            count: entries.length === 1 ? 1 : succeeded,
+            name: entries[0].name,
+            unit,
+          }),
         );
       } else {
         toast.error(t("home.delete.failed", { count: failed.length }), {
