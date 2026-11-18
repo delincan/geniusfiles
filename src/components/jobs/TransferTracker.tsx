@@ -15,7 +15,12 @@
  * Aucun rendu → aucun coût de layout, aucun repaint, aucun doublon d'UI.
  */
 import { useEffect } from "react";
-import { adoptNativeTransfers } from "@/lib/transfers/manager";
+import { haptic } from "@/lib/feedback/haptics";
+import {
+  adoptNativeTransfers,
+  getTransferSnapshot,
+  subscribeTransfers,
+} from "@/lib/transfers/manager";
 
 export function TransferTracker() {
   useEffect(() => {
@@ -25,6 +30,32 @@ export function TransferTracker() {
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => document.removeEventListener("visibilitychange", onVisible);
+  }, []);
+
+  /* Un tic discret quand un transfert vu en cours se termine réellement
+     sans échec, application au premier plan. Une tâche déjà terminée à la
+     reprise ne vibre pas : quitter puis rouvrir l'app n'annonce rien. */
+  useEffect(() => {
+    const running = new Set(
+      getTransferSnapshot()
+        .filter((task) => task.status === "running")
+        .map((task) => task.id),
+    );
+    return subscribeTransfers(() => {
+      for (const task of getTransferSnapshot()) {
+        if (task.status === "running") {
+          running.add(task.id);
+          continue;
+        }
+        if (!running.delete(task.id)) continue;
+        if (
+          task.status === "done" &&
+          task.failures.length === 0 &&
+          document.visibilityState === "visible"
+        )
+          haptic("confirm");
+      }
+    });
   }, []);
   return null;
 }

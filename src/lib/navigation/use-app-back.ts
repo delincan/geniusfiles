@@ -14,6 +14,7 @@
 import { useCallback } from "react";
 import { useRouter, useRouterState, type AnyRouter } from "@tanstack/react-router";
 import { canGoBackInApp, runRegisteredBackHandlers } from "@/lib/navigation/back-stack";
+import { keyboardLikelyOpen } from "@/lib/native/keyboard";
 
 /** Demande de sortie de l'application (accueil + pile vide). */
 export const EXIT_REQUEST_EVENT = "gf:exit-request";
@@ -50,7 +51,9 @@ export function dismissKeyboardIfOpen(): boolean {
   if (!(el instanceof HTMLElement) || !el.matches(EDITABLE)) return false;
   const vv = window.visualViewport;
   const inset = vv ? window.innerHeight - (vv.height + vv.offsetTop) : 0;
-  if (inset <= 80) return false;
+  // WebView redimensionnée par Capacitor (bord à bord) : l'écart se lit
+  // sur la hauteur de la fenêtre, pas sur le viewport visuel.
+  if (inset <= 80 && !keyboardLikelyOpen()) return false;
   el.blur();
   return true;
 }

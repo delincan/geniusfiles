@@ -22,6 +22,8 @@ function isEditable(target: EventTarget | null): boolean {
 /* ------------------------------------------------------------------ */
 
 /** Tout ce qui réagit à un appui : boutons, liens, lignes, onglets, choix. */
+import { installKeyboardBehaviors } from "./keyboard";
+
 export const PRESSABLE =
   "button, a[href], [role='button'], [role='menuitem'], [role='menuitemradio'], [role='tab'], [role='radio'], [role='checkbox'], [role='switch'], [role='option'], summary, label[for], [data-gf-pressable]";
 export const PRESSED_ATTR = "data-gf-pressed";
@@ -109,7 +111,16 @@ function installPressFeedback(): () => void {
   document.addEventListener("pointermove", onMove, { capture: true, passive: true });
   document.addEventListener("pointerup", onUp, { capture: true, passive: true });
   document.addEventListener("pointercancel", reset, { capture: true, passive: true });
+  /* Application mise en arrière-plan pendant un appui : aucun état
+     « pressé » ne doit survivre à la reprise. */
+  const onHidden = () => {
+    if (document.visibilityState === "hidden") reset();
+  };
+  document.addEventListener("visibilitychange", onHidden);
+  window.addEventListener("blur", reset);
   return () => {
+    document.removeEventListener("visibilitychange", onHidden);
+    window.removeEventListener("blur", reset);
     reset();
     document.removeEventListener("pointerdown", onDown, { capture: true });
     document.removeEventListener("pointermove", onMove, { capture: true });
@@ -164,9 +175,11 @@ export function installNativeBehaviors(): () => void {
   document.addEventListener("selectstart", onSelectStart, { capture: true });
   document.addEventListener("dragstart", onDragStart, { capture: true });
   const stopPress = installPressFeedback();
+  const stopKeyboard = installKeyboardBehaviors();
 
   return () => {
     stopPress();
+    stopKeyboard();
     document.removeEventListener("pointerdown", onPointerDown, { capture: true });
     document.removeEventListener("keydown", onKeyDown, { capture: true });
     document.removeEventListener("contextmenu", onContextMenu, { capture: true });

@@ -1,5 +1,5 @@
 import { Check, ChevronRight, Eye, MoreVertical } from "@/components/icons";
-import { memo, useRef } from "react";
+import { memo, useMemo, useRef } from "react";
 import { countLabel } from "@/lib/copy";
 import { useT } from "@/lib/i18n";
 import { formatDate, formatSize, kindLabel } from "@/lib/files/format";
@@ -7,7 +7,8 @@ import { useFolderCount } from "@/lib/files/folder-count";
 import type { FileEntry, PathRef } from "@/lib/files/types";
 import { FileIcon } from "./FileIcon";
 import { useWindowVirtualList } from "@/hooks/use-virtual-list";
-import { vibrate } from "@/lib/feedback/haptics";
+import { haptic } from "@/lib/feedback/haptics";
+import { useListMotion } from "@/lib/motion/list-motion";
 import { acceptOpenTap } from "@/lib/feedback/tap-guard";
 
 // Hauteurs FIXES : aucune re-mesure pendant le défilement, donc aucune
@@ -15,6 +16,10 @@ import { acceptOpenTap } from "@/lib/feedback/tap-guard";
 const ROW_HEIGHT = 72;
 const GRID_CELL_HEIGHT = 156;
 const GRID_ROW_HEIGHT = GRID_CELL_HEIGHT + 10; // + gap vertical
+/* Emplacements des lignes / cellules pour le mouvement après une opération
+   (gap-x-2 = 8 px, gap-y-2.5 = 10 px — identiques en mode virtualisé). */
+const LIST_GEOMETRY = { cols: 1, gapX: 0, gapY: 0 };
+const GRID_GEOMETRY = { cols: 3, gapX: 8, gapY: GRID_ROW_HEIGHT - GRID_CELL_HEIGHT };
 
 type Props = {
   entries: FileEntry[];
@@ -66,7 +71,7 @@ function usePressBinder(entry: FileEntry, onLongPress: (e: FileEntry) => void) {
           timer.current = null;
           fired.current = true;
           // Un seul tic bref : il confirme que la sélection a démarré.
-          vibrate(10);
+          haptic("select");
           onLongPress(entry);
         }, LONG_PRESS_MS);
       },
@@ -102,13 +107,17 @@ export function FileListView({
     estimateSize: ROW_HEIGHT,
     overscan: 10,
   });
+  const motionRef = useRef<HTMLDivElement>(null);
+  const keys = useMemo(() => entries.map(entryKey), [entries, entryKey]);
+  useListMotion(motionRef, keys, LIST_GEOMETRY);
 
   if (!enabled) {
     return (
-      <div>
+      <div ref={motionRef} className="relative">
         {entries.map((entry) => (
           <FileRow
             key={entryKey(entry)}
+            flipKey={entryKey(entry)}
             entry={entry}
             parent={parent ?? null}
             onOpen={onOpen}
@@ -128,6 +137,7 @@ export function FileListView({
   const items = virtualizer.getVirtualItems();
   const totalSize = virtualizer.getTotalSize();
   return (
+    <div ref={motionRef} className="relative">
     <div ref={parentRef} style={{ position: "relative", height: `${totalSize}px` }}>
       {items.map((v) => {
         const entry = entries[v.index];
@@ -146,6 +156,7 @@ export function FileListView({
             }}
           >
             <FileRow
+              flipKey={entryKey(entry)}
               entry={entry}
               parent={parent ?? null}
               onOpen={onOpen}
@@ -161,10 +172,12 @@ export function FileListView({
         );
       })}
     </div>
+    </div>
   );
 }
 
 export const FileRow = memo(function FileRow({
+  flipKey,
   entry,
   parent,
   onOpen,
@@ -176,6 +189,8 @@ export const FileRow = memo(function FileRow({
   isSelected,
   onToggleSelect,
 }: {
+  /** Identité suivie par le mouvement de liste. */
+  flipKey?: string;
   entry: FileEntry;
   parent?: PathRef | null;
   onOpen: (e: FileEntry) => void;
@@ -202,6 +217,7 @@ export const FileRow = memo(function FileRow({
     <button
       type="button"
       data-entry-name={entry.name}
+      data-flip-key={flipKey}
       {...press.handlers}
       onClick={() => {
         if (press.fired.current) return;
@@ -272,12 +288,16 @@ export function FileGridView({
     overscan: 6,
     threshold: 40,
   });
+  const motionRef = useRef<HTMLDivElement>(null);
+  const keys = useMemo(() => entries.map(entryKey), [entries, entryKey]);
+  useListMotion(motionRef, keys, GRID_GEOMETRY);
   if (!enabled) {
     return (
-      <div className="grid grid-cols-3 gap-x-2 gap-y-2.5 px-3">
+      <div ref={motionRef} className="relative grid grid-cols-3 gap-x-2 gap-y-2.5 px-3">
         {entries.map((entry) => (
           <GridCell
             key={entryKey(entry)}
+            flipKey={entryKey(entry)}
             entry={entry}
             parent={parent ?? null}
             onOpen={onOpen}
@@ -297,6 +317,7 @@ export function FileGridView({
   const items = virtualizer.getVirtualItems();
   const totalSize = virtualizer.getTotalSize();
   return (
+    <div ref={motionRef} className="relative">
     <div ref={parentRef} style={{ position: "relative", height: `${totalSize}px` }}>
       {items.map((v) => {
         const start = v.index * COLS;
@@ -319,6 +340,7 @@ export function FileGridView({
               {rowEntries.map((entry) => (
                 <GridCell
                   key={entryKey(entry)}
+                  flipKey={entryKey(entry)}
                   entry={entry}
                   parent={parent ?? null}
                   onOpen={onOpen}
@@ -336,10 +358,12 @@ export function FileGridView({
         );
       })}
     </div>
+    </div>
   );
 }
 
 const GridCell = memo(function GridCell({
+  flipKey,
   entry,
   parent,
   onOpen,
@@ -351,6 +375,7 @@ const GridCell = memo(function GridCell({
   isSelected,
   onToggleSelect,
 }: {
+  flipKey?: string;
   entry: FileEntry;
   parent: PathRef | null;
   onOpen: (e: FileEntry) => void;
@@ -375,6 +400,7 @@ const GridCell = memo(function GridCell({
     <button
       type="button"
       data-entry-name={entry.name}
+      data-flip-key={flipKey}
       {...press.handlers}
       onClick={() => {
         if (press.fired.current) return;

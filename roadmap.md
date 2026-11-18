@@ -114,3 +114,18 @@
 - [x] No double triggers; reduced-motion respected; light haptics only where useful
 - [x] Verify main interactions across sections
 - [ ] Feel-check touches, swipe-to-close and Back on a real Android phone — needs a new APK build.
+
+## Step 9 — Motion (keep identity and touch work)
+- [ ] Inspect existing animations; screen transitions without flash; scroll kept
+- [ ] Unified sheet/dialog open + close motion, backdrop fade
+- [ ] File list: selection transition, smooth list updates, removal only after success, discreet op feedback
+- [ ] Genius AI: message appearance, thinking indicator (no fake streaming)
+- [ ] Skeletons only when data is slow; no flicker; reduced motion
+
+## Step 10 — Android integration
+- [ ] Status/navigation bars, safe areas, edge-to-edge
+- [ ] Back order: keyboard → overlay → selection → previous screen/folder → exit guard
+- [ ] Native share / clipboard / open-with / permissions audit
+- [ ] Keyboard resize behaviour (Genius AI, search, automation forms)
+- [ ] Haptics on meaningful actions (gated)
+- [ ] Lifecycle: pause/resume state, no double ops, listener cleanup

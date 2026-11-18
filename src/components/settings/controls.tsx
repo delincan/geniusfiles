@@ -8,6 +8,7 @@
 import type { ComponentType, ReactNode } from "react";
 import { Check } from "@/components/icons";
 import { BottomSheet } from "@/components/files/BottomSheet";
+import { haptic } from "@/lib/feedback/haptics";
 
 /** Interrupteur : piste bleue quand actif, neutre sinon. */
 export function Toggle({
@@ -28,7 +29,10 @@ export function Toggle({
       aria-checked={checked}
       aria-label={ariaLabel}
       disabled={disabled}
-      onClick={() => onChange(!checked)}
+      onClick={() => {
+        haptic("toggle");
+        onChange(!checked);
+      }}
       className="-my-1 -mr-1.5 inline-flex h-11 w-[60px] shrink-0 items-center justify-center disabled:opacity-45"
     >
       <span
