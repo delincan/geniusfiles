@@ -1,5 +1,6 @@
 import { ACTION_ICON, MoreHorizontal, X, type AppIcon } from "@/components/icons";
 import { Portal } from "@/components/common/Portal";
+import { useEffect, useRef, useState } from "react";
 import { useT } from "@/lib/i18n";
 
 /**
@@ -137,7 +138,11 @@ function TopAction({
  * et respectant les insets Android. Un espaceur en flux évite qu'elle
  * masque la fin du contenu.
  */
+/** Durée de la sortie de la barre d'actions (ms). */
+const BAR_EXIT_MS = 170;
+
 export function SelectionBar({
+  open = true,
   count,
   onCopy,
   onMove,
@@ -146,6 +151,8 @@ export function SelectionBar({
   onShare,
   onMore,
 }: {
+  /** Barre visible ; à `false`, elle redescend avant de disparaître. */
+  open?: boolean;
   count: number;
   /** @deprecated conservé pour compat ; ignoré. */
   singleName?: string;
@@ -161,7 +168,20 @@ export function SelectionBar({
   onMore: () => void;
 }) {
   const t = useT();
-  const canRename = count === 1;
+  const [mounted, setMounted] = useState(open);
+  useEffect(() => {
+    if (open) {
+      setMounted(true);
+      return;
+    }
+    const timer = window.setTimeout(() => setMounted(false), BAR_EXIT_MS);
+    return () => window.clearTimeout(timer);
+  }, [open]);
+  // Pendant la sortie, la barre garde le contenu qu'elle affichait.
+  const lastCount = useRef(count);
+  if (open) lastCount.current = count;
+  const leaving = !open;
+  const canRename = lastCount.current === 1;
   // La barre s'adapte : « Renommer » n'apparaît que lorsqu'il s'applique
   // (un seul élément), ce qui laisse plus de place aux autres libellés.
   const actions: Array<{
@@ -186,6 +206,7 @@ export function SelectionBar({
     },
     { key: "more", icon: MoreHorizontal, label: t("action.more"), onClick: onMore },
   ];
+  if (!open && !mounted) return null;
   return (
     <>
       {/* Espaceur : la barre est `fixed`, elle ne doit rien recouvrir. */}
@@ -198,7 +219,10 @@ export function SelectionBar({
           aria-label={t("ops.selection.ariaLabel")}
           style={{
             bottom: "calc(env(safe-area-inset-bottom, 0px) + 76px)",
-            animation: "gf-bar-in-bottom 220ms cubic-bezier(0.2, 0, 0, 1) both",
+            animation: leaving
+              ? `gf-bar-out-bottom ${BAR_EXIT_MS}ms cubic-bezier(0.3, 0, 1, 1) both`
+              : "gf-bar-in-bottom 220ms cubic-bezier(0.2, 0, 0, 1) both",
+            pointerEvents: leaving ? "none" : undefined,
           }}
         >
           <div

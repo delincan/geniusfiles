@@ -990,21 +990,20 @@ export function CategoryPage({ kind }: { kind: CategoryKind }) {
         </div>
       ) : null}
 
-      {selectionMode && !pick ? (
-        <SelectionBar
-          count={selectedFiles.length}
-          onCopy={() => void startTransferFlow("copy", selectedFiles)}
-          onMove={() => void startTransferFlow("move", selectedFiles)}
-          onDelete={() => setDialog({ kind: "confirmDelete", items: selectedFiles })}
-          onRename={() => {
-            if (selectedFiles.length !== 1) return;
-            const f = selectedFiles[0];
-            setDialog({ kind: "rename", entry: f, parent: parentOf(f) });
-          }}
-          onShare={() => doShare(selectedFiles.filter((f) => !f.isDirectory))}
-          onMore={() => setMoreOpen(true)}
-        />
-      ) : null}
+      <SelectionBar
+        open={selectionMode && !pick}
+        count={selectedFiles.length}
+        onCopy={() => void startTransferFlow("copy", selectedFiles)}
+        onMove={() => void startTransferFlow("move", selectedFiles)}
+        onDelete={() => setDialog({ kind: "confirmDelete", items: selectedFiles })}
+        onRename={() => {
+          if (selectedFiles.length !== 1) return;
+          const f = selectedFiles[0];
+          setDialog({ kind: "rename", entry: f, parent: parentOf(f) });
+        }}
+        onShare={() => doShare(selectedFiles.filter((f) => !f.isDirectory))}
+        onMore={() => setMoreOpen(true)}
+      />
 
       <MoreActionsSheet
         open={moreOpen}

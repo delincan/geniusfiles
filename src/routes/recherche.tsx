@@ -1051,20 +1051,19 @@ export function SearchPage() {
         </>
       )}
 
-      {selectionMode ? (
-        <SelectionBar
-          count={selectedFiles.length}
-          onCopy={() => void startTransferFlow("copy", selectedFiles)}
-          onMove={() => void startTransferFlow("move", selectedFiles)}
-          onDelete={() => setDialog({ kind: "confirmDelete", items: selectedFiles })}
-          onRename={() => {
-            if (selectedFiles.length !== 1) return;
-            setDialog({ kind: "rename", entry: selectedFiles[0] });
-          }}
-          onShare={() => doShare(selectedFiles.filter((r) => !r.isDirectory))}
-          onMore={() => setMoreOpen(true)}
-        />
-      ) : null}
+      <SelectionBar
+        open={selectionMode}
+        count={selectedFiles.length}
+        onCopy={() => void startTransferFlow("copy", selectedFiles)}
+        onMove={() => void startTransferFlow("move", selectedFiles)}
+        onDelete={() => setDialog({ kind: "confirmDelete", items: selectedFiles })}
+        onRename={() => {
+          if (selectedFiles.length !== 1) return;
+          setDialog({ kind: "rename", entry: selectedFiles[0] });
+        }}
+        onShare={() => doShare(selectedFiles.filter((r) => !r.isDirectory))}
+        onMore={() => setMoreOpen(true)}
+      />
 
       <MoreActionsSheet
         open={moreOpen}

@@ -1356,19 +1356,20 @@ export function FilesPage() {
         <RootView roots={roots} onOpenRoot={openRoot} pick={pick} />
       )}
 
+      <SelectionBar
+        open={selectionMode && !pick}
+        count={selection.size}
+        onCopy={() => void startTransferFlow("copy", selectedEntries)}
+        onMove={() => void startTransferFlow("move", selectedEntries)}
+        onDelete={() => setDialog({ kind: "confirmDelete", entries: selectedEntries })}
+        onRename={() =>
+          selectedEntries[0] && setDialog({ kind: "rename", entry: selectedEntries[0] })
+        }
+        onShare={() => runShare(selectedEntries)}
+        onMore={() => setMoreOpen(true)}
+      />
       {selectionMode && !pick ? (
         <>
-          <SelectionBar
-            count={selection.size}
-            onCopy={() => void startTransferFlow("copy", selectedEntries)}
-            onMove={() => void startTransferFlow("move", selectedEntries)}
-            onDelete={() => setDialog({ kind: "confirmDelete", entries: selectedEntries })}
-            onRename={() =>
-              selectedEntries[0] && setDialog({ kind: "rename", entry: selectedEntries[0] })
-            }
-            onShare={() => runShare(selectedEntries)}
-            onMore={() => setMoreOpen(true)}
-          />
           <MoreActionsSheet
             open={moreOpen}
             onClose={() => setMoreOpen(false)}

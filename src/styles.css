@@ -1179,6 +1179,16 @@ html[data-gf-input="touch"] :is(.gf-press, .gf-chip, [data-gf-press-scale])[data
     transform: translateY(0);
   }
 }
+@keyframes gf-bar-out-bottom {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
 @keyframes gf-bar-in-bottom {
   from {
     opacity: 0;
