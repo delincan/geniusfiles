@@ -36,12 +36,7 @@ import { NamePrompt } from "@/components/files/BottomSheet";
 import { DeleteConfirmDialog } from "@/components/files/DeleteConfirmDialog";
 import { DetailsSheet } from "@/components/files/DetailsSheet";
 import { ProgressDialog } from "@/components/files/ProgressDialog";
-import {
-  startTransfer,
-  cancelTransfer,
-  openTransferDestination,
-  summaryMessage,
-} from "@/lib/transfers/manager";
+import { startTransfer, cancelTransfer, summaryMessage } from "@/lib/transfers/manager";
 import { useTransferTask } from "@/lib/transfers/useTransfers";
 import { UniversalViewer, type ViewerAction } from "@/components/viewer/UniversalViewer";
 import { IllustratedEmptyState } from "@/components/ui/IllustratedEmptyState";
@@ -423,11 +418,6 @@ export function AddedFilesPage() {
           // Résumé complet : transférés, ignorés et échecs.
           const message = summaryMessage(task);
           if (task.failures.length > 0) toast.error(message);
-          else toast.success(message);
-          if (task.succeeded > 0) {
-            openTransferDestination(task);
-            void navigate({ to: "/" });
-          }
         },
       });
       setTransferTaskId(id);
@@ -442,7 +432,7 @@ export function AddedFilesPage() {
       setProgressOpen(true);
       clearSelection();
     },
-    [clearSelection, navigate, t],
+    [clearSelection, t],
   );
 
   /* Copier / Déplacer : destination choisie dans la navigation habituelle. */

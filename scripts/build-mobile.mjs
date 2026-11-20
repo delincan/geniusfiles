@@ -176,7 +176,7 @@ await cp(DIST_CLIENT, OUT, { recursive: true });
 //   3. tous les pointeurs `src/assets/**/*.asset.json` du dépôt (filet de
 //      sécurité : une illustration chargée dynamiquement reste embarquée).
 // ---------------------------------------------------------------------------
-const assetRe = /\/__l5e\/assets-v1\/[A-Za-z0-9\-_]+\/[A-Za-z0-9\-_.%]+/g;
+const assetRe = /\/__l5e\/assets-v1\/[A-Za-z0-9\-_]+\/[^\s"'`\\<>?#()]+/g;
 const TEXT_EXT = /\.(js|mjs|cjs|css|html|json|map|txt|webmanifest|svg)$/i;
 
 async function walk(dir) {

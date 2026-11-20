@@ -87,7 +87,7 @@ import { NamePrompt } from "@/components/files/BottomSheet";
 import { DeleteConfirmDialog } from "@/components/files/DeleteConfirmDialog";
 import { DetailsSheet } from "@/components/files/DetailsSheet";
 import { ProgressDialog } from "@/components/files/ProgressDialog";
-import { startTransfer, cancelTransfer, openTransferDestination } from "@/lib/transfers/manager";
+import { startTransfer, cancelTransfer } from "@/lib/transfers/manager";
 import { useTransferTask } from "@/lib/transfers/useTransfers";
 import { UniversalViewer, type ViewerAction } from "@/components/viewer/UniversalViewer";
 import { canOpenInViewer, canPreview } from "@/lib/viewer/kinds";
@@ -142,7 +142,7 @@ import type {
   ViewMode,
 } from "@/lib/files/types";
 import { openStoragePermissionSettings } from "@/lib/native/storage-permission";
-import { summarize, progressLabel } from "@/lib/copy";
+import { progressLabel } from "@/lib/copy";
 import {
   useSelection,
   selectionEntries,
@@ -847,19 +847,7 @@ export function FilesPage() {
             toast.warning(t("home.transfer.cancelled"), {
               description: t("home.transfer.cancelledDetail", { count: task.succeeded, unit }),
             });
-          } else if (task.status === "done") {
-            const summary = summarize(
-              mode === "copy" ? t("ops.transfer.copyDone") : t("ops.transfer.moveDone"),
-              task.succeeded,
-              unit,
-              destLabel,
-            );
-            const extra =
-              task.skipped > 0
-                ? ` · ${t("ops.transfer.skippedCount", { count: task.skipped })}`
-                : "";
-            toast.success(summary.title, { description: `${summary.detail}${extra}` });
-          } else {
+          } else if (task.status === "failed") {
             toast.error(
               t("home.transfer.mixedResult", {
                 succeeded: task.succeeded,
@@ -873,9 +861,6 @@ export function FilesPage() {
               },
             );
           }
-          // L'utilisateur voit immédiatement le résultat : le dossier de
-          // destination s'ouvre dès qu'au moins un élément est arrivé.
-          if (task.succeeded > 0) openTransferDestination(task);
         },
       });
       setTransferTaskId(id);

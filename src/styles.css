@@ -22,6 +22,7 @@
   --radius-4xl: 16px; /* dialogue */
 
   --color-background: var(--background);
+  --color-illustration-surface: var(--illustration-surface);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
@@ -139,6 +140,7 @@
   --surface-elevated: #282826;
   /* Appui sur une surface L3 (menus, feuilles). */
   --surface-3: #323232;
+  --illustration-surface: #353639;
 
   --card: var(--surface);
   --card-foreground: var(--foreground);
@@ -301,6 +303,7 @@ html[data-theme="light"] {
   --surface-elevated: #ffffff;
   --surface-2: #eef0f4;
   --surface-3: #e4e7ec;
+  --illustration-surface: #dedfe1;
 
   --card: #ffffff;
   --card-foreground: #15171c;
@@ -1484,10 +1487,34 @@ ol.gf-answer-list > .gf-answer-item::before {
   }
 }
 @utility gf-empty-copy {
-  animation: gf-empty-rise 300ms var(--ease-standard) 110ms both;
+  animation: gf-empty-rise 180ms var(--ease-standard) both;
+}
+
+.gf-state-illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: min(180px, 48vw);
+  height: min(200px, 32dvh);
+  padding: 8px;
+  border-radius: var(--radius-3xl);
+  background: var(--illustration-surface);
+  color: var(--muted-foreground);
+  animation: gf-empty-rise 180ms var(--ease-standard) both;
+}
+.gf-state-illustration-compact {
+  width: min(152px, 42vw);
+  height: min(168px, 25dvh);
+}
+.gf-state-illustration img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 @media (prefers-reduced-motion: reduce) {
-  .gf-empty-copy {
+  .gf-empty-copy,
+  .gf-state-illustration {
     animation-duration: 1ms;
     animation-delay: 0ms;
   }

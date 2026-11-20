@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import type { ReactNode } from "react";
 import {
   GfDocument,
@@ -22,15 +21,16 @@ import {
   type GfIconComponent,
 } from "@/components/icons";
 import { EmptyStateAd } from "@/components/ads/EmptyStateAd";
-import { emptyIllustrationCopy, type EmptyIllustrationId } from "@/lib/copy/empty-illustrations";
+import { type EmptyIllustrationId } from "@/lib/copy/empty-illustrations";
+import { useT } from "@/lib/i18n";
+import { StateIllustration } from "./StateIllustration";
 
 /**
  * État vide de GeniusFiles.
  *
- * Une seule famille d'icônes — celle dessinée pour l'application — posée
- * dans un halo doux qui donne à l'écran une intention visuelle sans
- * illustration lourde. Rendu identique et parfaitement contrasté en thème
- * clair comme en thème sombre, coût mémoire nul.
+ * Illustrations dédiées sur une surface neutre commune. Les états dont
+ * l'image n'a pas encore été fournie conservent leur pictogramme propre.
+ * Les textes suivent immédiatement la langue active.
  */
 const ICONS: Record<EmptyIllustrationId, GfIconComponent> = {
   files: GfEmptyFiles,
@@ -78,23 +78,18 @@ export function IllustratedEmptyState({
    */
   adSlot?: string;
 }) {
-  const copy = useMemo(() => emptyIllustrationCopy(id), [id]);
+  const t = useT();
+  const copy = {
+    title: t(`copy.empty.${id}.title`),
+    description: t(`copy.empty.${id}.description`),
+  };
   const Icon = ICONS[id];
 
   return (
     <div
       className={`flex min-h-[42vh] w-full flex-col items-center justify-center px-6 pb-[8vh] pt-6 text-center sm:min-h-[58vh] sm:pb-[12vh] ${className}`}
     >
-      <span
-        aria-hidden="true"
-        className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl ${
-          tone === "inverted"
-            ? "bg-reader-backdrop-foreground/10 text-reader-backdrop-foreground/80"
-            : "bg-surface text-muted-foreground"
-        }`}
-      >
-        <Icon size={44} />
-      </span>
+      <StateIllustration id={id} fallback={<Icon size={44} />} />
       <div className="gf-empty-copy mt-4 flex max-w-[320px] shrink-0 flex-col items-center gap-1.5">
         <p
           className={`text-[16px] font-semibold leading-snug ${

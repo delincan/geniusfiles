@@ -11,6 +11,7 @@
  */
 import { useEffect, useState } from "react";
 import { FolderOpen } from "@/components/icons";
+import { StateIllustration } from "@/components/ui/StateIllustration";
 import { BottomSheet, PrimaryButton } from "@/components/files/BottomSheet";
 import {
   deferStorageAccess,
@@ -111,6 +112,8 @@ export function StorageAccessDialog() {
       open={open}
       onClose={onLater}
       fullScreen={false}
+      sheet
+      label={t("illustrations.permission.title")}
       footer={
         <>
           <PrimaryButton variant="ghost" onClick={onLater} disabled={busy}>
@@ -122,23 +125,18 @@ export function StorageAccessDialog() {
         </>
       }
     >
-      <div className="space-y-4 pr-8">
-        <div className="flex items-start gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary-softer text-primary">
-            <FolderOpen className="h-5 w-5" />
-          </span>
-          <div className="min-w-0 space-y-1.5">
-            <p className="text-[17px] font-semibold leading-snug text-foreground">
-              {t("files.storageAccess.title")}
-            </p>
-            <p className="text-[14px] leading-relaxed text-muted-foreground">
-              {reason ?? t("storage.access.defaultReason")}
-            </p>
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              {t("files.storageAccess.privacy")}
-            </p>
-          </div>
-        </div>
+      <div className="flex flex-col items-center gap-4 text-center">
+        <StateIllustration
+          id="androidPermission"
+          compact
+          fallback={<FolderOpen className="h-10 w-10 text-muted-foreground" />}
+        />
+        <h3 className="text-base font-semibold text-foreground">
+          {t("illustrations.permission.title")}
+        </h3>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          {reason ?? t("illustrations.permission.message")}
+        </p>
         {notice ? (
           <p className="rounded-2xl bg-surface-2 px-3.5 py-2.5 text-[13px] text-muted-foreground">
             {notice}

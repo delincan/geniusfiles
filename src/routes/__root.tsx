@@ -16,6 +16,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { useSystemIntegration } from "../lib/native/use-system-integration";
 import { StorageAccessDialog } from "../components/storage/StorageAccessDialog";
+import { TransferResultHost } from "@/components/jobs/TransferResultHost";
 import { BackNavigator } from "../components/navigation/BackNavigator";
 import { PickLayer } from "@/components/files/PickLayer";
 // Planificateur d'automatisations et indexeur média : chargés à la demande
@@ -342,6 +343,7 @@ function RootComponent() {
           d'autorisation ne s'interpose avant l'application. */}
       <Outlet />
       <StorageAccessDialog />
+      <TransferResultHost />
       {/* Mode sélection : l'interface officielle de GeniusFiles est
           présentée par-dessus la fonctionnalité appelante, qui reste
           montée et conserve tout son contexte. */}

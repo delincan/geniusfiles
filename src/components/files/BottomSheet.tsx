@@ -55,6 +55,7 @@ export function BottomSheet({
   open,
   onClose,
   title,
+  label,
   children,
   footer,
   fullScreen,
@@ -63,6 +64,8 @@ export function BottomSheet({
   open: boolean;
   onClose: () => void;
   title?: string;
+  /** Accessible title when the illustrated body contains its own visible heading. */
+  label?: string;
   children: ReactNode;
   footer?: ReactNode;
   fullScreen?: boolean;
@@ -270,7 +273,7 @@ export function BottomSheet({
             ref={setSheetEl}
             role="dialog"
             aria-modal="true"
-            aria-label={title}
+            aria-label={title ?? label}
             data-gf-sheet
             className={`relative z-10 flex max-h-[min(88dvh,calc(100dvh-env(safe-area-inset-top,0px)-24px))] w-full max-w-[560px] flex-col overflow-hidden rounded-t-2xl border border-b-0 border-border/70 bg-surface shadow-elevated will-change-transform ${
               visible
@@ -347,7 +350,7 @@ export function BottomSheet({
           ref={ref}
           role="dialog"
           aria-modal="true"
-          aria-label={title}
+          aria-label={title ?? label}
           className={`relative z-10 flex w-full flex-col overflow-hidden bg-surface transition-[opacity,transform] duration-150 ease-out ${
             visible ? "scale-100 opacity-100" : "scale-[0.97] opacity-0"
           } ${

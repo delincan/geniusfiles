@@ -1,5 +1,14 @@
 # Visual direction — first stage
 
+## Illustrations — first ten uploads
+
+- [x] Associate ten original transparent WebP assets, shared neutral presentation and live translations; reserve distinct ids for the next ten. Downloaded bytes match originals, alpha preserved.
+- [x] Replace automatic transfer navigation on all four caller screens with explicit success sheets; detect confirmed transfer storage exhaustion without inventing space values or confusing RAM.
+- [x] Improve the existing permission request using the shared bottom sheet; keep native authorization and real-grant refresh, with its own icon until the permission illustration arrives.
+- [x] Verify actual mock copies/move, close without cancellation, explicit destination opening, six available empty/error screens, light/dark, seven live languages and 320px reduced motion. 91 tests, ESLint and Prettier pass; preview reports build OK.
+- [ ] Add the remaining ten situation-specific illustrations — waiting for the next uploads.
+- [ ] Verify offline asset embedding in a rebuilt APK, Android permission flow, Back and actual ENOSPC interruption — needs Android build/device; no native validation claimed.
+
 # Genius AI — premium second stage
 
 - [x] Refine welcome, transcript, composer, suggestions and conversation menu using existing tokens.

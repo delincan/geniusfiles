@@ -13,6 +13,9 @@
 
 ## Interaction boundaries
 
+- State illustrations use one typed registry and the shared StateIllustration presentation; missing uploads retain their own icon, and mobile packaging embeds every referenced asset (including Unicode filenames) to avoid runtime network dependence.
+- Transfer result sheets observe confirmed task outcomes independently of file execution; closing them never cancels a task and destination navigation is explicit only.
+
 - Pull-to-refresh animates only its shared overlay indicator and awaits the page's real refresh; page content is never transformed, preserving virtual-list coordinates.
 - Pages with a self-inset header opt into AppShell header inset ownership; the safe-area inset must be applied exactly once.
 - Multi-root file lists provide a root-qualified entry key; cached search rows are replaced by a fresh deduplicated scan, never appended to it.

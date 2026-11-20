@@ -53,12 +53,7 @@ import { progressLabel } from "@/lib/copy";
 import { formatSize } from "@/lib/files/format";
 import { useSelectionSize } from "@/lib/files/selection-size";
 import { loadView } from "@/lib/files/preferences";
-import {
-  startTransfer,
-  cancelTransfer,
-  openTransferDestination,
-  summaryMessage,
-} from "@/lib/transfers/manager";
+import { startTransfer, cancelTransfer, summaryMessage } from "@/lib/transfers/manager";
 import { useTransferTask } from "@/lib/transfers/useTransfers";
 import {
   deleteEntries,
@@ -693,8 +688,6 @@ export function SearchPage() {
           }
           const message = summaryMessage(task);
           if (task.failures.length > 0) toast.error(message);
-          else toast.success(message);
-          if (task.succeeded > 0) openTransferDestination(task);
         },
       });
       setTransferTaskId(id);
