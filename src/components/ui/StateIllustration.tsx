@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { ILLUSTRATIONS, type IllustrationId } from "@/lib/illustrations";
 
-/** Fixed reserved space, untouched WebP alpha/colors; native builds embed the pointer URLs. */
+/** Fixed reserved space, untouched WebP alpha/colors; native builds embed all pointer URLs. */
 export function StateIllustration({
   id,
   fallback,
