@@ -1,3 +1,13 @@
+# Categories, Favorites, Vault and unified selection
+
+- [ ] Replace the home Downloads category with Favorites in the exact six-category order; keep Android Download browsing intact.
+- [ ] Add durable reference-based Favorites with normal file-manager presentation, missing-item handling, multi-item add/remove and organization folders.
+- [ ] Add favorite and vault actions to shared item menus everywhere compatible; resume pending vault additions after first-time setup.
+- [ ] Consolidate item and destination selection into one full-screen route with contextual description, counts, category/storage navigation and action-specific validation.
+- [ ] Correct copy/move destination routing while preserving transfer operations, conflicts and completion sheets.
+- [ ] Remove the obsolete Applications settings sentence; align real storage-group colors; sanitize Genius AI errors with working categorized retry.
+- [ ] Add translations and behavioral tests; verify main flows in preview, run all tests and `bun run verify`, then document Android-only limits.
+
 # Visual direction — first stage
 
 ## Illustrations — first ten uploads
